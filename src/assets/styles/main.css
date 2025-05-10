@@ -1,0 +1,259 @@
+/* Main CSS file for Pathfinding Visualizer */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --grid-border-color: #bdc3c7;
+    
+    --start-node-color: #27ae60;
+    --end-node-color: #e74c3c;
+    --wall-node-color: #34495e;
+    --visited-node-color: #3498db;
+    --path-node-color: #f1c40f;
+    --current-node-color: #9b59b6;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: var(--light-color);
+    color: var(--dark-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.controls, .tools, .action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+select, button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+select {
+    border: 1px solid var(--grid-border-color);
+}
+
+.tool-btn {
+    background-color: var(--light-color);
+    border: 1px solid var(--dark-color);
+    color: var(--dark-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tool-btn:hover, .tool-btn.active {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+.action-btn {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.action-btn:hover {
+    background-color: #2980b9;
+}
+
+.action-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.grid-container {
+    flex: 2;
+    min-width: 300px;
+}
+
+.sidebar {
+    flex: 1;
+    min-width: 250px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1px;
+    border: 1px solid var(--grid-border-color);
+}
+
+.node {
+    aspect-ratio: 1/1;
+    background-color: white;
+    border: 1px solid var(--grid-border-color);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.node:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.node.start {
+    background-color: var(--start-node-color);
+}
+
+.node.end {
+    background-color: var(--end-node-color);
+}
+
+.node.wall {
+    background-color: var(--wall-node-color);
+}
+
+.node.visited {
+    background-color: var(--visited-node-color);
+}
+
+.node.path {
+    background-color: var(--path-node-color);
+}
+
+.node.current {
+    background-color: var(--current-node-color);
+}
+
+.path-preview {
+    margin-bottom: 2rem;
+}
+
+.mini-grids {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mini-grid {
+    border: 1px solid var(--grid-border-color);
+    padding: 10px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.mini-grid h4 {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1px;
+    margin-bottom: 5px;
+}
+
+.preview-node {
+    aspect-ratio: 1/1;
+    background-color: white;
+    border: 1px solid var(--grid-border-color);
+}
+
+.path-info {
+    font-size: 0.8rem;
+}
+
+.legend {
+    border: 1px solid var(--grid-border-color);
+    padding: 10px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.legend h3 {
+    margin-bottom: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 1px solid var(--grid-border-color);
+}
+
+.legend-color.start-node {
+    background-color: var(--start-node-color);
+}
+
+.legend-color.end-node {
+    background-color: var(--end-node-color);
+}
+
+.legend-color.wall-node {
+    background-color: var(--wall-node-color);
+}
+
+.legend-color.visited-node {
+    background-color: var(--visited-node-color);
+}
+
+.legend-color.path-node {
+    background-color: var(--path-node-color);
+}
+
+.legend-color.current-node {
+    background-color: var(--current-node-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .grid-container, .sidebar {
+        width: 100%;
+    }
+} 

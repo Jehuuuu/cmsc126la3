@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Visualizer</title>
+    <link rel="stylesheet" href="src/assets/styles/main.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pathfinding Adventure</h1>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="grid-size">Grid Size:</label>
+                    <select id="grid-size">
+                        <option value="10">10x10</option>
+                        <option value="15">15x15</option>
+                        <option value="20">20x20</option>
+                        <option value="25">25x25</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="visualization-speed">Speed:</label>
+                    <select id="visualization-speed">
+                        <option value="slow">Slow</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="visualization-mode">Mode:</label>
+                    <select id="visualization-mode">
+                        <option value="auto">Auto</option>
+                        <option value="step">Step-by-Step</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="tools">
+                <button id="start-node-btn" class="tool-btn">Set Start</button>
+                <button id="end-node-btn" class="tool-btn">Set End</button>
+                <button id="wall-btn" class="tool-btn">Add Walls</button>
+                <button id="erase-btn" class="tool-btn">Erase</button>
+                <button id="random-maze-btn" class="tool-btn">Random Maze</button>
+                <button id="random-start-end-btn" class="tool-btn">Random Start/End</button>
+                <button id="clear-grid-btn" class="tool-btn">Clear Grid</button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="start-btn" class="action-btn">Find Path</button>
+                <button id="next-step-btn" class="action-btn step-control" disabled>Next Step</button>
+                <button id="prev-step-btn" class="action-btn step-control" disabled>Previous Step</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="grid-container">
+                <div id="grid" class="grid"></div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="path-preview">
+                    <h3>Alternative Paths</h3>
+                    <div class="mini-grids">
+                        <div class="mini-grid" id="path-preview-1">
+                            <h4>Path 1 (Optimal)</h4>
+                            <div class="preview-grid"></div>
+                            <p class="path-info">Length: <span class="path-length">0</span></p>
+                        </div>
+                        <div class="mini-grid" id="path-preview-2">
+                            <h4>Path 2</h4>
+                            <div class="preview-grid"></div>
+                            <p class="path-info">Length: <span class="path-length">0</span></p>
+                        </div>
+                        <div class="mini-grid" id="path-preview-3">
+                            <h4>Path 3</h4>
+                            <div class="preview-grid"></div>
+                            <p class="path-info">Length: <span class="path-length">0</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <h3>Legend</h3>
+                    <div class="legend-item">
+                        <div class="legend-color start-node"></div>
+                        <span>Start Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color end-node"></div>
+                        <span>End Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color wall-node"></div>
+                        <span>Wall</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color visited-node"></div>
+                        <span>Visited Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color path-node"></div>
+                        <span>Path Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color current-node"></div>
+                        <span>Current Node</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts with proper loading order -->
+    <!-- Utilities -->
+    <script src="src/utils/PriorityQueue.js" defer></script>
+    <script src="src/utils/PathUtils.js" defer></script>
+    
+    <!-- Models -->
+    <script src="src/models/Node.js" defer></script>
+    <script src="src/models/Grid.js" defer></script>
+    
+    <!-- Algorithms -->
+    <script src="src/algorithms/Algorithm.js" defer></script>
+    <script src="src/algorithms/DijkstraAlgorithm.js" defer></script>
+    
+    <!-- Views -->
+    <script src="src/views/GridView.js" defer></script>
+    <script src="src/views/UIView.js" defer></script>
+    
+    <!-- Controllers -->
+    <script src="src/controllers/VisualizationController.js" defer></script>
+    <script src="src/controllers/GameController.js" defer></script>
+    
+    <!-- Main entry point -->
+    <script src="src/index.js" defer></script>
+</body>
+</html> 

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "name": "pathfinding-adventure",
+  "builds": [
+    { "src": "**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+} 
