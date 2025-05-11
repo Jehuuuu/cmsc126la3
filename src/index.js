@@ -309,11 +309,192 @@ function setupMobileAccessButtons() {
             startBtn.click();
         });
         
+        // Set up the step-by-step button and menu
+        setupStepByStepMenu();
+        
         // Set up the assistive touch button and menu for drawing tools
         setupAssistiveTouch(gameController);
         
         // Set up the random features button and menu
         setupRandomFeaturesMenu(gameController);
+    }
+}
+
+/**
+ * Set up the step-by-step button and menu for step-by-step mode
+ */
+function setupStepByStepMenu() {
+    // Get references to existing DOM elements
+    const stepByStepMenu = document.getElementById('step-by-step-menu');
+    const modeSelect = document.getElementById('visualization-mode');
+    
+    if (!stepByStepMenu) {
+        console.error("Step-by-step menu element not found");
+        return;
+    }
+    
+    // Create the step by step button (hidden initially)
+    const stepByStepBtn = document.createElement('button');
+    stepByStepBtn.className = 'step-by-step-btn mini-action-btn';
+    stepByStepBtn.id = 'step-by-step-btn';
+    stepByStepBtn.innerHTML = '<i class="fas fa-shoe-prints"></i>';
+    stepByStepBtn.setAttribute('aria-label', 'Step Controls');
+    stepByStepBtn.setAttribute('aria-expanded', 'false');
+    document.body.appendChild(stepByStepBtn);
+    
+    // Show/hide the button based on the current mode
+    if (modeSelect) {
+        // Add a direct change event listener to respond immediately
+        modeSelect.addEventListener('change', (event) => {
+            const isStepMode = event.target.value === 'step';
+            console.log('Mode changed to:', event.target.value);
+            toggleStepByStepButton(isStepMode);
+        });
+        
+        // Set initial state based on current mode
+        const isStepMode = modeSelect.value === 'step';
+        console.log('Initial mode is step mode:', isStepMode);
+        toggleStepByStepButton(isStepMode);
+    }
+    
+    // Toggle the step-by-step menu when the button is clicked
+    stepByStepBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent document click from immediately closing it
+        
+        // Close other menus that might be open
+        const assistiveMenu = document.getElementById('assistive-menu');
+        const randomMenu = document.getElementById('random-menu');
+        const drawingToolsBtn = document.querySelector('.drawing-tools-btn');
+        const randomBtn = document.querySelector('.random-features-btn');
+        
+        if (assistiveMenu && assistiveMenu.classList.contains('visible')) {
+            assistiveMenu.classList.remove('visible');
+            if (drawingToolsBtn) drawingToolsBtn.classList.remove('active');
+        }
+        
+        if (randomMenu && randomMenu.classList.contains('visible')) {
+            randomMenu.classList.remove('visible');
+            if (randomBtn) randomBtn.classList.remove('active');
+        }
+        
+        // Toggle step-by-step menu
+        const isVisible = stepByStepMenu.classList.toggle('visible');
+        stepByStepBtn.setAttribute('aria-expanded', isVisible.toString());
+        stepByStepBtn.classList.toggle('active');
+    });
+    
+    // Close the menu when clicking anywhere else on the document
+    document.addEventListener('click', (event) => {
+        if (!stepByStepMenu.contains(event.target) && 
+            event.target !== stepByStepBtn && 
+            stepByStepMenu.classList.contains('visible')) {
+            stepByStepMenu.classList.remove('visible');
+            stepByStepBtn.classList.remove('active');
+            stepByStepBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+    
+    // Set up step control buttons
+    const mobilePrevStepBtn = document.getElementById('mobile-prev-step');
+    const mobileNextStepBtn = document.getElementById('mobile-next-step');
+    const mobileStepRunBtn = document.getElementById('mobile-step-run-btn');
+    
+    if (mobilePrevStepBtn) {
+        mobilePrevStepBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            // Trigger both algorithm's previous step functionality
+            if (window.dijkstraController) window.dijkstraController.prevStep();
+            if (window.astarController) window.astarController.prevStep();
+            
+            // Show visual feedback
+            mobilePrevStepBtn.classList.add('touch-active');
+            setTimeout(() => {
+                mobilePrevStepBtn.classList.remove('touch-active');
+            }, 200);
+        });
+    }
+    
+    if (mobileNextStepBtn) {
+        mobileNextStepBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            // Trigger both algorithm's next step functionality
+            if (window.dijkstraController) window.dijkstraController.nextStep();
+            if (window.astarController) window.astarController.nextStep();
+            
+            // Show visual feedback
+            mobileNextStepBtn.classList.add('touch-active');
+            setTimeout(() => {
+                mobileNextStepBtn.classList.remove('touch-active');
+            }, 200);
+        });
+    }
+    
+    if (mobileStepRunBtn) {
+        mobileStepRunBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            // Trigger both algorithms to run
+            if (window.dijkstraController) window.dijkstraController.startVisualization();
+            if (window.astarController) window.astarController.startVisualization();
+            
+            // Show visual feedback
+            mobileStepRunBtn.classList.add('touch-active');
+            setTimeout(() => {
+                mobileStepRunBtn.classList.remove('touch-active');
+            }, 200);
+            
+            // Close the menu after clicking run
+            setTimeout(() => {
+                stepByStepMenu.classList.remove('visible');
+                stepByStepBtn.classList.remove('active');
+                stepByStepBtn.setAttribute('aria-expanded', 'false');
+            }, 300);
+        });
+    }
+}
+
+/**
+ * Toggle the visibility of the step-by-step button based on mode
+ * @param {boolean} show - Whether to show the button
+ */
+function toggleStepByStepButton(show) {
+    const stepByStepBtn = document.getElementById('step-by-step-btn');
+    const drawingToolsBtn = document.querySelector('.drawing-tools-btn');
+    const randomBtn = document.querySelector('.random-features-btn');
+    
+    if (stepByStepBtn) {
+        if (show) {
+            // Show step button and adjust other buttons
+            stepByStepBtn.classList.add('enabled');
+            console.log('Showing step-by-step button');
+            
+            // Adjust positions of other buttons when step button is shown
+            if (drawingToolsBtn) {
+                drawingToolsBtn.style.bottom = '110px';
+            }
+            if (randomBtn) {
+                randomBtn.style.bottom = '50px';
+            }
+        } else {
+            // Hide step button and adjust other buttons
+            stepByStepBtn.classList.remove('enabled');
+            console.log('Hiding step-by-step button');
+            
+            // Adjust positions of other buttons when step button is hidden
+            if (drawingToolsBtn) {
+                drawingToolsBtn.style.bottom = '160px';
+            }
+            if (randomBtn) {
+                randomBtn.style.bottom = '90px';
+            }
+            
+            // Also close the menu if it's open
+            const stepByStepMenu = document.getElementById('step-by-step-menu');
+            if (stepByStepMenu && stepByStepMenu.classList.contains('visible')) {
+                stepByStepMenu.classList.remove('visible');
+                stepByStepBtn.classList.remove('active');
+                stepByStepBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
     }
 }
 
@@ -324,7 +505,7 @@ function setupMobileAccessButtons() {
 function setupAssistiveTouch(gameController) {
     // Get references to existing DOM elements
     const assistiveMenu = document.getElementById('assistive-menu');
-    const toolMenuItems = document.querySelectorAll('.tool-menu-item');
+    const toolMenuItems = document.querySelectorAll('.tool-menu-item:not(.step-btn)');
     
     if (!assistiveMenu) {
         console.error("Assistive menu element not found");
@@ -332,39 +513,47 @@ function setupAssistiveTouch(gameController) {
     }
     
     // Create the main assistive touch button
-    const assistiveTouchBtn = document.createElement('button');
-    assistiveTouchBtn.className = 'assistive-touch-btn';
-    assistiveTouchBtn.innerHTML = '<i class="fas fa-paint-brush"></i>'; 
-    assistiveTouchBtn.setAttribute('aria-label', 'Drawing Tools');
-    assistiveTouchBtn.setAttribute('aria-expanded', 'false');
-    document.body.appendChild(assistiveTouchBtn);
+    const drawingToolsBtn = document.createElement('button');
+    drawingToolsBtn.className = 'drawing-tools-btn';
+    drawingToolsBtn.innerHTML = '<i class="fas fa-paint-brush"></i>'; 
+    drawingToolsBtn.setAttribute('aria-label', 'Drawing Tools');
+    drawingToolsBtn.setAttribute('aria-expanded', 'false');
+    document.body.appendChild(drawingToolsBtn);
     
     // Toggle the assistive menu when the button is clicked
-    assistiveTouchBtn.addEventListener('click', (event) => {
+    drawingToolsBtn.addEventListener('click', (event) => {
         event.stopPropagation(); // Prevent document click from immediately closing it
         
-        // Close random menu if open
+        // Close other menus that might be open
         const randomMenu = document.getElementById('random-menu');
+        const stepByStepMenu = document.getElementById('step-by-step-menu');
         const randomBtn = document.querySelector('.random-features-btn');
+        const stepByStepBtn = document.getElementById('step-by-step-btn');
+        
         if (randomMenu && randomMenu.classList.contains('visible')) {
             randomMenu.classList.remove('visible');
             if (randomBtn) randomBtn.classList.remove('active');
         }
         
+        if (stepByStepMenu && stepByStepMenu.classList.contains('visible')) {
+            stepByStepMenu.classList.remove('visible');
+            if (stepByStepBtn) stepByStepBtn.classList.remove('active');
+        }
+        
         // Toggle assistive menu
         const isVisible = assistiveMenu.classList.toggle('visible');
-        assistiveTouchBtn.setAttribute('aria-expanded', isVisible.toString());
-        assistiveTouchBtn.classList.toggle('active');
+        drawingToolsBtn.setAttribute('aria-expanded', isVisible.toString());
+        drawingToolsBtn.classList.toggle('active');
     });
     
     // Close the menu when clicking anywhere else on the document
     document.addEventListener('click', (event) => {
         if (!assistiveMenu.contains(event.target) && 
-            event.target !== assistiveTouchBtn && 
+            event.target !== drawingToolsBtn && 
             assistiveMenu.classList.contains('visible')) {
             assistiveMenu.classList.remove('visible');
-            assistiveTouchBtn.classList.remove('active');
-            assistiveTouchBtn.setAttribute('aria-expanded', 'false');
+            drawingToolsBtn.classList.remove('active');
+            drawingToolsBtn.setAttribute('aria-expanded', 'false');
         }
     });
     
@@ -378,8 +567,8 @@ function setupAssistiveTouch(gameController) {
             // Close the menu after selecting a tool
             setTimeout(() => {
                 assistiveMenu.classList.remove('visible');
-                assistiveTouchBtn.classList.remove('active');
-                assistiveTouchBtn.setAttribute('aria-expanded', 'false');
+                drawingToolsBtn.classList.remove('active');
+                drawingToolsBtn.setAttribute('aria-expanded', 'false');
             }, 200);
             
             // Show visual feedback when pressing a button
@@ -417,12 +606,20 @@ function setupRandomFeaturesMenu(gameController) {
     randomFeaturesBtn.addEventListener('click', (event) => {
         event.stopPropagation(); // Prevent document click from immediately closing it
         
-        // Close assistive menu if open
+        // Close other menus if open
         const assistiveMenu = document.getElementById('assistive-menu');
-        const assistiveBtn = document.querySelector('.assistive-touch-btn');
+        const stepByStepMenu = document.getElementById('step-by-step-menu');
+        const drawingToolsBtn = document.querySelector('.drawing-tools-btn');
+        const stepByStepBtn = document.getElementById('step-by-step-btn');
+        
         if (assistiveMenu && assistiveMenu.classList.contains('visible')) {
             assistiveMenu.classList.remove('visible');
-            if (assistiveBtn) assistiveBtn.classList.remove('active');
+            if (drawingToolsBtn) drawingToolsBtn.classList.remove('active');
+        }
+        
+        if (stepByStepMenu && stepByStepMenu.classList.contains('visible')) {
+            stepByStepMenu.classList.remove('visible');
+            if (stepByStepBtn) stepByStepBtn.classList.remove('active');
         }
         
         // Toggle random menu

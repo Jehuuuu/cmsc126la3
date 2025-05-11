@@ -267,10 +267,27 @@ h2 {
 /* Original control-group styling */
 .control-group {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border: 2px solid #000;
     color: white;
-    font-size: 1.2rem;
+    text-shadow: 1px 1px 0 #000;
+    min-width: 100px;
+}
+
+/* Apply a slight gap between label and control */
+.control-group label {
+    margin-bottom: 8px;
+    display: block;
+    font-weight: bold;
+}
+
+/* Control group select styling */
+.control-group select {
+    width: 100%;
+    padding: 8px 30px 8px 8px; /* Left and right padding for text and arrow */
+    box-sizing: border-box;
 }
 
 select, button {
@@ -294,6 +311,28 @@ select {
     background-position-x: calc(100% - 5px);
     background-position-y: 50%;
     padding-right: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Add a min-width to prevent content from being too squeezed in small screens */
+.control-group select {
+    min-width: 100px;
+    max-width: 100%;
+}
+
+/* Adjust the padding for better text-icon separation */
+@media (max-width: 480px) {
+    select {
+        padding-right: 25px; /* Reduced from 30px for smaller screens */
+        background-position-x: calc(100% - 2px); /* Move icon closer to edge */
+        font-size: 0.85rem; /* Slightly smaller font for mobile */
+    }
+    
+    .control-group {
+        max-width: 130px; /* Prevent groups from being too wide on mobile */
+    }
 }
 
 /* Improved button styling for desktop with consistent sizing */
@@ -1008,9 +1047,8 @@ button.touch-active {
     /* ... other mobile styles ... */
 }
 
-/* Mobile floating action buttons */
-.mini-action-btn, .assistive-touch-btn, .random-features-btn {
-    display: none;
+/* Mobile floating action buttons - general styling */
+.mini-action-btn, .drawing-tools-btn, .random-features-btn, .step-by-step-btn {
     position: fixed;
     width: 56px;
     height: 56px;
@@ -1022,62 +1060,66 @@ button.touch-active {
     align-items: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     z-index: 90;
-    transition: transform 0.2s, background-color 0.2s;
+    transition: transform 0.2s, background-color 0.2s, bottom 0.3s ease-in-out;
     cursor: pointer;
+    right: 20px;
 }
 
 /* Button positions and hierarchy - Find Path button at top */
 .mini-action-btn {
-    right: 20px;
     bottom: 230px;
     background-color: var(--minecraft-green);
 }
 
-/* Drawing tools button in middle */
-.assistive-touch-btn {
-    right: 20px;
-    bottom: 160px;
+/* Step by step button - Only shown in step-by-step mode */
+.step-by-step-btn {
+    bottom: 170px; /* Position below the run button */
+    background-color: var(--minecraft-sky);
+    border: 2px solid #4a9c27;
+    color: white;
+    opacity: 0;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: flex; /* Always in the DOM but invisible */
+    visibility: hidden;
+    transform: scale(0);
+    pointer-events: none; /* Prevent interaction when invisible */
+}
+
+/* When enabled class is applied, make the button visible and interactive */
+.step-by-step-btn.enabled {
+    opacity: 0.95;
+    visibility: visible;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+/* When the button is active (menu open) */
+.step-by-step-btn.active {
+    background-color: #67a4c1;
+    color: white;
+    box-shadow: 0 0 15px rgba(137, 196, 225, 0.7);
+    transform: scale(1.1);
+}
+
+/* Drawing tools button */
+.drawing-tools-btn {
+    bottom: 160px; /* Default position when step button is hidden */
     background-color: #333;
     border: 2px solid #ffcc33;
     font-size: 24px;
     color: #ffcc33;
     opacity: 0.95;
-    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, bottom 0.3s ease-in-out;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Random button at bottom */
 .random-features-btn {
-    right: 20px;
-    bottom: 90px;
+    bottom: 90px; /* Default position when step button is hidden */
     background-color: #6f4e37; /* Brown for the random/maze button */
     border-color: #ffcc33;
-}
-
-.mini-action-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.assistive-touch-btn.active {
-    background-color: #ffcc33;
-    color: #333;
-    box-shadow: 0 0 15px rgba(255, 204, 51, 0.7);
-    transform: scale(1.1);
-}
-
-.random-features-btn.active {
-    background-color: #6f4e37;
-    box-shadow: 0 0 15px rgba(111, 78, 55, 0.7);
-    transform: scale(1.1);
-}
-
-.mini-action-btn:hover, .assistive-touch-btn:hover, .random-features-btn:hover {
-    transform: scale(1.1);
-}
-
-.assistive-touch-btn:active, .random-features-btn:active {
-    transform: scale(0.95);
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, bottom 0.3s ease-in-out;
 }
 
 /* Main tools menu (Previously assistive-touch menu) */
@@ -1253,7 +1295,7 @@ button.touch-active {
 }
 
 /* Better icon sizing for floating action buttons */
-.mini-action-btn i, .assistive-touch-btn i, .random-features-btn i {
+.mini-action-btn i, .drawing-tools-btn i, .random-features-btn i {
     font-size: 24px;
 }
 
@@ -1264,13 +1306,13 @@ button.touch-active {
         display: none !important;
     }
     
-    /* Hide tool buttons in collapsed header for mobile only */
-    .mobile-hidden-tools {
+    /* Hide tool buttons and step controls in collapsed header for mobile only */
+    .mobile-hidden-tools, .step-control {
         display: none !important;
     }
 
     /* Show mobile-only elements */
-    .mini-action-btn, .assistive-touch-btn, .random-features-btn {
+    .mini-action-btn, .drawing-tools-btn, .random-features-btn {
         display: flex !important;
     }
     
@@ -1281,11 +1323,17 @@ button.touch-active {
     
     /* Adjust assistive menu size on smaller screens */
     @media (max-width: 380px) {
-        .assistive-menu {
+        .assistive-menu, .step-by-step-menu {
             width: 200px;
-            height: 200px;
             right: 15px;
+        }
+        
+        .assistive-menu {
             bottom: 75px;
+        }
+        
+        .step-by-step-menu {
+            bottom: 135px;
         }
         
         .assistive-menu-item {
@@ -1303,12 +1351,118 @@ button.touch-active {
 /* Ensure desktop features remain visible on larger screens */
 @media (min-width: 769px) {
     /* Hide mobile-only elements on desktop */
-    .mini-action-btn, .assistive-touch-btn, .random-features-btn, .assistive-menu, .random-menu {
+    .mini-action-btn, .drawing-tools-btn, .random-features-btn, .step-by-step-btn,
+    .assistive-menu, .random-menu, .step-by-step-menu {
         display: none !important;
     }
     
     /* Show desktop elements */
     .mobile-hidden-tools, .mobile-hidden-action {
         display: block !important;
+    }
+}
+
+/* Mobile step controls styling */
+.mobile-step-controls {
+    width: 100%;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tool-menu-item.step-btn {
+    background-color: var(--minecraft-sky);
+}
+
+.tool-menu-item.step-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.tool-menu-item.step-btn:not(:disabled):hover {
+    background-color: #67a4c1;
+    transform: scale(1.02);
+}
+
+.tool-menu-item.run-btn {
+    background-color: var(--minecraft-green);
+}
+
+.tool-menu-item.run-btn:hover {
+    background-color: #4a9c27;
+    transform: scale(1.02);
+}
+
+/* Hide mobile step controls on desktop */
+@media (min-width: 769px) {
+    .mobile-step-controls {
+        display: none;
+    }
+}
+
+/* Step by step menu */
+.step-by-step-menu {
+    display: none;
+    position: fixed;
+    width: 220px;
+    height: auto;
+    bottom: 170px;
+    right: 90px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 3px solid var(--minecraft-sky);
+    z-index: 89;
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: right center;
+    transform: translateX(20px);
+    opacity: 0;
+    padding: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.step-by-step-menu.visible {
+    display: block;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.mini-action-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.drawing-tools-btn.active {
+    background-color: #ffcc33;
+    color: #333;
+    box-shadow: 0 0 15px rgba(255, 204, 51, 0.7);
+    transform: scale(1.1);
+}
+
+.random-features-btn.active {
+    background-color: #6f4e37;
+    box-shadow: 0 0 15px rgba(111, 78, 55, 0.7);
+    transform: scale(1.1);
+}
+
+.mini-action-btn:hover, .drawing-tools-btn:hover, .random-features-btn:hover, .step-by-step-btn:hover {
+    transform: scale(1.1);
+}
+
+.drawing-tools-btn:active, .random-features-btn:active, .step-by-step-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mobile floating action buttons display rule */
+@media (max-width: 768px) {
+    .mini-action-btn, .drawing-tools-btn, .random-features-btn {
+        display: flex !important;
+    }
+    
+    /* Step button is only shown when needed and has the enabled class */
+    .step-by-step-btn {
+        display: flex !important;
+        /* But still controlled by opacity, visibility, transform */
     }
 } 

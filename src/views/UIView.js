@@ -41,9 +41,16 @@ class UIView {
         const modeSelect = document.getElementById('visualization-mode');
         console.log("Mode select found:", !!modeSelect);
         if (modeSelect) {
-            modeSelect.addEventListener('change', () => {
-                this.controllers.dijkstra.setMode(modeSelect.value);
-                this.controllers.astar.setMode(modeSelect.value);
+            modeSelect.addEventListener('change', (event) => {
+                const selectedMode = event.target.value;
+                console.log(`UIView: Mode changed to ${selectedMode}`);
+                this.controllers.dijkstra.setMode(selectedMode);
+                this.controllers.astar.setMode(selectedMode);
+                
+                // Directly update the step-by-step button visibility
+                if (typeof toggleStepByStepButton === 'function') {
+                    toggleStepByStepButton(selectedMode === 'step');
+                }
             });
         }
         
@@ -199,9 +206,19 @@ class UIView {
         const nextStepButton = document.getElementById('next-step-btn');
         const prevStepButton = document.getElementById('prev-step-btn');
         
+        // Also handle mobile step controls
+        const mobileNextStepButton = document.getElementById('mobile-next-step');
+        const mobilePrevStepButton = document.getElementById('mobile-prev-step');
+        
         if (nextStepButton && prevStepButton) {
             nextStepButton.disabled = !enabled;
             prevStepButton.disabled = !enabled;
+        }
+        
+        // Enable/disable mobile step controls
+        if (mobileNextStepButton && mobilePrevStepButton) {
+            mobileNextStepButton.disabled = !enabled;
+            mobilePrevStepButton.disabled = !enabled;
         }
     }
 
@@ -212,16 +229,29 @@ class UIView {
     updateModeUI(mode) {
         const stepControls = document.querySelectorAll('.step-control');
         const startButton = document.getElementById('start-btn');
+        const mobileStepRunButton = document.getElementById('mobile-step-run-btn');
+        
+        // Call the global function to toggle step-by-step button visibility if it exists
+        if (typeof toggleStepByStepButton === 'function') {
+            toggleStepByStepButton(mode === 'step');
+        }
         
         if (mode === 'step') {
-            // Show step controls
-            stepControls.forEach(control => {
-                control.style.display = 'inline-block';
-            });
+            // Show step controls on desktop only - mobile uses floating button
+            if (window.matchMedia("(min-width: 769px)").matches) {
+                stepControls.forEach(control => {
+                    control.style.display = 'inline-block';
+                });
+            }
             
             // Update start button text
             if (startButton) {
                 startButton.textContent = 'Prepare Path';
+            }
+            
+            // Update mobile step run button text
+            if (mobileStepRunButton) {
+                mobileStepRunButton.innerHTML = '<span class="icon"><i class="fas fa-play"></i></span> Prepare Path';
             }
         } else {
             // Hide step controls
@@ -232,6 +262,11 @@ class UIView {
             // Update start button text
             if (startButton) {
                 startButton.textContent = 'Find Path';
+            }
+            
+            // Update mobile step run button text (even though it's hidden)
+            if (mobileStepRunButton) {
+                mobileStepRunButton.innerHTML = '<span class="icon"><i class="fas fa-play"></i></span> Find Path';
             }
         }
     }
