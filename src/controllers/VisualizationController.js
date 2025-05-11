@@ -391,9 +391,26 @@ class VisualizationController {
             this.algorithm.reset();
         }
         
+        // Stop any ongoing animations first
+        if (this.gridView) {
+            this.gridView.stopAnimation();
+        }
+        
         // Reset grid
         if (this.grid) {
             this.grid.resetPath();
+            
+            // Ensure all visited/path flags are cleared
+            for (let row = 0; row < this.grid.rows; row++) {
+                for (let col = 0; col < this.grid.cols; col++) {
+                    const node = this.grid.getNode(row, col);
+                    if (node) {
+                        node.isVisited = false;
+                        node.isPath = false;
+                        node.isCurrent = false;
+                    }
+                }
+            }
         }
         
         // Reset internal state
@@ -454,6 +471,29 @@ class VisualizationController {
         // Reset UI and grid
         if (this.grid) {
             this.grid.resetPath();
+            
+            // More thorough reset - clear all animation and node states
+            for (let row = 0; row < this.grid.rows; row++) {
+                for (let col = 0; col < this.grid.cols; col++) {
+                    const node = this.grid.getNode(row, col);
+                    if (node) {
+                        node.isVisited = false;
+                        node.isPath = false;
+                        node.isCurrent = false;
+                        
+                        // Also clear DOM element classes directly
+                        const nodeElement = document.getElementById(`dijkstra-grid-node-${row}-${col}`);
+                        if (nodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                            nodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                        }
+                        
+                        const astarNodeElement = document.getElementById(`astar-grid-node-${row}-${col}`);
+                        if (astarNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                            astarNodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                        }
+                    }
+                }
+            }
         }
         
         if (this.gridView) {

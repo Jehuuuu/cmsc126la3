@@ -107,7 +107,10 @@ class Algorithm {
      * @param {number} currentStep - Current step index
      */
     updateProgress(currentStep) {
+        console.log(`Algorithm: Updating to step ${currentStep}, total steps: ${this.visitedNodesInOrder.length}`);
+        
         if (currentStep < 0 || currentStep >= this.visitedNodesInOrder.length) {
+            console.warn(`Algorithm: Invalid step index ${currentStep}`);
             return;
         }
         
@@ -123,10 +126,13 @@ class Algorithm {
         
         // Mark nodes up to current step as visited
         for (let i = 0; i <= currentStep; i++) {
+            console.log(`Algorithm: Marking node (${this.visitedNodesInOrder[i].row}, ${this.visitedNodesInOrder[i].col}) as visited`);
             this.visitedNodesInOrder[i].isVisited = true;
         }
         
         // Mark current node
-        this.visitedNodesInOrder[currentStep].isCurrent = true;
+        const currentNode = this.visitedNodesInOrder[currentStep];
+        console.log(`Algorithm: Marking current node (${currentNode.row}, ${currentNode.col})`);
+        currentNode.isCurrent = true;
     }
 } 

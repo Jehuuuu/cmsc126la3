@@ -24,6 +24,12 @@ class GridView {
         this.currentTool = 'wall'; // Default tool: wall, start, end, erase
         this.gridIndex = gridContainerId.includes('dijkstra') ? 0 : 1; // Get grid index based on ID
         this.animationTimeouts = []; // Store animation timeouts for cancellation
+        
+        // Tileset configuration
+        this.tileVariations = 4; // Number of different tile variations (can adjust based on your tileset)
+        this.tilesetWidth = 32; // Width of a single tile in the tileset (adjust to match)
+        this.tilesetHeight = 32; // Height of a single tile in the tileset (adjust to match)
+        
         this.initialize();
     }
 
@@ -58,7 +64,7 @@ class GridView {
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
                 const node = this.grid.nodes[row][col];
-                const nodeElement = this.createNodeElement(node);
+                const nodeElement = this.createNodeElement(node, row, col);
                 
                 // Store reference to DOM element in node
                 node.element = nodeElement;
@@ -73,14 +79,26 @@ class GridView {
     /**
      * Create a DOM element for a node
      * @param {Node} node - The node model
+     * @param {number} row - The row position
+     * @param {number} col - The column position
      * @returns {HTMLElement} The node DOM element
      */
-    createNodeElement(node) {
+    createNodeElement(node, row, col) {
         const nodeElement = document.createElement('div');
         nodeElement.className = 'node';
         nodeElement.id = `${this.gridContainerId}-node-${node.row}-${node.col}`;
         nodeElement.dataset.row = node.row;
         nodeElement.dataset.col = node.col;
+        
+        // Add tileset variation for visual diversity
+        nodeElement.style.backgroundSize = '100% 100%';
+        nodeElement.style.backgroundRepeat = 'no-repeat';
+        
+        // Generate a consistent but seemingly random tile variation based on position
+        // This ensures the same node always gets the same tile but creates a diverse pattern
+        const tileVariation = this.getTileVariation(row, col);
+        this.applyTileVariation(nodeElement, tileVariation);
+        nodeElement.dataset.tileVariation = tileVariation;
         
         // Add status class if any
         const status = node.getStatus();
@@ -89,6 +107,32 @@ class GridView {
         }
         
         return nodeElement;
+    }
+    
+    /**
+     * Generate a deterministic but visually random tile variation based on position
+     * @param {number} row - The row of the node
+     * @param {number} col - The column of the node
+     * @returns {number} A value between 0 and tileVariations-1
+     */
+    getTileVariation(row, col) {
+        // Use a simple hash function of the coordinates
+        // This ensures the same position gets the same variation
+        // but adjacent tiles tend to get different variations
+        const hash = (row * 31 + col * 17) % this.tileVariations;
+        return hash;
+    }
+    
+    /**
+     * Apply a specific tile variation to a node element
+     * @param {HTMLElement} nodeElement - The DOM element of the node
+     * @param {number} variation - The variation index to apply
+     */
+    applyTileVariation(nodeElement, variation) {
+        nodeElement.style.backgroundPosition = `0% 0%`;
+        
+        // Store the variation for later reference
+        nodeElement.dataset.tileVariation = variation;
     }
 
     /**
@@ -439,16 +483,31 @@ class GridView {
 
     /**
      * Update the view to reflect the current state of the grid
+     * This method should only update nodes that are not being animated currently
      */
     update() {
+        console.log(`GridView (${this.gridContainerId}): Updating view`);
+        
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
                 const node = this.grid.nodes[row][col];
                 const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
                 
                 if (nodeElement) {
+                    // Skip nodes that are currently being animated by the visualize method
+                    // But allow updates for nodes in step-by-step mode or other manual updates
+                    if (nodeElement.classList.contains('animate')) {
+                        continue;
+                    }
+                    
+                    // Store current variation
+                    const currentVariation = nodeElement.dataset.tileVariation || 0;
+                    
                     // Clear all state classes
                     nodeElement.className = 'node';
+                    
+                    // Reapply tile variation
+                    this.applyTileVariation(nodeElement, currentVariation);
                     
                     // Add appropriate classes based on node state
                     if (node.isStart) {
@@ -478,6 +537,31 @@ class GridView {
             this.animationTimeouts.forEach(timeout => clearTimeout(timeout));
             this.animationTimeouts = [];
         }
+        
+        // Reset animation state on all nodes in the grid
+        // This ensures no leftover animation classes or states
+        for (let row = 0; row < this.grid.rows; row++) {
+            for (let col = 0; col < this.grid.cols; col++) {
+                const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
+                if (nodeElement) {
+                    // Remove animation classes that might be active
+                    nodeElement.classList.remove('animate');
+                    
+                    // Only reset visited/path nodes that haven't completed animation yet
+                    // This prevents flickering when resetting during visualization
+                    if (nodeElement.classList.contains('visited') || nodeElement.classList.contains('path')) {
+                        const node = this.grid.getNode(row, col);
+                        const currentVariation = nodeElement.dataset.tileVariation || 0;
+                        
+                        // Reset to base state if it's not a special node
+                        if (!node.isStart && !node.isEnd && !node.isWall) {
+                            nodeElement.className = 'node';
+                            this.applyTileVariation(nodeElement, currentVariation);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -506,16 +590,36 @@ class GridView {
                 const node = visitedNodesInOrder[i];
                 const timeout = setTimeout(() => {
                     if (!node.isStart && !node.isEnd) {
+                        // Only mark as visited at the time this node is being processed in the animation
                         node.isVisited = true;
                         node.isPath = false;
-                        this.update();
+                        
+                        // Get the node element
+                        const nodeElement = document.getElementById(`${this.gridContainerId}-node-${node.row}-${node.col}`);
+                        if (nodeElement) {
+                            // Clear previous classes but keep tile variation
+                            const currentVariation = nodeElement.dataset.tileVariation || 0;
+                            nodeElement.className = 'node';
+                            this.applyTileVariation(nodeElement, currentVariation);
+                            
+                            // Add visited class and animation
+                            nodeElement.classList.add('visited');
+                            nodeElement.classList.add('animate');
+                            
+                            // Remove animation class after it completes
+                            setTimeout(() => {
+                                nodeElement.classList.remove('animate');
+                            }, 500); // Match the animation duration in CSS
+                        }
                     }
                 }, speed * i);
                 this.animationTimeouts.push(timeout);
             }
             
             // If no nodes to visit, resolve immediately
-            resolve();
+            if (visitedNodesInOrder.length === 0) {
+                resolve();
+            }
         });
     }
     
@@ -530,8 +634,22 @@ class GridView {
             const node = pathNodesInOrder[i];
             const timeout = setTimeout(() => {
                 if (!node.isStart && !node.isEnd) {
+                    // Mark as path at the time this node is being processed
                     node.isPath = true;
-                    this.update();
+                    
+                    // Get the node element
+                    const nodeElement = document.getElementById(`${this.gridContainerId}-node-${node.row}-${node.col}`);
+                    if (nodeElement) {
+                        // Remove visited class and add path class with animation
+                        nodeElement.classList.remove('visited');
+                        nodeElement.classList.add('path');
+                        nodeElement.classList.add('animate');
+                        
+                        // Remove animation class after it completes
+                        setTimeout(() => {
+                            nodeElement.classList.remove('animate');
+                        }, 500); // Match the animation duration in CSS
+                    }
                 }
                 
                 // Resolve the promise when the animation is complete

@@ -301,7 +301,7 @@ function setupMobileAccessButtons() {
         // Create a mini floating action button for quick access to "Find Path"
         const miniActionBtn = document.createElement('button');
         miniActionBtn.className = 'mini-action-btn';
-        miniActionBtn.innerHTML = '<span style="font-size: 28px;">▶</span>';
+        miniActionBtn.innerHTML = '<i class="fas fa-play"></i>';
         miniActionBtn.setAttribute('aria-label', 'Find Path');
         document.body.appendChild(miniActionBtn);
         
@@ -334,7 +334,7 @@ function setupAssistiveTouch(gameController) {
     // Create the main assistive touch button
     const assistiveTouchBtn = document.createElement('button');
     assistiveTouchBtn.className = 'assistive-touch-btn';
-    assistiveTouchBtn.innerHTML = '<span style="font-size: 28px;">🖌️</span>'; // Paintbrush icon instead of gear
+    assistiveTouchBtn.innerHTML = '<i class="fas fa-paint-brush"></i>'; 
     assistiveTouchBtn.setAttribute('aria-label', 'Drawing Tools');
     assistiveTouchBtn.setAttribute('aria-expanded', 'false');
     document.body.appendChild(assistiveTouchBtn);
@@ -408,7 +408,7 @@ function setupRandomFeaturesMenu(gameController) {
     // Create the random features button
     const randomFeaturesBtn = document.createElement('button');
     randomFeaturesBtn.className = 'random-features-btn';
-    randomFeaturesBtn.innerHTML = '<span style="font-size: 28px;">🎲</span>'; // Dice icon
+    randomFeaturesBtn.innerHTML = '<i class="fas fa-dice"></i>'; 
     randomFeaturesBtn.setAttribute('aria-label', 'Random Features');
     randomFeaturesBtn.setAttribute('aria-expanded', 'false');
     document.body.appendChild(randomFeaturesBtn);

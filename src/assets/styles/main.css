@@ -223,6 +223,31 @@ h2 {
 .clear-grid-container {
     display: flex;
     justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Desktop-only styling to add a small separation between button groups */
+@media (min-width: 769px) {
+    .clear-grid-section {
+        margin-top: -5px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .tools, .action-buttons, .clear-grid-container {
+        position: relative;
+    }
+    
+    .tools::after, .action-buttons::after, .clear-grid-container::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 1px;
+    }
 }
 
 #clear-grid-btn {
@@ -271,6 +296,24 @@ select {
     padding-right: 30px;
 }
 
+/* Improved button styling for desktop with consistent sizing */
+.tool-btn, .action-btn {
+    min-width: 140px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Icon styling */
+.tool-btn i, .action-btn i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
 .tool-btn {
     background-color: var(--minecraft-stone);
     border: 3px solid #000;
@@ -291,8 +334,32 @@ select {
     font-size: 1.2rem;
 }
 
-.action-btn:hover {
+/* Different colors for different types of action buttons */
+#start-btn {
+    background-color: var(--minecraft-green);
+}
+
+#start-btn:hover {
     background-color: #4a9c27;
+}
+
+#clear-grid-btn {
+    background-color: var(--danger-color);
+}
+
+#clear-grid-btn:hover {
+    background-color: #c0392b;
+}
+
+.step-control {
+    background-color: var(--minecraft-sky);
+}
+
+.step-control:hover {
+    background-color: #67a4c1;
+}
+
+.action-btn:hover {
     transform: scale(1.05);
 }
 
@@ -300,6 +367,7 @@ select {
     background-color: #555;
     cursor: not-allowed;
     transform: none;
+    opacity: 0.7;
 }
 
 /* Algorithm comparison layout */
@@ -971,7 +1039,7 @@ button.touch-active {
     bottom: 160px;
     background-color: #333;
     border: 2px solid #ffcc33;
-    font-size: 26px;
+    font-size: 24px;
     color: #ffcc33;
     opacity: 0.95;
     transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
@@ -1091,12 +1159,15 @@ button.touch-active {
 
 .tool-menu-item .icon {
     margin-right: 8px;
-    font-size: 20px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
     width: 24px;
     height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tool-menu-item .icon i {
+    font-size: 18px;
 }
 
 /* Random features menu - same style as assistive menu now */
@@ -1167,14 +1238,23 @@ button.touch-active {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-.random-menu-item .icon {
+/* Improved icon styling for mobile menus */
+.tool-menu-item .icon, .random-menu-item .icon {
     margin-right: 8px;
-    font-size: 20px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
     width: 24px;
     height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tool-menu-item .icon i, .random-menu-item .icon i {
+    font-size: 18px;
+}
+
+/* Better icon sizing for floating action buttons */
+.mini-action-btn i, .assistive-touch-btn i, .random-features-btn i {
+    font-size: 24px;
 }
 
 /* Media queries for mobile */
