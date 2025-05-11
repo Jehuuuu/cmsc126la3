@@ -1,20 +1,24 @@
 /**
- * Controller for managing the game state
+ * Controller for managing the game state across multiple grids
  */
 class GameController {
     /**
      * Create a new GameController
-     * @param {Grid} grid - The grid model
-     * @param {GridView} gridView - The grid view
-     * @param {VisualizationController} visualizationController - The visualization controller
+     * @param {Grid[]} grids - Array of grid models
+     * @param {GridView[]} gridViews - Array of grid views
+     * @param {VisualizationController[]} visualizationControllers - Array of visualization controllers
      */
-    constructor(grid, gridView, visualizationController) {
-        console.log("GameController: Initializing");
-        this.grid = grid;
-        this.gridView = gridView;
-        this.visualizationController = visualizationController;
+    constructor(grids, gridViews, visualizationControllers) {
+        console.log("GameController: Initializing with", grids.length, "grids");
         
-        // Set default start and end nodes
+        // Handle both single grid and multiple grid scenarios
+        this.grids = Array.isArray(grids) ? grids : [grids];
+        this.gridViews = Array.isArray(gridViews) ? gridViews : [gridViews];
+        this.visualizationControllers = Array.isArray(visualizationControllers) 
+            ? visualizationControllers 
+            : [visualizationControllers];
+        
+        // Set default start and end nodes for all grids
         this.setDefaultStartEnd();
     }
 
@@ -22,37 +26,85 @@ class GameController {
      * Set default start and end nodes
      */
     setDefaultStartEnd() {
-        console.log("GameController: Setting default start/end nodes");
+        console.log("GameController: Setting default start/end nodes for all grids");
         
         // Default start node at top-left quarter
-        const startRow = Math.floor(this.grid.rows / 4);
-        const startCol = Math.floor(this.grid.cols / 4);
+        const startRow = Math.floor(this.grids[0].rows / 4);
+        const startCol = Math.floor(this.grids[0].cols / 4);
         
         // Default end node at bottom-right quarter
-        const endRow = Math.floor(this.grid.rows * 3 / 4);
-        const endCol = Math.floor(this.grid.cols * 3 / 4);
+        const endRow = Math.floor(this.grids[0].rows * 3 / 4);
+        const endCol = Math.floor(this.grids[0].cols * 3 / 4);
         
         console.log(`Setting start node at (${startRow}, ${startCol}) and end node at (${endRow}, ${endCol})`);
         
-        this.grid.setStartNode(startRow, startCol);
-        this.grid.setEndNode(endRow, endCol);
-        
-        console.log("Start node set:", !!this.grid.startNode);
-        console.log("End node set:", !!this.grid.endNode);
-        
-        if (this.gridView) {
-            this.gridView.update();
-        } else {
-            console.error("GridView is not initialized yet");
-        }
+        // Apply to all grids
+        this.grids.forEach((grid, index) => {
+            grid.setStartNode(startRow, startCol);
+            grid.setEndNode(endRow, endCol);
+            
+            console.log(`Grid ${index}: Start node set:`, !!grid.startNode);
+            console.log(`Grid ${index}: End node set:`, !!grid.endNode);
+            
+            // Update grid view
+            if (this.gridViews[index]) {
+                this.gridViews[index].update();
+            }
+        });
     }
 
     /**
      * Set random start and end nodes
      */
     setRandomStartEnd() {
-        this.grid.setRandomStartEnd();
-        this.gridView.update();
+        console.log("GameController: Setting random start/end for all grids");
+        
+        // Generate random positions ensuring they are different
+        const rows = this.grids[0].rows;
+        const cols = this.grids[0].cols;
+        
+        // Find positions that work for all grids (no walls in any grid)
+        let startRow, startCol, endRow, endCol;
+        let validPositions = false;
+        
+        // Try to find valid positions (maximum 10 attempts)
+        for (let attempt = 0; attempt < 10 && !validPositions; attempt++) {
+            startRow = Math.floor(Math.random() * rows);
+            startCol = Math.floor(Math.random() * cols);
+            endRow = Math.floor(Math.random() * rows);
+            endCol = Math.floor(Math.random() * cols);
+            
+            // Check if valid in all grids
+            validPositions = true;
+            
+            // Check if start and end are different
+            if (startRow === endRow && startCol === endCol) {
+                validPositions = false;
+                continue;
+            }
+            
+            // Check for walls in any grid
+            for (const grid of this.grids) {
+                const startNode = grid.getNode(startRow, startCol);
+                const endNode = grid.getNode(endRow, endCol);
+                
+                if (startNode.isWall || endNode.isWall) {
+                    validPositions = false;
+                    break;
+                }
+            }
+        }
+        
+        // Apply to all grids
+        this.grids.forEach((grid, index) => {
+            grid.setStartNode(startRow, startCol);
+            grid.setEndNode(endRow, endCol);
+            
+            // Update grid view
+            if (this.gridViews[index]) {
+                this.gridViews[index].update();
+            }
+        });
     }
 
     /**
@@ -60,73 +112,171 @@ class GameController {
      * @param {number} density - Wall density (0-1)
      */
     generateRandomMaze(density = 0.3) {
-        // Stop any running visualization
-        this.visualizationController.stopVisualization();
+        console.log("GameController: Generating random maze for all grids");
         
-        // Generate random maze
-        this.grid.generateRandomMaze(density);
+        // Stop any running visualizations
+        this.visualizationControllers.forEach(controller => {
+            if (controller) controller.stopVisualization();
+        });
+        
+        // Generate the same random maze for all grids
+        const rows = this.grids[0].rows;
+        const cols = this.grids[0].cols;
+        
+        // Reset all grids
+        this.grids.forEach(grid => grid.resetGrid());
+        
+        // Generate the same wall pattern for all grids
+        const wallPattern = [];
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                // Random wall generation based on density
+                if (Math.random() < density) {
+                    wallPattern.push({ row, col });
+                }
+            }
+        }
+        
+        // Apply walls to all grids
+        this.grids.forEach(grid => {
+            wallPattern.forEach(wall => {
+                grid.setWall(wall.row, wall.col, true);
+            });
+        });
         
         // Set random start and end positions
-        this.grid.setRandomStartEnd();
+        this.setRandomStartEnd();
         
-        this.gridView.update();
+        // Update all grid views
+        this.gridViews.forEach(gridView => {
+            if (gridView) gridView.update();
+        });
     }
 
     /**
-     * Resize the grid
+     * Resize all grids
      * @param {number} rows - Number of rows
      * @param {number} cols - Number of columns
      */
     resizeGrid(rows, cols) {
-        // Stop any running visualization
-        this.visualizationController.stopVisualization();
+        console.log(`GameController: Resizing all grids to ${rows}x${cols}`);
         
-        // Resize the grid
-        this.grid.resize(rows, cols);
+        // Stop any running visualizations
+        this.visualizationControllers.forEach(controller => {
+            if (controller) controller.stopVisualization();
+        });
         
-        // Re-render the grid view
-        this.gridView.render();
+        // Resize all grids
+        this.grids.forEach((grid, index) => {
+            grid.resize(rows, cols);
+            
+            // Re-render the grid view
+            if (this.gridViews[index]) {
+                this.gridViews[index].render();
+            }
+        });
         
         // Set default start and end nodes
         this.setDefaultStartEnd();
     }
 
     /**
-     * Clear the grid (walls and path)
+     * Clear all grids (walls and path)
      */
     clearGrid() {
-        // Stop any running visualization
-        this.visualizationController.stopVisualization();
+        console.log("GameController: Clearing all grids");
         
-        // Clear walls and reset path
-        this.grid.clearWalls();
-        this.grid.resetPath();
+        // Stop any running visualizations with stronger reset
+        this.visualizationControllers.forEach(controller => {
+            if (controller) {
+                // Use forceReset which handles animations and running algorithms more completely
+                if (typeof controller.forceReset === 'function') {
+                    controller.forceReset();
+                } else {
+                    // Fallback to original methods if forceReset isn't available
+                    controller.stopVisualization();
+                    
+                    if (typeof controller.reset === 'function') {
+                        controller.reset();
+                    }
+                    
+                    if (typeof controller.resetUI === 'function') {
+                        controller.resetUI();
+                    }
+                }
+            }
+        });
         
-        this.gridView.update();
+        // Clear walls and reset path for all grids
+        this.grids.forEach((grid, index) => {
+            grid.clearWalls();
+            grid.resetPath();
+            
+            // Update grid view
+            if (this.gridViews[index]) {
+                this.gridViews[index].update();
+            }
+        });
+        
+        // Ensure step controls are disabled
+        const nextStepBtn = document.getElementById('next-step-btn');
+        const prevStepBtn = document.getElementById('prev-step-btn');
+        if (nextStepBtn) nextStepBtn.disabled = true;
+        if (prevStepBtn) prevStepBtn.disabled = true;
     }
 
     /**
-     * Reset the entire grid
-     */
-    resetGrid() {
-        // Stop any running visualization
-        this.visualizationController.stopVisualization();
-        
-        // Reset the grid
-        this.grid.resetGrid();
-        
-        // Set default start and end nodes
-        this.setDefaultStartEnd();
-        
-        this.gridView.update();
-    }
-
-    /**
-     * Set the current tool
-     * @param {string} tool - The tool to set (wall, start, end, erase)
+     * Set current tool for all grid views
+     * @param {string} tool - The tool to set
      */
     setCurrentTool(tool) {
-        this.gridView.setCurrentTool(tool);
+        console.log("GameController: Setting tool to", tool);
+        this.gridViews.forEach(gridView => {
+            if (gridView) gridView.setCurrentTool(tool);
+        });
+    }
+
+    /**
+     * Handle a node action (wall, start, end)
+     * @param {number} gridIndex - Index of the grid being modified
+     * @param {number} row - The row of the node
+     * @param {number} col - The column of the node
+     * @param {string} action - The action to perform ('wall', 'start', 'end', 'erase')
+     */
+    handleNodeAction(gridIndex, row, col, action) {
+        console.log(`GameController: Grid ${gridIndex} - ${action} at (${row}, ${col})`);
+        
+        // Perform the action on all grids
+        this.grids.forEach((grid, index) => {
+            switch(action) {
+                case 'wall':
+                    grid.setWall(row, col, true);
+                    break;
+                case 'start':
+                    grid.setStartNode(row, col);
+                    break;
+                case 'end':
+                    grid.setEndNode(row, col);
+                    break;
+                case 'erase':
+                    grid.setWall(row, col, false);
+                    break;
+                // Add a special case for toggling walls
+                case 'toggleWall':
+                    const node = grid.getNode(row, col);
+                    if (node && !node.isStart && !node.isEnd) {
+                        node.isWall = !node.isWall;
+                    }
+                    break;
+            }
+        });
+        
+        // Make sure both grid views are updated
+        this.gridViews.forEach(gridView => {
+            if (gridView) {
+                gridView.update();
+            }
+        });
     }
 
     /**
@@ -140,17 +290,17 @@ class GameController {
         
         // Create a serializable version of the grid
         const gridData = {
-            rows: this.grid.rows,
-            cols: this.grid.cols,
-            start: this.grid.startNode ? { row: this.grid.startNode.row, col: this.grid.startNode.col } : null,
-            end: this.grid.endNode ? { row: this.grid.endNode.row, col: this.grid.endNode.col } : null,
+            rows: this.grids[0].rows,
+            cols: this.grids[0].cols,
+            start: this.grids[0].startNode ? { row: this.grids[0].startNode.row, col: this.grids[0].startNode.col } : null,
+            end: this.grids[0].endNode ? { row: this.grids[0].endNode.row, col: this.grids[0].endNode.col } : null,
             walls: []
         };
         
         // Save wall positions
-        for (let row = 0; row < this.grid.rows; row++) {
-            for (let col = 0; col < this.grid.cols; col++) {
-                if (this.grid.nodes[row][col].isWall) {
+        for (let row = 0; row < this.grids[0].rows; row++) {
+            for (let col = 0; col < this.grids[0].cols; col++) {
+                if (this.grids[0].nodes[row][col].isWall) {
                     gridData.walls.push({ row, col });
                 }
             }
@@ -192,29 +342,43 @@ class GameController {
             const gridData = savedGrids[name];
             
             // Resize grid if needed
-            if (gridData.rows !== this.grid.rows || gridData.cols !== this.grid.cols) {
-                this.grid.resize(gridData.rows, gridData.cols);
-                this.gridView.render();
+            if (gridData.rows !== this.grids[0].rows || gridData.cols !== this.grids[0].cols) {
+                this.grids.forEach((grid, index) => {
+                    grid.resize(gridData.rows, gridData.cols);
+                    if (this.gridViews[index]) {
+                        this.gridViews[index].render();
+                    }
+                });
             } else {
-                // Reset current grid
-                this.grid.resetGrid();
+                // Reset current grids
+                this.grids.forEach((grid, index) => {
+                    grid.resetGrid();
+                });
             }
             
             // Set start and end nodes
             if (gridData.start) {
-                this.grid.setStartNode(gridData.start.row, gridData.start.col);
+                this.grids.forEach((grid, index) => {
+                    grid.setStartNode(gridData.start.row, gridData.start.col);
+                });
             }
             
             if (gridData.end) {
-                this.grid.setEndNode(gridData.end.row, gridData.end.col);
+                this.grids.forEach((grid, index) => {
+                    grid.setEndNode(gridData.end.row, gridData.end.col);
+                });
             }
             
             // Set walls
             for (const wall of gridData.walls) {
-                this.grid.setWall(wall.row, wall.col, true);
+                this.grids.forEach((grid, index) => {
+                    grid.setWall(wall.row, wall.col, true);
+                });
             }
             
-            this.gridView.update();
+            this.gridViews.forEach((gridView, index) => {
+                if (gridView) gridView.update();
+            });
             
             return true;
         } catch (error) {

@@ -9,8 +9,9 @@ class GridView {
      */
     constructor(grid, gridContainerId = 'grid') {
         this.grid = grid;
+        this.gridContainerId = gridContainerId;
         this.gridContainer = document.getElementById(gridContainerId);
-        console.log("GridView: Grid container found:", !!this.gridContainer);
+        console.log(`GridView: Grid container '${gridContainerId}' found:`, !!this.gridContainer);
         
         if (!this.gridContainer) {
             console.error(`Grid container with ID "${gridContainerId}" not found!`);
@@ -21,6 +22,8 @@ class GridView {
         this.isMovingStart = false;
         this.isMovingEnd = false;
         this.currentTool = 'wall'; // Default tool: wall, start, end, erase
+        this.gridIndex = gridContainerId.includes('dijkstra') ? 0 : 1; // Get grid index based on ID
+        this.animationTimeouts = []; // Store animation timeouts for cancellation
         this.initialize();
     }
 
@@ -28,7 +31,7 @@ class GridView {
      * Initialize the grid view
      */
     initialize() {
-        console.log("GridView: Initializing");
+        console.log(`GridView (${this.gridContainerId}): Initializing`);
         this.render();
         this.setupEventListeners();
     }
@@ -37,11 +40,11 @@ class GridView {
      * Re-render the grid
      */
     render() {
-        console.log("GridView: Rendering grid", this.grid.rows, "x", this.grid.cols);
+        console.log(`GridView (${this.gridContainerId}): Rendering grid`, this.grid.rows, "x", this.grid.cols);
         
         // Clear the grid container
         if (!this.gridContainer) {
-            console.error("Grid container is null, cannot render grid");
+            console.error(`Grid container '${this.gridContainerId}' is null, cannot render grid`);
             return;
         }
         
@@ -64,7 +67,7 @@ class GridView {
             }
         }
         
-        console.log("GridView: Grid rendered with", this.grid.rows * this.grid.cols, "nodes");
+        console.log(`GridView (${this.gridContainerId}): Grid rendered with`, this.grid.rows * this.grid.cols, "nodes");
     }
 
     /**
@@ -75,7 +78,7 @@ class GridView {
     createNodeElement(node) {
         const nodeElement = document.createElement('div');
         nodeElement.className = 'node';
-        nodeElement.id = `node-${node.row}-${node.col}`;
+        nodeElement.id = `${this.gridContainerId}-node-${node.row}-${node.col}`;
         nodeElement.dataset.row = node.row;
         nodeElement.dataset.col = node.col;
         
@@ -97,6 +100,11 @@ class GridView {
         this.gridContainer.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.gridContainer.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
         this.gridContainer.addEventListener('mouseover', this.handleMouseOver.bind(this));
+        
+        // Touch events for mobile
+        this.gridContainer.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        this.gridContainer.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+        this.gridContainer.addEventListener('touchend', this.handleTouchEnd.bind(this));
         
         // Prevent default drag behavior
         this.gridContainer.addEventListener('dragstart', (e) => e.preventDefault());
@@ -164,6 +172,86 @@ class GridView {
     }
 
     /**
+     * Handle touch start event
+     * @param {TouchEvent} event - The touch event
+     */
+    handleTouchStart(event) {
+        // Prevent scrolling when interacting with the grid
+        event.preventDefault();
+        
+        const touch = event.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        if (target && target.classList.contains('node')) {
+            this.isMouseDown = true;
+            
+            const row = parseInt(target.dataset.row);
+            const col = parseInt(target.dataset.col);
+            const node = this.grid.getNode(row, col);
+            
+            if (node.isStart) {
+                this.isMovingStart = true;
+            } else if (node.isEnd) {
+                this.isMovingEnd = true;
+            } else {
+                this.handleNodeClick(row, col);
+            }
+            
+            // Add visual feedback
+            target.classList.add('touch-active');
+        }
+    }
+
+    /**
+     * Handle touch move event
+     * @param {TouchEvent} event - The touch event
+     */
+    handleTouchMove(event) {
+        // Only prevent default if we're interacting with the grid
+        if (this.isMouseDown) {
+            event.preventDefault();
+        }
+        
+        if (!this.isMouseDown) return;
+        
+        const touch = event.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        if (target && target.classList.contains('node')) {
+            const row = parseInt(target.dataset.row);
+            const col = parseInt(target.dataset.col);
+            
+            // Remove touch-active class from all nodes
+            const activeNodes = this.gridContainer.querySelectorAll('.touch-active');
+            activeNodes.forEach(node => node.classList.remove('touch-active'));
+            
+            // Add touch-active class to current node
+            target.classList.add('touch-active');
+            
+            if (this.isMovingStart) {
+                this.moveStartNode(row, col);
+            } else if (this.isMovingEnd) {
+                this.moveEndNode(row, col);
+            } else {
+                this.handleNodeClick(row, col);
+            }
+        }
+    }
+
+    /**
+     * Handle touch end event
+     */
+    handleTouchEnd() {
+        this.isMouseDown = false;
+        this.isMovingStart = false;
+        this.isMovingEnd = false;
+        
+        // Remove touch-active class from all nodes
+        const activeNodes = this.gridContainer.querySelectorAll('.touch-active');
+        activeNodes.forEach(node => node.classList.remove('touch-active'));
+    }
+
+    /**
      * Handle node click based on current tool
      * @param {number} row - Row of the clicked node
      * @param {number} col - Column of the clicked node
@@ -174,6 +262,25 @@ class GridView {
         // Don't do anything during visualization
         if (node.isVisited || node.isPath) return;
         
+        // Always use global gameController if available to sync grids
+        const gameController = window.gameController;
+        
+        if (gameController) {
+            console.log(`GridView (${this.gridContainerId}): Calling gameController with action ${this.currentTool}`);
+            
+            // Map the current tool to the right action
+            let action = this.currentTool;
+            
+            // Special case for wall tool - use toggleWall
+            if (action === 'wall') {
+                gameController.handleNodeAction(this.gridIndex, row, col, 'toggleWall');
+            } else {
+                gameController.handleNodeAction(this.gridIndex, row, col, action);
+            }
+            return;
+        }
+        
+        // Fallback to direct modification if game controller not available
         switch (this.currentTool) {
             case 'start':
                 this.setStartNode(row, col);
@@ -205,7 +312,7 @@ class GridView {
         this.grid.setStartNode(row, col);
         
         // Add start class to new start node
-        const nodeElement = document.getElementById(`node-${row}-${col}`);
+        const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
             nodeElement.className = 'node start';
         }
@@ -226,7 +333,7 @@ class GridView {
         this.grid.setEndNode(row, col);
         
         // Add end class to new end node
-        const nodeElement = document.getElementById(`node-${row}-${col}`);
+        const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
             nodeElement.className = 'node end';
         }
@@ -247,7 +354,7 @@ class GridView {
         this.grid.toggleWall(row, col);
         
         // Update class
-        const nodeElement = document.getElementById(`node-${row}-${col}`);
+        const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
             if (node.isWall) {
                 nodeElement.classList.add('wall');
@@ -272,7 +379,7 @@ class GridView {
         this.grid.setWall(row, col, false);
         
         // Update class
-        const nodeElement = document.getElementById(`node-${row}-${col}`);
+        const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
             nodeElement.classList.remove('wall');
         }
@@ -289,6 +396,14 @@ class GridView {
         // Don't move to end node or wall
         if (node.isEnd || node.isWall) return;
         
+        // Update all grids via the game controller if it exists
+        const gameController = window.gameController;
+        if (gameController) {
+            console.log(`GridView (${this.gridContainerId}): Moving start node to (${row}, ${col})`);
+            gameController.handleNodeAction(this.gridIndex, row, col, 'start');
+            return;
+        }
+        
         this.setStartNode(row, col);
     }
 
@@ -302,6 +417,14 @@ class GridView {
         
         // Don't move to start node or wall
         if (node.isStart || node.isWall) return;
+        
+        // Update all grids via the game controller if it exists
+        const gameController = window.gameController;
+        if (gameController) {
+            console.log(`GridView (${this.gridContainerId}): Moving end node to (${row}, ${col})`);
+            gameController.handleNodeAction(this.gridIndex, row, col, 'end');
+            return;
+        }
         
         this.setEndNode(row, col);
     }
@@ -321,7 +444,7 @@ class GridView {
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
                 const node = this.grid.nodes[row][col];
-                const nodeElement = document.getElementById(`node-${row}-${col}`);
+                const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
                 
                 if (nodeElement) {
                     // Clear all state classes
@@ -347,54 +470,81 @@ class GridView {
     }
 
     /**
-     * Visualize the visited nodes with animation
-     * @param {Node[]} visitedNodesInOrder - Nodes in the order they were visited
-     * @param {Node[]} path - The final path
-     * @param {number} speed - Animation speed in milliseconds
-     * @returns {Promise} Promise that resolves when animation is complete
+     * Stop any ongoing animations
      */
-    async visualize(visitedNodesInOrder, path, speed = 10) {
-        // Reset node classes except walls, start, and end
-        for (let row = 0; row < this.grid.rows; row++) {
-            for (let col = 0; col < this.grid.cols; col++) {
-                const node = this.grid.nodes[row][col];
-                const nodeElement = document.getElementById(`node-${row}-${col}`);
-                
-                if (nodeElement && !node.isStart && !node.isEnd && !node.isWall) {
-                    nodeElement.classList.remove('visited', 'path', 'current');
+    stopAnimation() {
+        // Clear all animation timeouts
+        if (this.animationTimeouts && this.animationTimeouts.length > 0) {
+            this.animationTimeouts.forEach(timeout => clearTimeout(timeout));
+            this.animationTimeouts = [];
+        }
+    }
+
+    /**
+     * Visualize the algorithm execution
+     * @param {Array} visitedNodesInOrder - Array of nodes visited in order
+     * @param {Array} pathNodesInOrder - Array of nodes in the final path
+     * @param {number} speed - Delay between animations in ms
+     * @returns {Promise} - Resolves when animation is complete
+     */
+    visualize(visitedNodesInOrder, pathNodesInOrder, speed = 20) {
+        // Clear any previous animations
+        this.stopAnimation();
+        
+        return new Promise((resolve) => {
+            // First animate visited nodes
+            for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+                if (i === visitedNodesInOrder.length) {
+                    // When visited nodes animation is done, animate the path
+                    const timeout = setTimeout(() => {
+                        this.animatePath(pathNodesInOrder, speed, resolve);
+                    }, speed * i);
+                    this.animationTimeouts.push(timeout);
+                    return;
                 }
+                
+                const node = visitedNodesInOrder[i];
+                const timeout = setTimeout(() => {
+                    if (!node.isStart && !node.isEnd) {
+                        node.isVisited = true;
+                        node.isPath = false;
+                        this.update();
+                    }
+                }, speed * i);
+                this.animationTimeouts.push(timeout);
             }
+            
+            // If no nodes to visit, resolve immediately
+            resolve();
+        });
+    }
+    
+    /**
+     * Animate the path part of the visualization
+     * @param {Array} pathNodesInOrder - Array of nodes in the final path
+     * @param {number} speed - Delay between animations in ms
+     * @param {Function} resolve - Promise resolve function
+     */
+    animatePath(pathNodesInOrder, speed, resolve) {
+        for (let i = 0; i < pathNodesInOrder.length; i++) {
+            const node = pathNodesInOrder[i];
+            const timeout = setTimeout(() => {
+                if (!node.isStart && !node.isEnd) {
+                    node.isPath = true;
+                    this.update();
+                }
+                
+                // Resolve the promise when the animation is complete
+                if (i === pathNodesInOrder.length - 1) {
+                    resolve();
+                }
+            }, speed * i);
+            this.animationTimeouts.push(timeout);
         }
         
-        // Animate visited nodes
-        for (let i = 0; i < visitedNodesInOrder.length; i++) {
-            // Break animation if we're at the end
-            if (i === visitedNodesInOrder.length - 1) break;
-            
-            const node = visitedNodesInOrder[i];
-            const nodeElement = document.getElementById(`node-${node.row}-${node.col}`);
-            
-            if (nodeElement && !node.isStart && !node.isEnd) {
-                // Create a small delay between nodes being visited
-                await new Promise(resolve => setTimeout(resolve, speed));
-                
-                nodeElement.classList.add('visited');
-            }
-        }
-        
-        // Animate the path after the visited nodes
-        await new Promise(resolve => setTimeout(resolve, speed * 2));
-        
-        for (let i = 0; i < path.length; i++) {
-            const node = path[i];
-            const nodeElement = document.getElementById(`node-${node.row}-${node.col}`);
-            
-            if (nodeElement && !node.isStart && !node.isEnd) {
-                await new Promise(resolve => setTimeout(resolve, speed * 3));
-                
-                nodeElement.classList.remove('visited');
-                nodeElement.classList.add('path');
-            }
+        // If no path nodes, resolve immediately
+        if (pathNodesInOrder.length === 0) {
+            resolve();
         }
     }
 

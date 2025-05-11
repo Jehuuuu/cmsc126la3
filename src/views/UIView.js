@@ -32,7 +32,8 @@ class UIView {
         console.log("Speed select found:", !!speedSelect);
         if (speedSelect) {
             speedSelect.addEventListener('change', () => {
-                this.controllers.visualization.setSpeed(speedSelect.value);
+                this.controllers.dijkstra.setSpeed(speedSelect.value);
+                this.controllers.astar.setSpeed(speedSelect.value);
             });
         }
         
@@ -41,7 +42,8 @@ class UIView {
         console.log("Mode select found:", !!modeSelect);
         if (modeSelect) {
             modeSelect.addEventListener('change', () => {
-                this.controllers.visualization.setMode(modeSelect.value);
+                this.controllers.dijkstra.setMode(modeSelect.value);
+                this.controllers.astar.setMode(modeSelect.value);
             });
         }
         
@@ -74,7 +76,37 @@ class UIView {
         console.log("Clear grid button found:", !!clearGridButton);
         if (clearGridButton) {
             clearGridButton.addEventListener('click', () => {
+                // Force stop any ongoing visualizations using window global references
+                if (window.dijkstraController) {
+                    window.dijkstraController.reset();
+                    window.dijkstraController.resetUI();
+                    
+                    // Reset step controls if in step-by-step mode
+                    const nextStepBtn = document.getElementById('next-step-btn');
+                    const prevStepBtn = document.getElementById('prev-step-btn');
+                    if (nextStepBtn) nextStepBtn.disabled = true;
+                    if (prevStepBtn) prevStepBtn.disabled = true;
+                }
+                
+                if (window.astarController) {
+                    window.astarController.reset();
+                    window.astarController.resetUI();
+                }
+                
+                // Then clear the grid using the game controller
                 this.controllers.game.clearGrid();
+                
+                // Enable user interactions after clearing
+                const toolButtons = document.querySelectorAll('.tool-btn');
+                const gridSizeSelect = document.getElementById('grid-size');
+                
+                toolButtons.forEach(button => {
+                    button.disabled = false;
+                });
+                
+                if (gridSizeSelect) {
+                    gridSizeSelect.disabled = false;
+                }
             });
         }
         
@@ -83,7 +115,9 @@ class UIView {
         console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
-                this.controllers.visualization.startVisualization();
+                // Run both algorithms simultaneously
+                this.controllers.dijkstra.startVisualization();
+                this.controllers.astar.startVisualization();
             });
         }
         
@@ -92,7 +126,8 @@ class UIView {
         console.log("Next step button found:", !!nextStepButton);
         if (nextStepButton) {
             nextStepButton.addEventListener('click', () => {
-                this.controllers.visualization.nextStep();
+                this.controllers.dijkstra.nextStep();
+                this.controllers.astar.nextStep();
             });
         }
         
@@ -100,7 +135,8 @@ class UIView {
         console.log("Previous step button found:", !!prevStepButton);
         if (prevStepButton) {
             prevStepButton.addEventListener('click', () => {
-                this.controllers.visualization.prevStep();
+                this.controllers.dijkstra.prevStep();
+                this.controllers.astar.prevStep();
             });
         }
         
@@ -205,7 +241,8 @@ class UIView {
      * @param {boolean} disabled - Whether interactions should be disabled
      */
     setGridInteractionsDisabled(disabled) {
-        const toolButtons = document.querySelectorAll('.tool-btn');
+        // Disable only tool buttons inside the .tools div
+        const toolButtons = document.querySelectorAll('.tools .tool-btn');
         const gridSizeSelect = document.getElementById('grid-size');
         
         toolButtons.forEach(button => {
@@ -214,6 +251,12 @@ class UIView {
         
         if (gridSizeSelect) {
             gridSizeSelect.disabled = disabled;
+        }
+        
+        // Make sure Clear Grid button remains enabled at all times
+        const clearGridBtn = document.getElementById('clear-grid-btn');
+        if (clearGridBtn) {
+            clearGridBtn.disabled = false;
         }
     }
 } 
