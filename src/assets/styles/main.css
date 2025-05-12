@@ -3,6 +3,15 @@
 /* Import Pixelify Sans font */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap');
 
+/* Custom Stardew Valley font */
+@font-face {
+    font-family: 'Stardew Valley';
+    src: url('../fonts/Stardew_Valley.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -195,6 +204,7 @@ h1 {
     text-shadow: 2px 2px 0 #000;
     font-size: 2.5rem;
     letter-spacing: 1px;
+    font-family: 'Pixelify Sans', sans-serif;
 }
 
 h2 {
@@ -203,6 +213,7 @@ h2 {
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
     text-shadow: 1px 1px 0 #000;
+    font-family: 'Pixelify Sans', sans-serif;
 }
 
 .controls, .tools, .action-buttons {
@@ -753,6 +764,43 @@ select {
     transform: translateY(-50%) scale(0.95);
 }
 
+/* Mobile styles for the reorganized header */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    .tools-section, .randomizer-section, .actions-section {
+        padding: 0.6rem;
+        margin-bottom: 1rem;
+    }
+    
+    .randomizer-btn, .tool-btn {
+        min-width: 120px;
+        min-height: 40px;
+        font-size: 0.9rem;
+    }
+    
+    /* Ensure the tool buttons are properly aligned */
+    .tools, .randomizer-tools {
+        gap: 5px;
+    }
+    
+    /* Make action buttons wrap better on mobile */
+    .action-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    /* Make sure Clear Grid button is visible on mobile */
+    #clear-grid-btn {
+        display: flex !important;
+    }
+}
+
 /* Responsive design for mobile */
 @media (max-width: 768px) {
     .algorithm-comparison {
@@ -816,11 +864,6 @@ select {
         right: 5px;
     }
     
-    /* Hide clear-grid-section in mobile view since we have it in the assistive touch menu */
-    .clear-grid-section {
-        display: none;
-    }
-    
     /* Modal adjustments for mobile */
     .modal-content {
         width: 95%;
@@ -840,152 +883,6 @@ select {
     .legend-item {
         min-width: 100px;
         font-size: 0.9rem;
-    }
-}
-
-/* For very small screens */
-@media (max-width: 480px) {
-    .container {
-        padding: 0.5rem;
-    }
-    
-    header {
-        padding: 0.6rem;
-    }
-    
-    .title-container {
-        max-width: calc(100% - 40px);
-    }
-    
-    h1 {
-        font-size: 1.5rem; /* Even smaller title on very small screens */
-    }
-    
-    /* Further size adjustments for very small screens */
-    select, button {
-        font-size: 0.9rem;
-        padding: 5px 8px;
-    }
-    
-    .control-group {
-        font-size: 0.95rem;
-    }
-    
-    .tools {
-        gap: 5px;
-    }
-    
-    .tool-btn {
-        font-size: 0.85rem;
-        padding: 5px 7px;
-    }
-    
-    .action-buttons {
-        gap: 5px;
-    }
-    
-    .action-btn {
-        font-size: 0.95rem;
-    }
-    
-    .help-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 1.2rem;
-        right: 2px;
-    }
-    
-    /* Ensure grid remains visible */
-    .grid {
-        gap: 0;
-    }
-    
-    .node {
-        border-width: 1px;
-    }
-}
-
-/* Add extra small screen support */
-@media (max-width: 360px) {
-    h1 {
-        font-size: 1.3rem;
-    }
-    
-    .subtitle {
-        font-size: 0.9rem;
-    }
-    
-    select, button {
-        font-size: 0.85rem;
-        padding: 4px 6px;
-    }
-    
-    .tool-btn, .action-btn {
-        min-width: auto;
-        padding: 4px 6px;
-    }
-    
-    .legend-item {
-        min-width: 80px;
-        font-size: 0.8rem;
-    }
-}
-
-.subtitle {
-    color: #fff;
-    text-shadow: 1px 1px 0 #000;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-}
-
-button, select {
-    image-rendering: pixelated;
-    transition: all 0.1s;
-}
-
-button:active, select:active {
-    transform: translateY(2px);
-}
-
-.path-preview {
-    cursor: pointer;
-    transition: transform 0.2s;
-    margin-bottom: 5px;
-    border: 2px solid transparent;
-}
-
-.path-preview:hover {
-    transform: scale(1.02);
-    border-color: var(--minecraft-green);
-}
-
-.path-preview.selected {
-    border-color: var(--minecraft-gold);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-}
-
-.path-details {
-    text-align: center;
-    color: white;
-    font-size: 1.1rem;
-    margin-top: 5px;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.path-length {
-    color: var(--minecraft-gold);
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .title-container {
-        max-width: calc(100% - 35px);
-    }
-}
-
-@media (max-width: 480px) {
-    .title-container {
-        max-width: calc(100% - 30px);
     }
 }
 
@@ -1551,4 +1448,121 @@ button.touch-active {
         display: flex !important;
         /* But still controlled by opacity, visibility, transform */
     }
+}
+
+/* Specialized styling for the weight input modal */
+#weight-modal .modal-content {
+    width: 250px;
+    max-width: 90%;
+    padding: 15px;
+}
+
+#weight-modal h3 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+#weight-modal p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+#weight-modal input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#weight-modal .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+#weight-modal button {
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#weight-modal #cancel-weight-btn {
+    background-color: #f44336;
+}
+
+/* Section titles for tool groups */
+.section-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--minecraft-gold);
+    text-shadow: 1px 1px 0 #000;
+    text-align: center;
+}
+
+/* Drawing tools section */
+.tools-section, .randomizer-section, .actions-section {
+    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+/* Randomizer tools styling */
+.randomizer-tools {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Randomizer buttons with different styling from regular tool buttons */
+.randomizer-btn {
+    min-width: 140px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--minecraft-brown);
+    border: 3px solid #000;
+    color: white;
+}
+
+.randomizer-btn i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.randomizer-btn:hover {
+    background-color: var(--minecraft-dirt);
+    transform: scale(1.05);
+}
+
+/* Random Weights button specific color */
+#random-weights-btn {
+    background-color: #9b59b6;
+}
+
+#random-weights-btn:hover {
+    background-color: #8e44ad;
+}
+
+/* Random Maze button specific color */
+#random-maze-btn {
+    background-color: #3498db;
+}
+
+#random-maze-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Action buttons section spacing */
+.action-buttons {
+    justify-content: space-evenly;
 } 

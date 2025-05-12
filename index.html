@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PathCraft Adventure - Algorithm Explorer</title>
+    <title>Skull Cavern Path - Algorithm Explorer</title>
     <link rel="stylesheet" href="src/assets/styles/main.css">
     <link rel="stylesheet" href="src/assets/styles/tileset-grid.css">
     <link rel="stylesheet" href="src/assets/styles/overlays.css">
@@ -17,11 +17,11 @@
             <div id="header-content">
                 <div class="header-top">
                     <div class="title-container">
-                        <h1>PathCraft Adventure</h1>
+                        <h1>Skull Cavern Path</h1>
                     </div>
                     <button id="help-btn" class="help-btn" aria-label="Help">?</button>
                 </div>
-                <p class="subtitle">A Pixel Journey Through Pathfinding Algorithms</p>
+                <p class="subtitle">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
                 
                 <div id="collapsible-controls" class="collapsible-controls">
                     <nav aria-label="Control settings">
@@ -55,28 +55,33 @@
                         </div>
                     </nav>
                     
-                    <section class="tools-section mobile-hidden-tools" aria-label="Grid tools">
+                    <!-- Manual drawing tools -->
+                    <section class="tools-section mobile-hidden-tools" aria-label="Drawing tools">
+                        <h3 class="section-title">Drawing Tools</h3>
                         <div class="tools">
                             <button id="start-node-btn" class="tool-btn"><i class="fas fa-flag-checkered"></i> Set Start</button>
                             <button id="end-node-btn" class="tool-btn"><i class="fas fa-bullseye"></i> Set End</button>
                             <button id="wall-btn" class="tool-btn"><i class="fas fa-th"></i> Add Walls</button>
                             <button id="weighted-node-btn" class="tool-btn"><i class="fas fa-weight-hanging"></i> Add Weights</button>
                             <button id="erase-btn" class="tool-btn"><i class="fas fa-eraser"></i> Erase</button>
-                            <button id="random-maze-btn" class="tool-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
-                            <button id="random-start-end-btn" class="tool-btn"><i class="fas fa-random"></i> Random Start/End</button>
                         </div>
                     </section>
                     
-                    <!-- Clear Grid Button in its own section so it doesn't get disabled -->
-                    <section class="clear-grid-section" aria-label="Clear Grid">
-                        <div class="clear-grid-container">
-                            <button id="clear-grid-btn" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
+                    <!-- Randomizer tools -->
+                    <section class="randomizer-section mobile-hidden-tools" aria-label="Random generators">
+                        <h3 class="section-title">Randomizers</h3>
+                        <div class="randomizer-tools">
+                            <button id="random-maze-btn" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
+                            <button id="random-weights-btn" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
+                            <button id="random-start-end-btn" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
                         </div>
                     </section>
                     
+                    <!-- Action buttons with Find Path and Clear Grid together -->
                     <section class="actions-section" aria-label="Visualization controls">
                         <div class="action-buttons">
                             <button id="start-btn" class="action-btn mobile-hidden-action"><i class="fas fa-play"></i> Find Path</button>
+                            <button id="clear-grid-btn" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
                             <button id="next-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
                             <button id="prev-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
                         </div>
@@ -130,6 +135,9 @@
             <button class="random-menu-item maze" data-action="random-maze" aria-label="Random Maze">
                 <span class="icon"><i class="fas fa-puzzle-piece"></i></span> Random Maze
             </button>
+            <button class="random-menu-item weights" data-action="random-weights" aria-label="Random Weights">
+                <span class="icon"><i class="fas fa-dice-three"></i></span> Random Weights
+            </button>
             <button class="random-menu-item positions" data-action="random-start-end" aria-label="Random Start/End">
                 <span class="icon"><i class="fas fa-random"></i></span> Random Points
             </button>
@@ -157,6 +165,7 @@
                         <li><strong>Set End</strong>: Set the destination point</li>
                         <li><strong>Add Walls</strong>: Create obstacles the algorithm must navigate around</li>
                         <li><strong>Add Weights</strong>: Add weighted nodes that are costly to traverse (value 2-10)</li>
+                        <li><strong>Random Weights</strong>: Automatically add weighted nodes to the grid</li>
                         <li><strong>Erase</strong>: Remove walls or obstacles</li>
                         <li><strong>Random Maze</strong>: Generate a random maze of obstacles</li>
                         <li><strong>Random Start/End</strong>: Randomly place start and end points</li>

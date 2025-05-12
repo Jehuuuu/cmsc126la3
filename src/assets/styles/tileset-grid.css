@@ -11,6 +11,7 @@
     position: relative;
     overflow: hidden;
     background-color: #222; /* Dark background behind grid */
+    user-select: none; /* Prevent text selection on grid */
 }
 
 /* Remove standard grid effects as we'll use our own */
@@ -30,6 +31,9 @@
     background-repeat: no-repeat;
     border: none; /* Remove border for seamless tiles */
     image-rendering: pixelated; /* Keep pixelated look for retro style */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-drag: none; /* Prevent dragging */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 /* Hover effect */
@@ -37,6 +41,28 @@
     transform: scale(1.1);
     z-index: 10;
     filter: brightness(1.2);
+}
+
+/* Disable hover effect for walls, start and end nodes when mouse is down (drawing) */
+.isMouseDown .node.wall:hover,
+.isMouseDown .node.start:hover,
+.isMouseDown .node.end:hover {
+    transform: none;
+    filter: none;
+}
+
+/* Disable the blue highlighting that can occur during interaction */
+.node.wall::before,
+.node.start::before,
+.node.end::before {
+    background-color: transparent !important;
+}
+
+/* Prevent blue highlighting from visited animation during wall drawing */
+.isMouseDown .node.visited::before {
+    animation: none !important;
+    opacity: 0.5 !important;
+    transform: scale(1) !important;
 }
 
 /* Node state overlays using ::after pseudo-element */

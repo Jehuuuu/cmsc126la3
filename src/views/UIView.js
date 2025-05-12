@@ -70,6 +70,15 @@ class UIView {
             });
         }
         
+        // Random weights button
+        const randomWeightsButton = document.getElementById('random-weights-btn');
+        console.log("Random weights button found:", !!randomWeightsButton);
+        if (randomWeightsButton) {
+            randomWeightsButton.addEventListener('click', () => {
+                this.controllers.game.generateRandomWeights();
+            });
+        }
+        
         // Random start/end button
         const randomStartEndButton = document.getElementById('random-start-end-btn');
         console.log("Random start/end button found:", !!randomStartEndButton);
@@ -295,4 +304,13 @@ class UIView {
             clearGridBtn.disabled = false;
         }
     }
-} 
+}
+
+/**
+ * Map the random feature actions to button IDs
+ */
+const randomButtonMap = {
+    'random-maze': 'random-maze-btn',
+    'random-weights': 'random-weights-btn', 
+    'random-start-end': 'random-start-end-btn'
+}; 

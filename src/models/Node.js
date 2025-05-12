@@ -17,6 +17,7 @@ class Node {
         this.isPath = false;
         this.isCurrent = false;
         this.isWeighted = false; // Flag for weighted nodes
+        this.obstacleType = null; // Track which obstacle image to use (1 or 2)
         this.distance = Infinity;
         this.previousNode = null;
         this.weight = 1; // Default weight for normal terrain
@@ -48,6 +49,7 @@ class Node {
         this.isEnd = false;
         this.isWall = false;
         this.isWeighted = false;
+        this.obstacleType = null;
         this.weight = 1;
         this.reset();
     }
@@ -74,6 +76,7 @@ class Node {
         clonedNode.isCurrent = this.isCurrent;
         clonedNode.distance = this.distance;
         clonedNode.weight = this.weight;
+        clonedNode.obstacleType = this.obstacleType;
         return clonedNode;
     }
 

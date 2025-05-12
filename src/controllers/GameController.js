@@ -224,9 +224,23 @@ class GameController {
             }
         });
         
-        // Clear walls and reset path for all grids
+        // Clear walls, weighted nodes, and reset path for all grids
         this.grids.forEach((grid, index) => {
+            // Clear walls
             grid.clearWalls();
+            
+            // Clear weighted nodes separately
+            for (let row = 0; row < grid.rows; row++) {
+                for (let col = 0; col < grid.cols; col++) {
+                    const node = grid.nodes[row][col];
+                    if (node) {
+                        node.isWeighted = false;
+                        node.weight = 1;
+                    }
+                }
+            }
+            
+            // Reset path
             grid.resetPath();
             
             // Update grid view
@@ -270,6 +284,13 @@ class GameController {
             return;
         }
         
+        // Determine obstacle type only once for consistent wall appearance across grids
+        let sharedObstacleType = null;
+        if (action === 'wall' || action === 'toggleWall') {
+            // Generate random obstacle type (1 or 2) to be consistent across grids
+            sharedObstacleType = Math.random() < 0.5 ? 1 : 2;
+        }
+        
         // Perform the action on all grids
         this.grids.forEach((grid, index) => {
             // Skip if grid is not properly initialized
@@ -282,6 +303,11 @@ class GameController {
                 switch(action) {
                     case 'wall':
                         if (typeof grid.setWall === 'function') {
+                            const node = grid.getNode(row, col);
+                            if (node && !node.isWall) {
+                                // Assign obstacle type when wall is first created
+                                node.obstacleType = sharedObstacleType;
+                            }
                             grid.setWall(row, col, true);
                         }
                         break;
@@ -299,6 +325,7 @@ class GameController {
                         const weightedNode = grid.getNode(row, col);
                         if (weightedNode && !weightedNode.isStart && !weightedNode.isEnd) {
                             weightedNode.isWall = false; // Ensure it's not a wall
+                            weightedNode.obstacleType = null; // Clear obstacle type
                             weightedNode.isWeighted = true; // Mark as weighted
                             weightedNode.weight = customValue || 2; // Set weight value
                         }
@@ -307,6 +334,7 @@ class GameController {
                         const node = grid.getNode(row, col);
                         if (node) {
                             node.isWall = false;
+                            node.obstacleType = null; // Clear obstacle type
                             node.isWeighted = false;
                             node.weight = 1;
                         }
@@ -315,7 +343,15 @@ class GameController {
                     case 'toggleWall':
                         const toggleNode = grid.getNode(row, col);
                         if (toggleNode && !toggleNode.isStart && !toggleNode.isEnd) {
+                            // If turning wall on, set type; if turning off, clear type
+                            if (!toggleNode.isWall) {
+                                toggleNode.obstacleType = sharedObstacleType;
+                            } else {
+                                toggleNode.obstacleType = null;
+                            }
+                            
                             toggleNode.isWall = !toggleNode.isWall;
+                            
                             // If turning into a wall, remove weighted status
                             if (toggleNode.isWall) {
                                 toggleNode.isWeighted = false;
@@ -463,5 +499,70 @@ class GameController {
             console.error('Error getting saved grids:', error);
             return [];
         }
+    }
+
+    /**
+     * Generate random weighted nodes
+     * @param {number} density - Weighted node density (0-1)
+     */
+    generateRandomWeights(density = 0.15) {
+        console.log("GameController: Generating random weighted nodes");
+        
+        // Stop any running visualizations
+        this.visualizationControllers.forEach(controller => {
+            if (controller) controller.stopVisualization();
+        });
+        
+        // Generate the same weights pattern for all grids
+        const rows = this.grids[0].rows;
+        const cols = this.grids[0].cols;
+        
+        // Generate the weight pattern
+        const weightPattern = [];
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                // Skip walls, start and end nodes
+                if (this.grids[0].nodes[row][col].isWall || 
+                    this.grids[0].nodes[row][col].isStart || 
+                    this.grids[0].nodes[row][col].isEnd) {
+                    continue;
+                }
+                
+                // Random weight generation based on density
+                if (Math.random() < density) {
+                    // Generate random weight between 2-10
+                    const weight = Math.floor(Math.random() * 9) + 2; // 2 to 10
+                    weightPattern.push({ row, col, weight });
+                }
+            }
+        }
+        
+        // Apply weights to all grids
+        this.grids.forEach(grid => {
+            // First, clear existing weights
+            for (let row = 0; row < grid.rows; row++) {
+                for (let col = 0; col < grid.cols; col++) {
+                    const node = grid.nodes[row][col];
+                    if (node && !node.isWall && !node.isStart && !node.isEnd) {
+                        node.isWeighted = false;
+                        node.weight = 1;
+                    }
+                }
+            }
+            
+            // Then apply new weights
+            weightPattern.forEach(item => {
+                const node = grid.getNode(item.row, item.col);
+                if (node && !node.isWall && !node.isStart && !node.isEnd) {
+                    node.isWeighted = true;
+                    node.weight = item.weight;
+                }
+            });
+        });
+        
+        // Update all grid views
+        this.gridViews.forEach(gridView => {
+            if (gridView) gridView.update();
+        });
     }
 } 

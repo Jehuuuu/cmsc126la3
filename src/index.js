@@ -776,6 +776,13 @@ function handleRandomMenuAction(action, gameController) {
             
             return;
         }
+    } else if (action === 'random-weights') {
+        // Handle random weights action
+        if (gameController && typeof gameController.generateRandomWeights === 'function') {
+            console.log('Random menu: generating random weights');
+            gameController.generateRandomWeights();
+            return;
+        }
     } else {
         // Map the action to the corresponding button ID
         const buttonMap = {

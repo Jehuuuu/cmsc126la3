@@ -251,6 +251,11 @@ class GridView {
     handleMouseDown(event) {
         this.isMouseDown = true;
         
+        // Add isMouseDown class to grid container for CSS targeting
+        if (this.gridContainer) {
+            this.gridContainer.classList.add('isMouseDown');
+        }
+        
         if (event.target.classList.contains('node')) {
             const row = parseInt(event.target.dataset.row);
             const col = parseInt(event.target.dataset.col);
@@ -273,6 +278,11 @@ class GridView {
         this.isMouseDown = false;
         this.isMovingStart = false;
         this.isMovingEnd = false;
+        
+        // Remove isMouseDown class from grid container
+        if (this.gridContainer) {
+            this.gridContainer.classList.remove('isMouseDown');
+        }
     }
 
     /**
@@ -282,6 +292,11 @@ class GridView {
         this.isMouseDown = false;
         this.isMovingStart = false;
         this.isMovingEnd = false;
+        
+        // Remove isMouseDown class from grid container
+        if (this.gridContainer) {
+            this.gridContainer.classList.remove('isMouseDown');
+        }
     }
 
     /**
@@ -632,48 +647,25 @@ class GridView {
                     nodeElement.removeChild(existingObstacle);
                 }
                 
-                // Get absolute URL for the obstacle image
-                const obstacleUrl = window.location.origin + '/src/assets/images/obstacle1.png';
-                console.log(`Using absolute URL for obstacle: ${obstacleUrl}`);
+                // Add obstacle image overlay using the node's obstacle type or pick one if not set
+                const obstacleNum = node.obstacleType || Math.floor(Math.random() * 2) + 1;
                 
-                try {
-                    // Create a new img element for the obstacle
-                    const obstacleImg = document.createElement('img');
-                    obstacleImg.src = obstacleUrl;
-                    obstacleImg.alt = 'Wall Obstacle';
-                    obstacleImg.className = 'obstacle-overlay';
-                    
-                    // Set inline styles for the obstacle
-                    obstacleImg.style.cssText = `
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        z-index: 10;
-                        pointer-events: none;
-                        object-fit: cover;
-                    `;
-                    
-                    // Add load and error event handlers
-                    obstacleImg.onload = function() {
-                        console.log(`SUCCESS: Obstacle image loaded at (${row}, ${col})`, obstacleImg);
-                    };
-                    
-                    obstacleImg.onerror = function(e) {
-                        console.error(`ERROR: Failed to load obstacle image at (${row}, ${col})`, e);
-                        // Try with relative URL as fallback
-                        obstacleImg.src = 'src/assets/images/obstacle1.png';
-                    };
-                    
-                    // Add the obstacle image on top of the node
-                    nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
-                    nodeElement.appendChild(obstacleImg);
-                    
-                    console.log(`Added obstacle image to node at (${row}, ${col})`, obstacleImg);
-                } catch (error) {
-                    console.error('Error adding obstacle image:', error);
+                // Store the obstacle type if it wasn't already set
+                if (!node.obstacleType) {
+                    node.obstacleType = obstacleNum;
                 }
+                
+                const obstacleUrl = `src/assets/images/obstacle${obstacleNum}.png`;
+                const obstacleImg = document.createElement('img');
+                obstacleImg.src = obstacleUrl;
+                obstacleImg.alt = 'Obstacle';
+                obstacleImg.className = 'obstacle-overlay';
+                // Add error handler
+                obstacleImg.onerror = function() {
+                    console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                    obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
+                };
+                nodeElement.appendChild(obstacleImg);
             } else {
                 // Remove wall class
                 nodeElement.classList.remove('wall');
@@ -810,8 +802,14 @@ class GridView {
                 if (node.isWall) {
                     nodeElement.classList.add('wall');
                     
-                    // Add obstacle image overlay (50% chance of obstacle1 or obstacle2)
-                    const obstacleNum = Math.random() < 0.5 ? 1 : 2;
+                    // Add obstacle image overlay using the node's obstacle type or pick one if not set
+                    const obstacleNum = node.obstacleType || Math.floor(Math.random() * 2) + 1;
+                    
+                    // Store the obstacle type if it wasn't already set
+                    if (!node.obstacleType) {
+                        node.obstacleType = obstacleNum;
+                    }
+                    
                     const obstacleUrl = `src/assets/images/obstacle${obstacleNum}.png`;
                     const obstacleImg = document.createElement('img');
                     obstacleImg.src = obstacleUrl;
