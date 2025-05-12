@@ -7,28 +7,34 @@
     <link rel="stylesheet" href="src/assets/styles/main.css">
     <link rel="stylesheet" href="src/assets/styles/tileset-grid.css">
     <link rel="stylesheet" href="src/assets/styles/overlays.css">
+    <link rel="stylesheet" href="src/assets/styles/sidebar.css">
     <link rel="icon" href="data:,">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header id="main-header">
-            <div id="header-content">
-                <div class="header-top">
-                    <div class="title-container">
-                        <h1>Skull Cavern Path</h1>
-                    </div>
-                    <button id="help-btn" class="help-btn" aria-label="Help">?</button>
+    <div class="app-container">
+        <!-- Toggle button for sidebar, now outside the sidebar -->
+        <button id="toggle-sidebar-btn" class="toggle-sidebar-btn" aria-label="Toggle Sidebar">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <!-- Sidebar for desktop view -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="src/assets/images/app_logo.png" alt="Skull Cavern Path" class="app-logo">
                 </div>
-                <p class="subtitle">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
-                
-                <div id="collapsible-controls" class="collapsible-controls">
-                    <nav aria-label="Control settings">
-                        <div class="controls">
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Grid Controls -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Controls</h3>
+                    <div class="sidebar-controls horizontal-controls">
                             <div class="control-group">
-                                <label for="grid-size">Grid Size:</label>
-                                <select id="grid-size">
+                                <label for="grid-size">Grid:</label>
+                                <select id="grid-size" class="truncate-text">
                                     <option value="10">10x10</option>
                                     <option value="15">15x15</option>
                                     <option value="20">20x20</option>
@@ -38,7 +44,7 @@
                             
                             <div class="control-group">
                                 <label for="visualization-speed">Speed:</label>
-                                <select id="visualization-speed">
+                                <select id="visualization-speed" class="truncate-text">
                                     <option value="slow">Slow</option>
                                     <option value="medium" selected>Medium</option>
                                     <option value="fast">Fast</option>
@@ -47,45 +53,136 @@
 
                             <div class="control-group">
                                 <label for="visualization-mode">Mode:</label>
-                                <select id="visualization-mode">
+                                <select id="visualization-mode" class="truncate-text">
                                     <option value="auto">Auto</option>
                                     <option value="step">Step-by-Step</option>
                                 </select>
                             </div>
                         </div>
-                    </nav>
-                    
-                    <!-- Manual drawing tools -->
-                    <section class="tools-section mobile-hidden-tools" aria-label="Drawing tools">
-                        <h3 class="section-title">Drawing Tools</h3>
-                        <div class="tools">
+                </div>
+
+                <!-- Drawing Tools -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Drawing Tools</h3>
+                    <div class="sidebar-tools compact-tools">
                             <button id="start-node-btn" class="tool-btn"><i class="fas fa-flag-checkered"></i> Set Start</button>
                             <button id="end-node-btn" class="tool-btn"><i class="fas fa-bullseye"></i> Set End</button>
                             <button id="wall-btn" class="tool-btn"><i class="fas fa-th"></i> Add Walls</button>
                             <button id="weighted-node-btn" class="tool-btn"><i class="fas fa-weight-hanging"></i> Add Weights</button>
                             <button id="erase-btn" class="tool-btn"><i class="fas fa-eraser"></i> Erase</button>
                         </div>
-                    </section>
+                </div>
+
+                <!-- Randomizers -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Randomizers</h3>
+                    <div class="sidebar-randomizers compact-tools">
+                        <button id="random-maze-btn" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
+                        <button id="random-weights-btn" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
+                        <button id="random-start-end-btn" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
+                    </div>
+                </div>
+
+                <!-- Save & Load -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Save & Load</h3>
+                    <div class="sidebar-save-load compact-tools">
+                        <button id="save-grid-btn" class="randomizer-btn"><i class="fas fa-save"></i> Save Grid</button>
+                        <button id="load-grid-btn" class="randomizer-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Actions</h3>
+                    <div class="sidebar-actions compact-tools">
+                        <button id="start-btn" class="action-btn"><i class="fas fa-play"></i> Find Path</button>
+                        <button id="clear-grid-btn" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
+                        <div class="step-controls">
+                            <button id="next-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
+                            <button id="prev-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content-wrapper">
+            <!-- Original header - hidden on desktop, visible on mobile -->
+            <header id="main-header" class="mobile-only-header">
+                <div id="header-content">
+                    <div class="header-top">
+                        <div class="title-container">
+                            <img src="src/assets/images/app_logo.png" alt="Skull Cavern Path" class="app-logo-mobile">
+                        </div>
+                        <button id="help-btn" class="help-btn" aria-label="Help">?</button>
+                    </div>
+                    <p class="subtitle">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
+                    
+                    <div id="collapsible-controls" class="collapsible-controls">
+                        <nav aria-label="Control settings">
+                            <div class="controls">
+                                <div class="control-group">
+                                    <label for="grid-size-mobile">Grid Size:</label>
+                                    <select id="grid-size-mobile">
+                                        <option value="10">10x10</option>
+                                        <option value="15">15x15</option>
+                                        <option value="20">20x20</option>
+                                        <option value="25">25x25</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="control-group">
+                                    <label for="visualization-speed-mobile">Speed:</label>
+                                    <select id="visualization-speed-mobile">
+                                        <option value="slow">Slow</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="fast">Fast</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="visualization-mode-mobile">Mode:</label>
+                                    <select id="visualization-mode-mobile">
+                                        <option value="auto">Auto</option>
+                                        <option value="step">Step-by-Step</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </nav>
+                        
+                        <!-- Manual drawing tools -->
+                        <section class="tools-section mobile-hidden-tools" aria-label="Drawing tools">
+                            <h3 class="section-title">Drawing Tools</h3>
+                            <div class="tools">
+                                <button id="start-node-btn-mobile" class="tool-btn"><i class="fas fa-flag-checkered"></i> Set Start</button>
+                                <button id="end-node-btn-mobile" class="tool-btn"><i class="fas fa-bullseye"></i> Set End</button>
+                                <button id="wall-btn-mobile" class="tool-btn"><i class="fas fa-th"></i> Add Walls</button>
+                                <button id="weighted-node-btn-mobile" class="tool-btn"><i class="fas fa-weight-hanging"></i> Add Weights</button>
+                                <button id="erase-btn-mobile" class="tool-btn"><i class="fas fa-eraser"></i> Erase</button>
+                            </div>
+                        </section>
                     
                     <!-- Randomizer tools -->
                     <section class="randomizer-section mobile-hidden-tools" aria-label="Random generators">
                         <h3 class="section-title">Randomizers</h3>
                         <div class="randomizer-tools">
-                            <button id="random-maze-btn" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
-                            <button id="random-weights-btn" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
-                            <button id="random-start-end-btn" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
-                            <button id="save-grid-btn" class="randomizer-btn"><i class="fas fa-save"></i> Save Grid</button>
-                            <button id="load-grid-btn" class="randomizer-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
+                                <button id="random-maze-btn-mobile" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
+                                <button id="random-weights-btn-mobile" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
+                                <button id="random-start-end-btn-mobile" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
+                                <button id="save-grid-btn-mobile" class="randomizer-btn"><i class="fas fa-save"></i> Save Grid</button>
+                                <button id="load-grid-btn-mobile" class="randomizer-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
                         </div>
                     </section>
                     
                     <!-- Action buttons with Find Path and Clear Grid together -->
                     <section class="actions-section" aria-label="Visualization controls">
                         <div class="action-buttons">
-                            <button id="start-btn" class="action-btn mobile-hidden-action"><i class="fas fa-play"></i> Find Path</button>
-                            <button id="clear-grid-btn" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
-                            <button id="next-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
-                            <button id="prev-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
+                                <button id="start-btn-mobile" class="action-btn mobile-hidden-action"><i class="fas fa-play"></i> Find Path</button>
+                                <button id="clear-grid-btn-mobile" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
+                                <button id="next-step-btn-mobile" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
+                                <button id="prev-step-btn-mobile" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
                         </div>
                     </section>
                 </div>
@@ -97,7 +194,57 @@
             </button>
         </header>
         
-        <!-- Main tools menu -->
+            <!-- Desktop header with help button -->
+            <div class="desktop-header">
+                <p class="subtitle">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
+                <button id="help-btn-desktop" class="help-btn" aria-label="Help">?</button>
+            </div>
+            
+            <main>
+                <section class="algorithm-comparison">
+                    <article class="algorithm-container">
+                        <div class="algorithm-header">
+                            <h2>Dijkstra's Algorithm</h2>
+                            <button id="swap-dijkstra-btn" class="swap-btn" aria-label="Swap Position">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+                        <div class="main-content">
+                            <div class="grid-container">
+                                <div id="dijkstra-grid" class="grid" aria-label="Dijkstra's algorithm grid"></div>
+                            </div>
+                            
+                            <footer class="path-info">
+                                <p><i class="fas fa-search"></i> Nodes visited: <span id="dijkstra-visited-count">0</span></p>
+                                <p><i class="fas fa-route"></i> Path length: <span id="dijkstra-path-length">0</span></p>
+                            </footer>
+                        </div>
+                    </article>
+                    
+                    <article class="algorithm-container">
+                        <div class="algorithm-header">
+                            <h2>A* Algorithm</h2>
+                            <button id="swap-astar-btn" class="swap-btn" aria-label="Swap Position">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+                        <div class="main-content">
+                            <div class="grid-container">
+                                <div id="astar-grid" class="grid" aria-label="A* algorithm grid"></div>
+                            </div>
+                            
+                            <footer class="path-info">
+                                <p><i class="fas fa-search"></i> Nodes visited: <span id="astar-visited-count">0</span></p>
+                                <p><i class="fas fa-route"></i> Path length: <span id="astar-path-length">0</span></p>
+                            </footer>
+                        </div>
+                    </article>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Main tools menu (Mobile only) -->
         <div id="assistive-menu" class="assistive-menu">
             <button class="tool-menu-item start" data-tool="start" aria-label="Set Start">
                 <span class="icon"><i class="fas fa-flag-checkered"></i></span> Set Start Point
@@ -119,7 +266,7 @@
             </button>
         </div>
         
-        <!-- Step by step controls menu (separate from other tools) -->
+    <!-- Step by step controls menu (Mobile only) -->
         <div id="step-by-step-menu" class="step-by-step-menu">
             <button class="tool-menu-item run-btn" data-action="run" id="mobile-step-run-btn" aria-label="Prepare Path">
                 <span class="icon"><i class="fas fa-play"></i></span> Prepare Path
@@ -132,7 +279,7 @@
             </button>
         </div>
         
-        <!-- Random Features Menu -->
+    <!-- Random Features Menu (Mobile only) -->
         <div id="random-menu" class="random-menu">
             <button class="random-menu-item maze" data-action="random-maze" aria-label="Random Maze">
                 <span class="icon"><i class="fas fa-puzzle-piece"></i></span> Random Maze
@@ -143,12 +290,12 @@
             <button class="random-menu-item positions" data-action="random-start-end" aria-label="Random Start/End">
                 <span class="icon"><i class="fas fa-random"></i></span> Random Points
             </button>
-            <button class="random-menu-item save" data-action="save-grid" aria-label="Save Grid">
-                <span class="icon"><i class="fas fa-save"></i></span> Save Grid
-            </button>
-            <button class="random-menu-item load" data-action="load-grid" aria-label="Load Grid">
-                <span class="icon"><i class="fas fa-folder-open"></i></span> Load Grid
-            </button>
+        <button class="random-menu-item save" data-action="save-grid" aria-label="Save Grid">
+            <span class="icon"><i class="fas fa-save"></i></span> Save Grid
+        </button>
+        <button class="random-menu-item load" data-action="load-grid" aria-label="Load Grid">
+            <span class="icon"><i class="fas fa-folder-open"></i></span> Load Grid
+        </button>
             <button class="random-menu-item clear" data-action="clear-grid" aria-label="Clear Grid">
                 <span class="icon"><i class="fas fa-trash-alt"></i></span> Clear Grid
             </button>
@@ -177,8 +324,8 @@
                         <li><strong>Erase</strong>: Remove walls or obstacles</li>
                         <li><strong>Random Maze</strong>: Generate a random maze of obstacles</li>
                         <li><strong>Random Start/End</strong>: Randomly place start and end points</li>
-                        <li><strong>Save Grid</strong>: Save the current grid layout for future use</li>
-                        <li><strong>Load Grid</strong>: Load a previously saved grid layout</li>
+                    <li><strong>Save Grid</strong>: Save the current grid layout for future use</li>
+                    <li><strong>Load Grid</strong>: Load a previously saved grid layout</li>
                         <li><strong>Clear Grid</strong>: Reset the entire grid</li>
                     </ul>
                     
@@ -211,76 +358,33 @@
             </div>
         </div>
         
-        <!-- Save Grid Modal -->
-        <div id="save-grid-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h3>Save Grid</h3>
-                <p>Enter a name for this grid layout:</p>
-                <input type="text" id="grid-name-input" placeholder="My Grid Layout">
-                <div class="modal-buttons">
-                    <button id="confirm-save-btn">Save</button>
-                    <button id="cancel-save-btn">Cancel</button>
-                </div>
+    <!-- Save Grid Modal -->
+    <div id="save-grid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Save Grid</h3>
+            <p>Enter a name for this grid layout:</p>
+            <input type="text" id="grid-name-input" placeholder="My Grid Layout">
+            <div class="modal-buttons">
+                <button id="confirm-save-btn">Save</button>
+                <button id="cancel-save-btn">Cancel</button>
             </div>
-        </div>
-
-        <!-- Load Grid Modal -->
-        <div id="load-grid-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h3>Load Saved Grid</h3>
-                <div id="saved-grids-list" class="saved-grids-list">
-                    <p id="no-saved-grids" class="no-saved-grids">No saved grids found</p>
-                    <!-- Saved grids will be listed here dynamically -->
-                </div>
-                <div class="modal-buttons">
-                    <button id="cancel-load-btn">Cancel</button>
-                </div>
-            </div>
-        </div>
-        
-        <main>
-            <section class="algorithm-comparison">
-                <article class="algorithm-container">
-                    <div class="algorithm-header">
-                        <h2>Dijkstra's Algorithm</h2>
-                        <button id="swap-dijkstra-btn" class="swap-btn" aria-label="Swap Position">
-                            <i class="fas fa-exchange-alt"></i>
-                        </button>
                     </div>
-                    <div class="main-content">
-                        <div class="grid-container">
-                            <div id="dijkstra-grid" class="grid" aria-label="Dijkstra's algorithm grid"></div>
                         </div>
                         
-                        <footer class="path-info">
-                            <p>Nodes visited: <span id="dijkstra-visited-count">0</span></p>
-                            <p>Path length: <span id="dijkstra-path-length">0</span></p>
-                        </footer>
+    <!-- Load Grid Modal -->
+    <div id="load-grid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Load Saved Grid</h3>
+            <div id="saved-grids-list" class="saved-grids-list">
+                <p id="no-saved-grids" class="no-saved-grids">No saved grids found</p>
+                <!-- Saved grids will be listed here dynamically -->
                     </div>
-                </article>
-                
-                <article class="algorithm-container">
-                    <div class="algorithm-header">
-                        <h2>A* Algorithm</h2>
-                        <button id="swap-astar-btn" class="swap-btn" aria-label="Swap Position">
-                            <i class="fas fa-exchange-alt"></i>
-                        </button>
-                    </div>
-                    <div class="main-content">
-                        <div class="grid-container">
-                            <div id="astar-grid" class="grid" aria-label="A* algorithm grid"></div>
+            <div class="modal-buttons">
+                <button id="cancel-load-btn">Cancel</button>
                         </div>
-                        
-                        <footer class="path-info">
-                            <p>Nodes visited: <span id="astar-visited-count">0</span></p>
-                            <p>Path length: <span id="astar-path-length">0</span></p>
-                        </footer>
                     </div>
-                </article>
-            </section>
-        </main>
     </div>
 
     <!-- Scripts with proper loading order -->

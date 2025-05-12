@@ -17,27 +17,69 @@ class UIView {
      * Set up event listeners for UI controls
      */
     setupEventListeners() {
-        // Grid size control
+        // Grid size control - desktop
         const gridSizeSelect = document.getElementById('grid-size');
         console.log("Grid size select found:", !!gridSizeSelect);
         if (gridSizeSelect) {
             gridSizeSelect.addEventListener('change', () => {
                 const size = parseInt(gridSizeSelect.value);
                 this.controllers.game.resizeGrid(size, size);
+                
+                // Sync mobile control
+                const mobileSizeSelect = document.getElementById('grid-size-mobile');
+                if (mobileSizeSelect) {
+                    mobileSizeSelect.value = size;
+                }
             });
         }
         
-        // Visualization speed control
+        // Grid size control - mobile
+        const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+        if (gridSizeMobileSelect) {
+            gridSizeMobileSelect.addEventListener('change', () => {
+                const size = parseInt(gridSizeMobileSelect.value);
+                this.controllers.game.resizeGrid(size, size);
+                
+                // Sync desktop control
+                if (gridSizeSelect) {
+                    gridSizeSelect.value = size;
+                }
+            });
+        }
+        
+        // Visualization speed control - desktop
         const speedSelect = document.getElementById('visualization-speed');
         console.log("Speed select found:", !!speedSelect);
         if (speedSelect) {
             speedSelect.addEventListener('change', () => {
-                this.controllers.dijkstra.setSpeed(speedSelect.value);
-                this.controllers.astar.setSpeed(speedSelect.value);
+                const speed = speedSelect.value;
+                this.controllers.dijkstra.setSpeed(speed);
+                this.controllers.astar.setSpeed(speed);
+                
+                // Sync mobile control
+                const mobileSpeedSelect = document.getElementById('visualization-speed-mobile');
+                if (mobileSpeedSelect) {
+                    mobileSpeedSelect.value = speed;
+                }
             });
         }
         
-        // Visualization mode control
+        // Visualization speed control - mobile
+        const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+        if (speedMobileSelect) {
+            speedMobileSelect.addEventListener('change', () => {
+                const speed = speedMobileSelect.value;
+                this.controllers.dijkstra.setSpeed(speed);
+                this.controllers.astar.setSpeed(speed);
+                
+                // Sync desktop control
+                if (speedSelect) {
+                    speedSelect.value = speed;
+                }
+            });
+        }
+        
+        // Visualization mode control - desktop
         const modeSelect = document.getElementById('visualization-mode');
         console.log("Mode select found:", !!modeSelect);
         if (modeSelect) {
@@ -47,6 +89,12 @@ class UIView {
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
+                // Sync mobile control
+                const mobileModeSelect = document.getElementById('visualization-mode-mobile');
+                if (mobileModeSelect) {
+                    mobileModeSelect.value = selectedMode;
+                }
+                
                 // Directly update the step-by-step button visibility
                 if (typeof toggleStepByStepButton === 'function') {
                     toggleStepByStepButton(selectedMode === 'step');
@@ -54,14 +102,42 @@ class UIView {
             });
         }
         
-        // Tool buttons
+        // Visualization mode control - mobile
+        const modeMobileSelect = document.getElementById('visualization-mode-mobile');
+        if (modeMobileSelect) {
+            modeMobileSelect.addEventListener('change', (event) => {
+                const selectedMode = event.target.value;
+                console.log(`UIView: Mode changed to ${selectedMode} (mobile)`);
+                this.controllers.dijkstra.setMode(selectedMode);
+                this.controllers.astar.setMode(selectedMode);
+                
+                // Sync desktop control
+                if (modeSelect) {
+                    modeSelect.value = selectedMode;
+                }
+                
+                // Directly update the step-by-step button visibility
+                if (typeof toggleStepByStepButton === 'function') {
+                    toggleStepByStepButton(selectedMode === 'step');
+                }
+            });
+        }
+        
+        // Tool buttons - desktop
         this.setupToolButton('start-node-btn', 'start');
         this.setupToolButton('end-node-btn', 'end');
         this.setupToolButton('wall-btn', 'wall');
         this.setupToolButton('weighted-node-btn', 'weighted');
         this.setupToolButton('erase-btn', 'erase');
         
-        // Random maze button
+        // Tool buttons - mobile
+        this.setupToolButton('start-node-btn-mobile', 'start');
+        this.setupToolButton('end-node-btn-mobile', 'end');
+        this.setupToolButton('wall-btn-mobile', 'wall');
+        this.setupToolButton('weighted-node-btn-mobile', 'weighted');
+        this.setupToolButton('erase-btn-mobile', 'erase');
+        
+        // Random maze button - desktop
         const randomMazeButton = document.getElementById('random-maze-btn');
         console.log("Random maze button found:", !!randomMazeButton);
         if (randomMazeButton) {
@@ -70,7 +146,15 @@ class UIView {
             });
         }
         
-        // Random weights button
+        // Random maze button - mobile
+        const randomMazeMobileButton = document.getElementById('random-maze-btn-mobile');
+        if (randomMazeMobileButton) {
+            randomMazeMobileButton.addEventListener('click', () => {
+                this.controllers.game.generateRandomMaze();
+            });
+        }
+        
+        // Random weights button - desktop
         const randomWeightsButton = document.getElementById('random-weights-btn');
         console.log("Random weights button found:", !!randomWeightsButton);
         if (randomWeightsButton) {
@@ -79,7 +163,15 @@ class UIView {
             });
         }
         
-        // Random start/end button
+        // Random weights button - mobile
+        const randomWeightsMobileButton = document.getElementById('random-weights-btn-mobile');
+        if (randomWeightsMobileButton) {
+            randomWeightsMobileButton.addEventListener('click', () => {
+                this.controllers.game.generateRandomWeights();
+            });
+        }
+        
+        // Random start/end button - desktop
         const randomStartEndButton = document.getElementById('random-start-end-btn');
         console.log("Random start/end button found:", !!randomStartEndButton);
         if (randomStartEndButton) {
@@ -88,7 +180,15 @@ class UIView {
             });
         }
         
-        // Save grid button
+        // Random start/end button - mobile
+        const randomStartEndMobileButton = document.getElementById('random-start-end-btn-mobile');
+        if (randomStartEndMobileButton) {
+            randomStartEndMobileButton.addEventListener('click', () => {
+                this.controllers.game.setRandomStartEnd();
+            });
+        }
+        
+        // Save grid button - desktop
         const saveGridButton = document.getElementById('save-grid-btn');
         console.log("Save grid button found:", !!saveGridButton);
         if (saveGridButton) {
@@ -97,11 +197,27 @@ class UIView {
             });
         }
         
-        // Load grid button
+        // Save grid button - mobile
+        const saveGridMobileButton = document.getElementById('save-grid-btn-mobile');
+        if (saveGridMobileButton) {
+            saveGridMobileButton.addEventListener('click', () => {
+                this.showSaveGridModal();
+            });
+        }
+        
+        // Load grid button - desktop
         const loadGridButton = document.getElementById('load-grid-btn');
         console.log("Load grid button found:", !!loadGridButton);
         if (loadGridButton) {
             loadGridButton.addEventListener('click', () => {
+                this.showLoadGridModal();
+            });
+        }
+        
+        // Load grid button - mobile
+        const loadGridMobileButton = document.getElementById('load-grid-btn-mobile');
+        if (loadGridMobileButton) {
+            loadGridMobileButton.addEventListener('click', () => {
                 this.showLoadGridModal();
             });
         }
@@ -138,6 +254,28 @@ class UIView {
             });
         }
         
+        // Help button - desktop
+        const helpDesktopButton = document.getElementById('help-btn-desktop');
+        if (helpDesktopButton) {
+            helpDesktopButton.addEventListener('click', () => {
+                const helpModal = document.getElementById('help-modal');
+                if (helpModal) {
+                    helpModal.style.display = 'block';
+                }
+            });
+        }
+        
+        // Help button - mobile
+        const helpMobileButton = document.getElementById('help-btn');
+        if (helpMobileButton) {
+            helpMobileButton.addEventListener('click', () => {
+                const helpModal = document.getElementById('help-modal');
+                if (helpModal) {
+                    helpModal.style.display = 'block';
+                }
+            });
+        }
+        
         // Close buttons for modals
         document.querySelectorAll('.close-btn').forEach(closeBtn => {
             closeBtn.addEventListener('click', (e) => {
@@ -149,46 +287,24 @@ class UIView {
             });
         });
         
-        // Clear grid button
+        // Clear grid button - desktop
         const clearGridButton = document.getElementById('clear-grid-btn');
         console.log("Clear grid button found:", !!clearGridButton);
         if (clearGridButton) {
             clearGridButton.addEventListener('click', () => {
-                // Force stop any ongoing visualizations using window global references
-                if (window.dijkstraController) {
-                    window.dijkstraController.reset();
-                    window.dijkstraController.resetUI();
-                    
-                    // Reset step controls if in step-by-step mode
-                    const nextStepBtn = document.getElementById('next-step-btn');
-                    const prevStepBtn = document.getElementById('prev-step-btn');
-                    if (nextStepBtn) nextStepBtn.disabled = true;
-                    if (prevStepBtn) prevStepBtn.disabled = true;
-                }
-                
-                if (window.astarController) {
-                    window.astarController.reset();
-                    window.astarController.resetUI();
-                }
-                
-                // Then clear the grid using the game controller
-                this.controllers.game.clearGrid();
-                
-                // Enable user interactions after clearing
-                const toolButtons = document.querySelectorAll('.tool-btn');
-                const gridSizeSelect = document.getElementById('grid-size');
-                
-                toolButtons.forEach(button => {
-                    button.disabled = false;
-                });
-                
-                if (gridSizeSelect) {
-                    gridSizeSelect.disabled = false;
-                }
+                this.handleClearGrid();
             });
         }
         
-        // Start button (find path)
+        // Clear grid button - mobile
+        const clearGridMobileButton = document.getElementById('clear-grid-btn-mobile');
+        if (clearGridMobileButton) {
+            clearGridMobileButton.addEventListener('click', () => {
+                this.handleClearGrid();
+            });
+        }
+        
+        // Start button (find path) - desktop
         const startButton = document.getElementById('start-btn');
         console.log("Start button found:", !!startButton);
         if (startButton) {
@@ -199,7 +315,17 @@ class UIView {
             });
         }
         
-        // Step controls
+        // Start button (find path) - mobile
+        const startMobileButton = document.getElementById('start-btn-mobile');
+        if (startMobileButton) {
+            startMobileButton.addEventListener('click', () => {
+                // Run both algorithms simultaneously
+                this.controllers.dijkstra.startVisualization();
+                this.controllers.astar.startVisualization();
+            });
+        }
+        
+        // Step controls - desktop
         const nextStepButton = document.getElementById('next-step-btn');
         console.log("Next step button found:", !!nextStepButton);
         if (nextStepButton) {
@@ -213,6 +339,23 @@ class UIView {
         console.log("Previous step button found:", !!prevStepButton);
         if (prevStepButton) {
             prevStepButton.addEventListener('click', () => {
+                this.controllers.dijkstra.prevStep();
+                this.controllers.astar.prevStep();
+            });
+        }
+        
+        // Step controls - mobile
+        const nextStepMobileButton = document.getElementById('next-step-btn-mobile');
+        if (nextStepMobileButton) {
+            nextStepMobileButton.addEventListener('click', () => {
+                this.controllers.dijkstra.nextStep();
+                this.controllers.astar.nextStep();
+            });
+        }
+        
+        const prevStepMobileButton = document.getElementById('prev-step-btn-mobile');
+        if (prevStepMobileButton) {
+            prevStepMobileButton.addEventListener('click', () => {
                 this.controllers.dijkstra.prevStep();
                 this.controllers.astar.prevStep();
             });
@@ -244,7 +387,7 @@ class UIView {
             });
             
             // Set wall as default active tool
-            if (tool === 'wall') {
+            if (tool === 'wall' && buttonId === 'wall-btn') {
                 this.setActiveTool(button, tool);
             }
         }
@@ -267,6 +410,59 @@ class UIView {
         
         // Update current tool in controller
         this.controllers.game.setCurrentTool(tool);
+        
+        // Sync the active tool across desktop and mobile
+        this.syncActiveTool(tool);
+    }
+
+    /**
+     * Sync active tool selection between desktop and mobile interfaces
+     * @param {string} tool - The tool name
+     */
+    syncActiveTool(tool) {
+        const desktopIds = {
+            'start': 'start-node-btn',
+            'end': 'end-node-btn',
+            'wall': 'wall-btn',
+            'weighted': 'weighted-node-btn',
+            'erase': 'erase-btn'
+        };
+        
+        const mobileIds = {
+            'start': 'start-node-btn-mobile',
+            'end': 'end-node-btn-mobile',
+            'wall': 'wall-btn-mobile',
+            'weighted': 'weighted-node-btn-mobile',
+            'erase': 'erase-btn-mobile'
+        };
+        
+        // Get all relevant buttons
+        const desktopButton = document.getElementById(desktopIds[tool]);
+        const mobileButton = document.getElementById(mobileIds[tool]);
+        
+        // Remove active class from all tools except the active tool button
+        Object.values(desktopIds).forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn && btn !== this.activeToolButton) {
+                btn.classList.remove('active');
+            }
+        });
+        
+        Object.values(mobileIds).forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn && btn !== this.activeToolButton) {
+                btn.classList.remove('active');
+            }
+        });
+        
+        // Add active class to corresponding buttons
+        if (desktopButton && desktopButton !== this.activeToolButton) {
+            desktopButton.classList.add('active');
+        }
+        
+        if (mobileButton && mobileButton !== this.activeToolButton) {
+            mobileButton.classList.add('active');
+        }
     }
 
     /**
@@ -274,23 +470,27 @@ class UIView {
      * @param {boolean} enabled - Whether the controls should be enabled
      */
     setStepControlsEnabled(enabled) {
+        // Desktop step controls
         const nextStepButton = document.getElementById('next-step-btn');
         const prevStepButton = document.getElementById('prev-step-btn');
         
-        // Also handle mobile step controls
-        const mobileNextStepButton = document.getElementById('mobile-next-step');
-        const mobilePrevStepButton = document.getElementById('mobile-prev-step');
+        // Mobile step controls
+        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+        const mobilePrevStepButton = document.getElementById('prev-step-btn-mobile');
+        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+        const mobileStepMenuPrevButton = document.getElementById('mobile-prev-step');
         
-        if (nextStepButton && prevStepButton) {
-            nextStepButton.disabled = !enabled;
-            prevStepButton.disabled = !enabled;
-        }
+        // Desktop controls
+        if (nextStepButton) nextStepButton.disabled = !enabled;
+        if (prevStepButton) prevStepButton.disabled = !enabled;
         
-        // Enable/disable mobile step controls
-        if (mobileNextStepButton && mobilePrevStepButton) {
-            mobileNextStepButton.disabled = !enabled;
-            mobilePrevStepButton.disabled = !enabled;
-        }
+        // Mobile header controls
+        if (mobileNextStepButton) mobileNextStepButton.disabled = !enabled;
+        if (mobilePrevStepButton) mobilePrevStepButton.disabled = !enabled;
+        
+        // Mobile floating menu controls
+        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = !enabled;
+        if (mobileStepMenuPrevButton) mobileStepMenuPrevButton.disabled = !enabled;
     }
 
     /**
@@ -347,23 +547,26 @@ class UIView {
      * @param {boolean} disabled - Whether interactions should be disabled
      */
     setGridInteractionsDisabled(disabled) {
-        // Disable only tool buttons inside the .tools div
-        const toolButtons = document.querySelectorAll('.tools .tool-btn');
+        // Desktop tool buttons
+        const toolButtons = document.querySelectorAll('.tool-btn');
         const gridSizeSelect = document.getElementById('grid-size');
+        const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
         
+        // Disable all tool buttons
         toolButtons.forEach(button => {
             button.disabled = disabled;
         });
         
-        if (gridSizeSelect) {
-            gridSizeSelect.disabled = disabled;
-        }
+        // Disable grid size controls
+        if (gridSizeSelect) gridSizeSelect.disabled = disabled;
+        if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = disabled;
         
         // Make sure Clear Grid button remains enabled at all times
         const clearGridBtn = document.getElementById('clear-grid-btn');
-        if (clearGridBtn) {
-            clearGridBtn.disabled = false;
-        }
+        const clearGridMobileBtn = document.getElementById('clear-grid-btn-mobile');
+        
+        if (clearGridBtn) clearGridBtn.disabled = false;
+        if (clearGridMobileBtn) clearGridMobileBtn.disabled = false;
     }
 
     /**
@@ -503,6 +706,48 @@ class UIView {
             console.error('Error deleting grid:', error);
             return false;
         }
+    }
+
+    /**
+     * Handle clear grid action
+     */
+    handleClearGrid() {
+        // Force stop any ongoing visualizations using window global references
+        if (window.dijkstraController) {
+            window.dijkstraController.reset();
+            window.dijkstraController.resetUI();
+            
+            // Reset step controls if in step-by-step mode
+            const nextStepBtn = document.getElementById('next-step-btn');
+            const prevStepBtn = document.getElementById('prev-step-btn');
+            const nextStepMobileBtn = document.getElementById('next-step-btn-mobile');
+            const prevStepMobileBtn = document.getElementById('prev-step-btn-mobile');
+            
+            if (nextStepBtn) nextStepBtn.disabled = true;
+            if (prevStepBtn) prevStepBtn.disabled = true;
+            if (nextStepMobileBtn) nextStepMobileBtn.disabled = true;
+            if (prevStepMobileBtn) prevStepMobileBtn.disabled = true;
+        }
+        
+        if (window.astarController) {
+            window.astarController.reset();
+            window.astarController.resetUI();
+        }
+        
+        // Then clear the grid using the game controller
+        this.controllers.game.clearGrid();
+        
+        // Enable user interactions after clearing
+        const toolButtons = document.querySelectorAll('.tool-btn');
+        const gridSizeSelect = document.getElementById('grid-size');
+        const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+        
+        toolButtons.forEach(button => {
+            button.disabled = false;
+        });
+        
+        if (gridSizeSelect) gridSizeSelect.disabled = false;
+        if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
     }
 }
 
