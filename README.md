@@ -1,126 +1,204 @@
-# Pathfinding Adventure
+# 🧠 Pathfinding Algorithm Visualizer
 
-A web-based interactive visualization tool that demonstrates how pathfinding algorithms work in real-time. Watch Dijkstra's algorithm find the shortest path between two points while learning about graph traversal in a fun, visual way!
+<div align="center">
+  <img src="src/assets/images/app_logo.png" alt="Pathfinding Visualizer Logo" width="180">
+  
+  ### Compare Dijkstra's Algorithm vs A* in real-time!
+  
+  [View Demo](https://jehuuuu.github.io/cmsc126le3/) | [GitHub Repository](https://github.com/Jehuuuu/cmsc126le3)
+</div>
 
-## What It Does
+---
 
-This application lets you:
-- Create custom maps with walls and obstacles
-- Place start and end points
-- Watch the algorithm search for the best path in real-time
-- View alternative paths and compare their lengths
-- Generate random mazes to test the algorithm
+## ✨ Features
 
-## How to Use
+### Lab Requirements Checklist
+- [x] 10x10 grid with resizable options
+- [x] Click to place obstacles (walls)
+- [x] Set start and end points
+- [x] "Find Path" button to start visualization
+- [x] Dynamic grid updates showing the algorithm's pathfinding process
+- [x] Implementation of Dijkstra's Algorithm
+- [x] Implementation of A* Search algorithm
+- [x] Visual representation of:
+  - [x] Exploration of nodes (blue cells)
+  - [x] Final shortest path (yellow cells)
+  - [x] Obstacles and weighted nodes
+- [x] Object-Oriented Programming with proper classes
+- [x] Asynchronous execution for animation
+- [x] Performance optimization
 
-### Getting Started
-1. **Open the application**: Simply open `index.html` in any web browser - no installation required!
+### Additional Challenges Completed
+- [x] Grid resizing (10x10, 15x15, 20x20, 25x25)
+- [x] Speed control (slow, medium, fast)
+- [x] Weighted nodes with custom weights (2-10)
+- [x] Save/load grid configurations with local storage
 
-### Basic Controls
-1. **Set up your grid**:
-   - Use "Set Start" to place your starting point (green)
-   - Use "Set End" to place your destination point (red)
-   - Draw walls with "Add Walls" to create obstacles
-   - Use "Erase" to remove anything you've placed
+### Extra Features Added
+- [x] Side-by-side algorithm comparison
+- [x] Step-by-step mode with forward/backward controls
+- [x] Algorithm container swapping
+- [x] Responsive design with sidebar navigation
+- [x] Randomization tools:
+  - [x] Generate random mazes
+  - [x] Create random weighted patterns
+  - [x] Place random start/end points
+- [x] Keyboard shortcuts for faster interaction
+- [x] Mobile support with touch controls
+- [x] Interactive help modal
 
-2. **Start the visualization**:
-   - Click "Find Path" to watch the algorithm work
-   - Watch as the algorithm explores (purple cells) and finds the optimal path (yellow)
+### Fixed Issues
+- [x] Proper visualization reset when switching from step-by-step to auto mode
+- [x] Consistent algorithm container border colors when swapping
+- [x] Proper notification when step-by-step mode completes
+- [x] Superior drag for start/end nodes (replacing walls AND weighted nodes)
+- [x] Centered and properly sized help modal
 
-3. **Adjust settings**:
-   - Change grid size (10x10, 15x15, 20x20, or 25x25)
-   - Control speed (Slow, Medium, Fast)
-   - Choose between Auto mode or Step-by-Step mode
+---
 
-### Advanced Features
-- **Generate random mazes** with one click
-- **Place random start/end points** to quickly test new scenarios
-- View **alternative paths** in the sidebar
-- Use **keyboard shortcuts** for faster interaction:
-  - `S`: Set Start tool
-  - `E`: Set End tool
-  - `W`: Add Walls tool
-  - `D`: Erase tool
-  - `C`: Clear grid
-  - `R`: Generate random maze
-  - `Space`: Start visualization
-  - Arrow keys: Navigate steps (in Step-by-Step mode)
+## 🚀 Quick Start
 
-## How It Works
+1. **Open the application**:
+   - Clone this repository
+   - Open `index.html` in any modern browser
 
-The application uses Dijkstra's algorithm, which finds the shortest path between two points by:
-1. Exploring cells outward from the start point
-2. Tracking the total distance to each visited cell
-3. Identifying the shortest possible path to the destination
+2. **Place start and end points**:
+   - Use the "Set Start" tool (or press `S`) 
+   - Use the "Set End" tool (or press `E`)
 
-## Requirements
+3. **Create your maze**:
+   - Draw walls with the "Add Walls" tool (or press `W`)
+   - Add weighted terrain with "Add Weights" tool
+   - Or generate a random maze with one click!
 
-No special requirements or installation needed! This application runs in any modern web browser using standard:
-- HTML5
-- CSS3
-- JavaScript (no frameworks)
+4. **Watch the algorithms compete**:
+   - Click "Find Path" (or press `Space`)
+   - Compare which algorithm is more efficient!
 
-## Development
+---
 
-This project is structured using the Model-View-Controller (MVC) pattern:
-- **Models**: Define the data structures (grid, nodes)
-- **Views**: Handle the visual presentation
-- **Controllers**: Manage user interactions and algorithm execution
+## 🎮 How to Use
 
-## Deployment
+### Drawing Tools
+| Tool | Description | Shortcut |
+|------|-------------|----------|
+| **Set Start** | Place your starting point | `S` |
+| **Set End** | Place your destination | `E` |
+| **Add Walls** | Create impenetrable obstacles | `W` |
+| **Add Weights** | Create costly terrain (2-10) | - |
+| **Erase** | Remove obstacles or weights | `D` |
 
-To deploy and share this application:
+### Visualization Controls
+| Control | Description | Shortcut |
+|---------|-------------|----------|
+| **Find Path** | Begin algorithm visualization | `Space` |
+| **Step-by-Step** | Navigate through algorithm execution | Arrow keys |
+| **Clear Grid** | Reset the entire grid | `C` |
+| **Help** | Show detailed instructions | `H` |
 
-1. Clone this repository
-2. Run locally: Open `index.html` in a browser
-3. Deploy online: Use the included configuration for Vercel with `npm run deploy`
+---
 
-## Testing Locally
+## 💡 Algorithm Comparison
 
-Use the command `npm run test` to start a local server and test the application.
+### Dijkstra's Algorithm
+- Guarantees the shortest path
+- Explores in all directions equally
+- Great for unweighted or weighted grids
+- Generally visits more nodes than A*
 
-## Technical Implementation
+### A* Algorithm
+- Also finds the shortest path
+- Uses heuristics to search more efficiently
+- Prioritizes promising directions
+- Usually faster than Dijkstra's for most scenarios
 
-This project is implemented using a modular, object-oriented approach with:
+---
 
-- HTML5, CSS3, and vanilla JavaScript
-- Model-View-Controller (MVC) architecture
-- Efficient implementation of Dijkstra's algorithm using a binary heap priority queue
-- Optimized path searching with early termination
-- Alternative path generation
-- Responsive UI design
-
-## Project Structure
+## 📂 Project Structure
 
 ```
-/pathfinding-visualizer/
-  /src/
-    /models/         # Data models (Grid, Node)
-    /algorithms/     # Pathfinding algorithms
-    /controllers/    # Game and visualization controllers
-    /views/          # UI and grid views
-    /utils/          # Utility classes
-    /assets/         # Styles and images
-  index.html         # Main HTML file
-  README.md          # Documentation
+/cmsc126le3/
+│
+├── src/                        # Source code
+│   ├── algorithms/             # Pathfinding algorithms
+│   │   ├── Algorithm.js        # Base algorithm class
+│   │   ├── AStarAlgorithm.js   # A* implementation
+│   │   └── DijkstraAlgorithm.js # Dijkstra's implementation
+│   │
+│   ├── assets/                 # Static assets
+│   │   ├── images/             # Images and icons
+│   │   └── styles/             # CSS files
+│   │       ├── main.css        # Main styling
+│   │       ├── sidebar.css     # Sidebar styling
+│   │       ├── modals.css      # Modal windows styling
+│   │       └── ...
+│   │
+│   ├── controllers/            # Control logic
+│   │   ├── GameController.js   # Main game controller
+│   │   └── VisualizationController.js # Visualization logic
+│   │
+│   ├── models/                 # Data models
+│   │   ├── Grid.js             # Grid data structure
+│   │   └── Node.js             # Node data structure
+│   │
+│   ├── utils/                  # Utility classes
+│   │   ├── PathUtils.js        # Path calculation utilities
+│   │   ├── PriorityQueue.js    # Priority queue implementation
+│   │   └── ToastNotification.js # Toast notifications
+│   │
+│   ├── views/                  # UI components
+│   │   ├── GridView.js         # Grid view/rendering
+│   │   └── UIView.js           # User interface elements
+│   │
+│   └── index.js                # Main entry point
+│
+├── index.html                  # Main HTML file
+├── README.md                   # Documentation
+└── Lab Activity 3.md           # Assignment details
 ```
 
-## Future Enhancements
+## 🛠️ Technical Implementation
 
-- Add more pathfinding algorithms (A*, BFS, DFS)
-- Implement weighted nodes for terrain effects
-- Add animation and visual enhancements
-- Include additional game elements and challenges
-- Implement touch support for mobile devices
+- Pure HTML, CSS, and vanilla JavaScript
+- Object-oriented design with Model-View-Controller architecture:
+  - **Models**: Define data structures (Grid, Node)
+  - **Views**: Handle the visual presentation and UI
+  - **Controllers**: Manage application logic and algorithm execution
+- Asynchronous visualization with customizable speeds
+- Optimized algorithms using priority queues
+- Local storage for saving grid configurations
+- Responsive design for various screen sizes
 
-## Getting Started
+---
 
-1. Clone this repository
-2. Open `index.html` in your web browser
-3. Start exploring pathfinding algorithms!
+## 🔮 Keyboard Shortcuts
 
-No build process or dependencies required - just plain HTML, CSS, and JavaScript.
+| Key | Action |
+|-----|--------|
+| `S` | Select Start tool |
+| `E` | Select End tool |
+| `W` | Select Wall tool |
+| `D` | Select Erase tool |
+| `C` | Clear grid |
+| `R` | Generate random maze |
+| `Space` | Find path |
+| `→` | Next step (in step mode) |
+| `←` | Previous step (in step mode) |
+| `H` | Show help |
+| `Esc` | Close modal |
 
-## License
+---
 
-This project is created for educational purposes. 
+## 📱 Mobile Support
+
+The visualizer is fully responsive and works on mobile devices with touch controls:
+- Floating action buttons for easy access to tools
+- Responsive grid that adapts to screen size
+- Collapsible controls for maximum viewing area
+
+---
+
+<div align="center">
+  <p>Created for CMSC 126 Web Engineering Lab Activity 3</p>
+  <p>By: Jehu Garcia © 2023</p>
+</div> 

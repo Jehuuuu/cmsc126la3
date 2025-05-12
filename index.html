@@ -93,6 +93,16 @@
                         <button id="prev-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
                     </div>
                 </div>
+                
+                <!-- GitHub Link -->
+                <div class="sidebar-section github-section">
+                    <h3 class="sidebar-section-title">Source Code</h3>
+                    <div class="sidebar-tools compact-tools">
+                        <a href="https://github.com/Jehuuuu/cmsc126le3" target="_blank" class="tool-btn github-btn">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -373,6 +383,20 @@
                 <button id="cancel-load-btn">Cancel</button>
                         </div>
                     </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this saved grid?</p>
+            <p id="grid-to-delete-name" class="grid-name-highlight"></p>
+            <div class="modal-buttons">
+                <button id="confirm-delete-btn">Delete</button>
+                <button id="cancel-delete-btn">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <!-- Hidden buttons for JavaScript to reference -->

@@ -463,4 +463,54 @@
         max-width: 100%;
         padding: 10px 15px;
     }
+}
+
+/* Delete Confirmation Modal */
+#delete-confirmation-modal .modal-content {
+    width: 320px;
+    max-width: 90%;
+}
+
+#delete-confirmation-modal .modal-content h3 {
+    background-color: #c0392b; /* Red background for warning */
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 10px 15px;
+}
+
+#delete-confirmation-modal .modal-content p {
+    padding: 15px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+#delete-confirmation-modal .modal-buttons {
+    margin-top: 10px;
+}
+
+#confirm-delete-btn {
+    background-color: #e74c3c; /* Red */
+}
+
+#confirm-delete-btn:hover {
+    background-color: #c0392b;
+}
+
+#cancel-delete-btn {
+    background-color: #7f8c8d; /* Gray */
+}
+
+#cancel-delete-btn:hover {
+    background-color: #95a5a6;
+}
+
+.grid-name-highlight {
+    font-weight: bold;
+    color: #d9a334; /* Gold color for emphasis */
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 4px;
+    margin: 0 15px 10px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 } 
