@@ -17,7 +17,7 @@
 <body>
     <div class="app-container">
         <!-- Toggle button for sidebar, now outside the sidebar -->
-        <button id="toggle-sidebar-btn" class="toggle-sidebar-btn" aria-label="Toggle Sidebar">
+        <button id="toggle-sidebar-btn" class="toggle-sidebar-btn mobile-hidden" aria-label="Toggle Sidebar">
             <i class="fas fa-chevron-left"></i>
         </button>
         
@@ -107,13 +107,12 @@
                         </div>
                         <button id="help-btn" class="help-btn" aria-label="Help">?</button>
                     </div>
-                    <p class="subtitle">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
                     
                     <div id="collapsible-controls" class="collapsible-controls">
                         <nav aria-label="Control settings">
-                            <div class="controls">
+                            <div class="controls single-row-controls">
                                 <div class="control-group">
-                                    <label for="grid-size-mobile">Grid Size:</label>
+                                    <label for="grid-size-mobile">Grid:</label>
                                     <select id="grid-size-mobile">
                                         <option value="10">10x10</option>
                                         <option value="15">15x15</option>
@@ -141,48 +140,22 @@
                             </div>
                         </nav>
                         
-                        <!-- Manual drawing tools -->
-                        <section class="tools-section mobile-hidden-tools" aria-label="Drawing tools">
-                            <h3 class="section-title">Drawing Tools</h3>
-                            <div class="tools">
-                                <button id="start-node-btn-mobile" class="tool-btn"><i class="fas fa-flag-checkered"></i> Set Start</button>
-                                <button id="end-node-btn-mobile" class="tool-btn"><i class="fas fa-bullseye"></i> Set End</button>
-                                <button id="wall-btn-mobile" class="tool-btn"><i class="fas fa-th"></i> Add Walls</button>
-                                <button id="weighted-node-btn-mobile" class="tool-btn"><i class="fas fa-weight-hanging"></i> Add Weights</button>
-                                <button id="erase-btn-mobile" class="tool-btn"><i class="fas fa-eraser"></i> Erase</button>
-                            </div>
-                        </section>
-                    
-                    <!-- Randomizer tools -->
-                    <section class="randomizer-section mobile-hidden-tools" aria-label="Random generators">
-                        <h3 class="section-title">Randomizers</h3>
-                        <div class="randomizer-tools">
-                                <button id="random-maze-btn-mobile" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
-                                <button id="random-weights-btn-mobile" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
-                                <button id="random-start-end-btn-mobile" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
-                                <button id="save-grid-btn-mobile" class="randomizer-btn"><i class="fas fa-save"></i> Save Grid</button>
-                                <button id="load-grid-btn-mobile" class="randomizer-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
-                        </div>
-                    </section>
-                    
-                    <!-- Action buttons with Find Path and Clear Grid together -->
-                    <section class="actions-section" aria-label="Visualization controls">
-                        <div class="action-buttons">
-                                <button id="start-btn-mobile" class="action-btn mobile-hidden-action"><i class="fas fa-play"></i> Find Path</button>
-                                <button id="clear-grid-btn-mobile" class="action-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
+                        <!-- Action buttons with step controls only -->
+                        <section class="actions-section" aria-label="Visualization controls">
+                            <div class="action-buttons">
                                 <button id="next-step-btn-mobile" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
                                 <button id="prev-step-btn-mobile" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
-                        </div>
-                    </section>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-            </div>
+                
+                <!-- Toggle button at the bottom of header -->
+                <button id="toggle-controls-btn" class="toggle-controls-btn" aria-label="Toggle Controls">
+                    <span class="double-arrow">⇣⇣</span>
+                </button>
+            </header>
             
-            <!-- Toggle button at the bottom of header -->
-            <button id="toggle-controls-btn" class="toggle-controls-btn" aria-label="Toggle Controls">
-                <span class="double-arrow">⇣⇣</span>
-            </button>
-        </header>
-        
             <!-- Floating action buttons for desktop -->
             <div class="floating-actions-container">
                 <div class="left-actions">
