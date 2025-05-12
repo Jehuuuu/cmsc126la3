@@ -32,8 +32,8 @@
 
 /* Help modal - wider content */
 #help-modal .modal-content {
-    width: 600px; /* Wider content */
-    max-height: 80vh;
+    width: 1500px; /* Wider content */
+    max-height: 100%;
     overflow-y: auto;
 }
 

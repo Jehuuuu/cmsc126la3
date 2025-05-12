@@ -103,6 +103,15 @@ class Algorithm {
     }
 
     /**
+     * Update progress for step-by-step visualization (bridge method for updateStep)
+     * @param {number} currentStep - Current step index
+     */
+    updateProgress(currentStep) {
+        // This is a bridge method to support the naming used in VisualizationController
+        this.updateStep(currentStep);
+    }
+
+    /**
      * Update progress for step-by-step visualization
      * @param {number} currentStep - Current step index
      */
@@ -119,8 +128,8 @@ class Algorithm {
         
         // Mark current node
         if (currentStep < this.visitedNodesInOrder.length) {
-            const currentNode = this.visitedNodesInOrder[currentStep];
-            currentNode.isCurrent = true;
+        const currentNode = this.visitedNodesInOrder[currentStep];
+        currentNode.isCurrent = true;
         }
     }
 } 

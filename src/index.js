@@ -111,8 +111,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault(); // Prevent page scrolling with space
                 break;
             case 'arrowright': // Next step
+                // Check if both algorithms have reached their max steps
+                if (window.dijkstraController && window.astarController) {
+                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                    
+                    if (dijkstraFinished && astarFinished) {
+                        // Both algorithms have completed, don't proceed
+                        // Make sure all next step buttons are disabled
+                        const nextStepButton = document.getElementById('next-step-btn');
+                        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+                        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+                        
+                        if (nextStepButton) nextStepButton.disabled = true;
+                        if (mobileNextStepButton) mobileNextStepButton.disabled = true;
+                        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+                        
+                        event.preventDefault();
+                        break;
+                    }
+                }
+                
+                // Proceed with the next step if not completed
                 dijkstraController.nextStep();
                 astarController.nextStep();
+                
+                // Check again after taking the step if both algorithms are now complete
+                if (window.dijkstraController && window.astarController) {
+                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                    
+                    if (dijkstraFinished && astarFinished) {
+                        // Both algorithms have reached their end, disable all next step buttons
+                        const nextStepButton = document.getElementById('next-step-btn');
+                        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+                        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+                        
+                        if (nextStepButton) nextStepButton.disabled = true;
+                        if (mobileNextStepButton) mobileNextStepButton.disabled = true;
+                        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+                    }
+                }
+                
                 event.preventDefault();
                 break;
             case 'arrowleft': // Previous step
@@ -424,9 +464,48 @@ function setupStepByStepMenu() {
     if (mobileNextStepBtn) {
         mobileNextStepBtn.addEventListener('click', (event) => {
             event.stopPropagation();
+            
+            // Check if both algorithms have reached their max steps before proceeding
+            if (window.dijkstraController && window.astarController) {
+                const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                
+                if (dijkstraFinished && astarFinished) {
+                    // Both algorithms have reached their end, disable the next button
+                    mobileNextStepBtn.disabled = true;
+                    
+                    // Also disable desktop and other mobile next step buttons
+                    const nextStepButton = document.getElementById('next-step-btn');
+                    const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+                    
+                    if (nextStepButton) nextStepButton.disabled = true;
+                    if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+                    
+                    return; // Don't proceed with the next step
+                }
+            }
+            
             // Trigger both algorithm's next step functionality
             if (window.dijkstraController) window.dijkstraController.nextStep();
             if (window.astarController) window.astarController.nextStep();
+            
+            // Check again after taking the step if both algorithms are now complete
+            if (window.dijkstraController && window.astarController) {
+                const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                
+                if (dijkstraFinished && astarFinished) {
+                    // Both algorithms have reached their end, disable the next button
+                    mobileNextStepBtn.disabled = true;
+                    
+                    // Also disable desktop and other mobile next step buttons
+                    const nextStepButton = document.getElementById('next-step-btn');
+                    const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+                    
+                    if (nextStepButton) nextStepButton.disabled = true;
+                    if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+                }
+            }
             
             // Show visual feedback
             mobileNextStepBtn.classList.add('touch-active');

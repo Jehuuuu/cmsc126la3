@@ -96,13 +96,55 @@ class UIView {
         if (modeSelect) {
             modeSelect.addEventListener('change', (event) => {
                 const selectedMode = event.target.value;
-                // console.log(`UIView: Mode changed to ${selectedMode}`);
+                const previousMode = this.controllers.dijkstra.mode;
+                
+                // First, check if both algorithms have completed visualizations
+                const bothAlgorithmsCompleted = this.checkIfBothAlgorithmsCompleted();
+                
+                // Apply mode changes to both controllers
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
-                // Show toast notification for step-by-step mode
-                if (window.Toast && selectedMode === 'step') {
-                    window.Toast.info('Step-by-step mode activated');
+                // Special case: when switching from step to auto mode and both algorithms 
+                // were active, ensure all visualization elements are cleared and controls re-enabled
+                if (previousMode === 'step' && selectedMode === 'auto') {
+                    // The resetPathVisualization calls in the setMode methods will handle
+                    // clearing the visualization and setting isVisualizing to false
+                    
+                    // Force reset visualization state
+                    this.controllers.dijkstra.isVisualizing = false;
+                    this.controllers.astar.isVisualizing = false;
+                    
+                    // Make sure speed selector is re-enabled
+                    const speedSelect = document.getElementById('visualization-speed');
+                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+                    if (speedSelect) speedSelect.disabled = false;
+                    if (speedMobileSelect) speedMobileSelect.disabled = false;
+                    
+                    // Make sure grid size selector is re-enabled
+                    const gridSizeSelect = document.getElementById('grid-size');
+                    const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+                    if (gridSizeSelect) gridSizeSelect.disabled = false;
+                    if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+                    
+                    // Re-enable all tool buttons
+                    const toolButtons = document.querySelectorAll('.tool-btn');
+                    toolButtons.forEach(button => {
+                        button.disabled = false;
+                    });
+                } else if (previousMode === 'auto' && selectedMode === 'step') {
+                    // When switching to step mode, make sure to disable speed controls
+                    const speedSelect = document.getElementById('visualization-speed');
+                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+                    if (speedSelect) speedSelect.disabled = true;
+                    if (speedMobileSelect) speedMobileSelect.disabled = true;
+                }
+                
+                // Show toast notification for mode change
+                if (window.Toast) {
+                    if (selectedMode === 'step') {
+                        window.Toast.info('Step-by-step mode activated');
+                    }
                 }
                 
                 // Sync mobile control
@@ -111,7 +153,7 @@ class UIView {
                     mobileModeSelect.value = selectedMode;
                 }
                 
-                // Directly update the step-by-step button visibility
+                // Update the step-by-step button visibility
                 if (typeof toggleStepByStepButton === 'function') {
                     toggleStepByStepButton(selectedMode === 'step');
                 }
@@ -123,13 +165,55 @@ class UIView {
         if (modeMobileSelect) {
             modeMobileSelect.addEventListener('change', (event) => {
                 const selectedMode = event.target.value;
-                // console.log(`UIView: Mode changed to ${selectedMode} (mobile)`);
+                const previousMode = this.controllers.dijkstra.mode;
+                
+                // First, check if both algorithms have completed visualizations
+                const bothAlgorithmsCompleted = this.checkIfBothAlgorithmsCompleted();
+                
+                // Apply mode changes to both controllers
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
-                // Show toast notification for step-by-step mode
-                if (window.Toast && selectedMode === 'step') {
-                    window.Toast.info('Step-by-step mode activated');
+                // Special case: when switching from step to auto mode and both algorithms 
+                // were active, ensure all visualization elements are cleared and controls re-enabled
+                if (previousMode === 'step' && selectedMode === 'auto') {
+                    // The resetPathVisualization calls in the setMode methods will handle
+                    // clearing the visualization and setting isVisualizing to false
+                    
+                    // Force reset visualization state
+                    this.controllers.dijkstra.isVisualizing = false;
+                    this.controllers.astar.isVisualizing = false;
+                    
+                    // Make sure speed selector is re-enabled
+                    const speedSelect = document.getElementById('visualization-speed');
+                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+                    if (speedSelect) speedSelect.disabled = false;
+                    if (speedMobileSelect) speedMobileSelect.disabled = false;
+                    
+                    // Make sure grid size selector is re-enabled
+                    const gridSizeSelect = document.getElementById('grid-size');
+                    const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+                    if (gridSizeSelect) gridSizeSelect.disabled = false;
+                    if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+                    
+                    // Re-enable all tool buttons
+                    const toolButtons = document.querySelectorAll('.tool-btn');
+                    toolButtons.forEach(button => {
+                        button.disabled = false;
+                    });
+                } else if (previousMode === 'auto' && selectedMode === 'step') {
+                    // When switching to step mode, make sure to disable speed controls
+                    const speedSelect = document.getElementById('visualization-speed');
+                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+                    if (speedSelect) speedSelect.disabled = true;
+                    if (speedMobileSelect) speedMobileSelect.disabled = true;
+                }
+                
+                // Show toast notification for mode change
+                if (window.Toast) {
+                    if (selectedMode === 'step') {
+                        window.Toast.info('Step-by-step mode activated');
+                    }
                 }
                 
                 // Sync desktop control
@@ -137,7 +221,7 @@ class UIView {
                     modeSelect.value = selectedMode;
                 }
                 
-                // Directly update the step-by-step button visibility
+                // Update the step-by-step button visibility
                 if (typeof toggleStepByStepButton === 'function') {
                     toggleStepByStepButton(selectedMode === 'step');
                 }
@@ -536,6 +620,8 @@ class UIView {
         const stepControls = document.querySelectorAll('.step-control');
         const startButton = document.getElementById('start-btn');
         const mobileStepRunButton = document.getElementById('mobile-step-run-btn');
+        const speedSelect = document.getElementById('visualization-speed');
+        const speedMobileSelect = document.getElementById('visualization-speed-mobile');
         
         // Call the global function to toggle step-by-step button visibility if it exists
         if (typeof toggleStepByStepButton === 'function') {
@@ -559,6 +645,10 @@ class UIView {
             if (mobileStepRunButton) {
                 mobileStepRunButton.innerHTML = '<span class="icon"><i class="fas fa-play"></i></span> Prepare Path';
             }
+            
+            // Disable speed controls in step mode since they have no effect
+            if (speedSelect) speedSelect.disabled = true;
+            if (speedMobileSelect) speedMobileSelect.disabled = true;
         } else {
             // Hide step controls
             stepControls.forEach(control => {
@@ -574,6 +664,16 @@ class UIView {
             if (mobileStepRunButton) {
                 mobileStepRunButton.innerHTML = '<span class="icon"><i class="fas fa-play"></i></span> Find Path';
             }
+            
+            // Enable speed controls in auto mode - but only if not currently visualizing
+            const isVisualizingActive = 
+                (window.dijkstraController && window.dijkstraController.isVisualizing) || 
+                (window.astarController && window.astarController.isVisualizing);
+                
+            if (!isVisualizingActive) {
+                if (speedSelect) speedSelect.disabled = false;
+                if (speedMobileSelect) speedMobileSelect.disabled = false;
+            }
         }
     }
     
@@ -586,6 +686,8 @@ class UIView {
         const toolButtons = document.querySelectorAll('.tool-btn');
         const gridSizeSelect = document.getElementById('grid-size');
         const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+        const speedSelect = document.getElementById('visualization-speed');
+        const speedMobileSelect = document.getElementById('visualization-speed-mobile');
         
         // Disable all tool buttons
         toolButtons.forEach(button => {
@@ -807,6 +909,26 @@ class UIView {
         
         if (gridSizeSelect) gridSizeSelect.disabled = false;
         if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+    }
+
+    /**
+     * Check if both algorithms have completed visualizations
+     * @returns {boolean} - True if both algorithms have completed, false otherwise
+     */
+    checkIfBothAlgorithmsCompleted() {
+        // Check if the controllers exist
+        if (!this.controllers.dijkstra || !this.controllers.astar) {
+            return false;
+        }
+        
+        // Check if both algorithms have reached their maximum step
+        const dijkstraFinished = this.controllers.dijkstra.currentStep >= this.controllers.dijkstra.maxStep && 
+                                 this.controllers.dijkstra.maxStep >= 0;
+        const astarFinished = this.controllers.astar.currentStep >= this.controllers.astar.maxStep && 
+                              this.controllers.astar.maxStep >= 0;
+        
+        // Return true only if both have finished
+        return dijkstraFinished && astarFinished;
     }
 }
 

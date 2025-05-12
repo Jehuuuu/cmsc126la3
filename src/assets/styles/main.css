@@ -561,11 +561,11 @@ select {
     }
 }
 
-.algorithm-container:first-child {
+.dijkstra-container {
     border-color: var(--dijkstra-color);
 }
 
-.algorithm-container:last-child {
+.astar-container {
     border-color: var(--astar-color);
 }
 

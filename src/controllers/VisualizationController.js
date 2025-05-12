@@ -101,10 +101,39 @@ class VisualizationController {
             // Step mode: prepare for stepping
             this.currentStep = -1;
             this.maxStep = this.visitedNodesInOrder.length - 1;
-            this.uiView.setStepControlsEnabled(true);
             
-            // Show first step
-            this.nextStep();
+            // Enable step controls but disable the Previous Step button initially
+            // since there's no previous step at the beginning
+            this.uiView.setStepControlsEnabled(true);
+            this.disablePrevStepButton(true);
+            
+            // Handle special case where there's only one step (end is immediately found)
+            if (this.maxStep <= 0) {
+                // If there are no steps to take or only one step, disable next button after taking it
+                this.nextStep();
+                // Directly check if both algorithms have completed
+                if (window.dijkstraController && window.astarController) {
+                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                    
+                    if (dijkstraFinished && astarFinished) {
+                        this.disableNextStepButton();
+                    }
+                }
+                
+                // If there are no steps to take, set isVisualizing to false
+                if (this.visitedNodesInOrder.length <= 1) {
+                    this.isVisualizing = false;
+                }
+            } else {
+                // Show first step for normal cases
+                this.nextStep();
+                
+                // In step mode, we still want some interactions to be enabled even though 
+                // the algorithm is "visualizing" - for example, the user should be able
+                // to click "Next Step"
+                this.uiView.setGridInteractionsDisabled(true);
+            }
         }
     }
 
@@ -261,7 +290,22 @@ class VisualizationController {
      * Move to the next step in step-by-step mode
      */
     nextStep() {
-        if (this.mode !== 'step' || this.currentStep >= this.maxStep) return;
+        // Early exit if not in step mode
+        if (this.mode !== 'step') return;
+        
+        // If already at max step, don't continue
+        if (this.currentStep >= this.maxStep) {
+            // Make sure the Next Step button is disabled if both algorithms are at their end
+            if (window.dijkstraController && window.astarController) {
+                const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                
+                if (dijkstraFinished && astarFinished) {
+                    this.disableNextStepButton();
+                }
+            }
+            return;
+        }
         
         this.currentStep++;
         this.algorithm.updateProgress(this.currentStep);
@@ -269,6 +313,15 @@ class VisualizationController {
         // If we've reached the end node, show the path
         if (this.currentStep === this.maxStep) {
             this.showPath();
+            
+            // Check if this is one of the algorithms that has reached its end
+            // We'll use the global algorithm controllers to check if both have reached their end
+            this.checkIfBothAlgorithmsFinished();
+        }
+        
+        // After the first step, enable the Previous Step button
+        if (this.currentStep > 0) {
+            this.disablePrevStepButton(false);
         }
         
         this.gridView.update();
@@ -286,6 +339,16 @@ class VisualizationController {
         // If we had the path shown, hide it now
         for (const node of this.pathNodesInOrder) {
             node.isPath = false;
+        }
+        
+        // If we're back at the first step, disable the Previous Step button
+        if (this.currentStep === 0) {
+            this.disablePrevStepButton(true);
+        }
+        
+        // If we're stepping back from end, make sure Next Step button is enabled
+        if (window.dijkstraController && window.astarController) {
+            this.enableNextStepButton();
         }
         
         this.gridView.update();
@@ -310,12 +373,91 @@ class VisualizationController {
     setMode(mode) {
         if (this.isVisualizing) return;
         
+        const previousMode = this.mode;
         this.mode = mode;
+        
+        // If switching from step mode to auto mode, always reset visualizations
+        if (previousMode === 'step' && mode === 'auto') {
+            // Check if the algorithm has completed (current step is at max)
+            const isAlgorithmCompleted = this.currentStep >= this.maxStep;
+            
+            // Reset visualization regardless of completion state
+            this.resetPathVisualization();
+            
+            // Make sure Next Step button is re-enabled for future use
+            if (window.dijkstraController && window.astarController) {
+                this.enableNextStepButton();
+            }
+            
+            // Show toast notification if it was completed
+            if (isAlgorithmCompleted && window.Toast) {
+                window.Toast.info('Visualization reset for auto mode');
+            }
+        }
+        
         this.uiView.updateModeUI(mode);
         
-        // Reset step controls
+        // Reset step controls if entering step mode
         if (mode === 'step') {
             this.uiView.setStepControlsEnabled(false);
+        }
+    }
+
+    /**
+     * Reset only the path visualization, preserving walls and weights
+     */
+    resetPathVisualization() {
+        // Stop any ongoing animations first
+        if (this.gridView) {
+            this.gridView.stopAnimation();
+        }
+        
+        // Reset visualization state flag
+        this.isVisualizing = false;
+        
+        // Re-enable grid interactions
+        if (this.uiView) {
+            this.uiView.setGridInteractionsDisabled(false);
+        }
+        
+        // Reset path in grid (but not walls or weights)
+        if (this.grid) {
+            this.grid.resetPath();
+            
+            // Clear only visited, path, and current flags
+            for (let row = 0; row < this.grid.rows; row++) {
+                for (let col = 0; col < this.grid.cols; col++) {
+                    const node = this.grid.getNode(row, col);
+                    if (node) {
+                        node.isVisited = false;
+                        node.isPath = false;
+                        node.isCurrent = false;
+                        
+                        // Also clear DOM element classes directly for more thorough reset
+                        // This ensures that visual elements are cleared even if grid model is updated
+                        // Get algorithm type safely to determine element ID prefix
+                        const prefix = this.algorithm && this.algorithm instanceof DijkstraAlgorithm ? 'dijkstra' : 'astar';
+                        const nodeElement = document.getElementById(`${prefix}-grid-node-${row}-${col}`);
+                        if (nodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                            nodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Reset algorithm tracking
+        this.currentStep = -1;
+        this.maxStep = -1;
+        this.visitedNodesInOrder = [];
+        this.pathNodesInOrder = [];
+        
+        // Reset stats display
+        this.updateStats(0, 0);
+        
+        // Update the grid view
+        if (this.gridView) {
+            this.gridView.update();
         }
     }
 
@@ -513,5 +655,99 @@ class VisualizationController {
         
         // Reset stats display
         this.updateStats(0, 0);
+    }
+
+    /**
+     * Disable the previous step button
+     * @param {boolean} disable - Whether to disable the button
+     */
+    disablePrevStepButton(disable) {
+        // Desktop controls
+        const prevStepButton = document.getElementById('prev-step-btn');
+        
+        // Mobile controls
+        const mobilePrevStepButton = document.getElementById('prev-step-btn-mobile');
+        const mobileStepMenuPrevButton = document.getElementById('mobile-prev-step');
+        
+        // Set disabled state
+        if (prevStepButton) prevStepButton.disabled = disable;
+        if (mobilePrevStepButton) mobilePrevStepButton.disabled = disable;
+        if (mobileStepMenuPrevButton) mobileStepMenuPrevButton.disabled = disable;
+    }
+
+    /**
+     * Check if both algorithms have finished and disable Next Step button if so
+     */
+    checkIfBothAlgorithmsFinished() {
+        // Get references to both algorithm controllers
+        const dijkstraController = window.dijkstraController;
+        const astarController = window.astarController;
+        
+        // If we have both controllers and both have reached their maximum step
+        if (dijkstraController && astarController) {
+            const dijkstraFinished = dijkstraController.currentStep >= dijkstraController.maxStep && 
+                                     dijkstraController.maxStep >= 0;
+            const astarFinished = astarController.currentStep >= astarController.maxStep && 
+                                  astarController.maxStep >= 0;
+            
+            // If both algorithms have finished, disable the Next Step button
+            if (dijkstraFinished && astarFinished) {
+                // Immediately disable all Next Step buttons
+                this.disableNextStepButton();
+                
+                // Also update the UI state to reflect that we've reached the end
+                if (window.Toast) {
+                    // Show a toast notification only once when both algorithms complete
+                    if (dijkstraController.algorithm instanceof DijkstraAlgorithm) {
+                        if (dijkstraController.pathFound && astarController.pathFound) {
+                            window.Toast.success('Both algorithms have found their paths!');
+                        }
+                    }
+                }
+                
+                // Since both algorithms are finished, we can set isVisualizing to false
+                // to allow new visualizations to start
+                dijkstraController.isVisualizing = false;
+                astarController.isVisualizing = false;
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Disable the next step button
+     */
+    disableNextStepButton() {
+        // Desktop controls
+        const nextStepButton = document.getElementById('next-step-btn');
+        
+        // Mobile controls
+        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+        
+        // Set disabled state
+        if (nextStepButton) nextStepButton.disabled = true;
+        if (mobileNextStepButton) mobileNextStepButton.disabled = true;
+        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+    }
+
+    /**
+     * Enable the next step button
+     */
+    enableNextStepButton() {
+        // Desktop controls
+        const nextStepButton = document.getElementById('next-step-btn');
+        
+        // Mobile controls
+        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+        
+        // Set enabled state
+        if (nextStepButton) nextStepButton.disabled = false;
+        if (mobileNextStepButton) mobileNextStepButton.disabled = false;
+        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = false;
     }
 } 
