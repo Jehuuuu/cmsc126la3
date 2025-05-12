@@ -490,6 +490,51 @@ class UIView {
                 });
             }
         }
+
+        // Mobile toggle controls button event handler
+        const toggleControlsBtn = document.getElementById('toggle-controls-btn');
+        if (toggleControlsBtn) {
+            toggleControlsBtn.addEventListener('click', () => {
+                const collapsibleControls = document.getElementById('collapsible-controls');
+                if (collapsibleControls) {
+                    collapsibleControls.classList.toggle('collapsed');
+                    
+                    // Update button text
+                    if (collapsibleControls.classList.contains('collapsed')) {
+                        toggleControlsBtn.querySelector('.double-arrow').textContent = '⇡⇡';
+                        toggleControlsBtn.setAttribute('aria-expanded', 'false');
+                    } else {
+                        toggleControlsBtn.querySelector('.double-arrow').textContent = '⇣⇣';
+                        toggleControlsBtn.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            });
+        }
+
+        // Delete confirmation modal initialization
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const deleteModalCloseBtn = document.querySelector('#delete-confirmation-modal .close-btn');
+        
+        if (confirmDeleteBtn && cancelDeleteBtn && deleteModalCloseBtn) {
+            // Initial setup of event listeners
+            confirmDeleteBtn.addEventListener('click', () => {
+                const gridNameElement = document.getElementById('grid-to-delete-name');
+                if (gridNameElement) {
+                    const name = gridNameElement.textContent.trim();
+                    this.deleteGrid(name);
+                    this.hideDeleteConfirmationModal();
+                }
+            });
+            
+            cancelDeleteBtn.addEventListener('click', () => {
+                this.hideDeleteConfirmationModal();
+            });
+            
+            deleteModalCloseBtn.addEventListener('click', () => {
+                this.hideDeleteConfirmationModal();
+            });
+        }
     }
 
     /**
@@ -771,9 +816,7 @@ class UIView {
                 deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
                 deleteButton.addEventListener('click', (e) => {
                     e.stopPropagation(); // Prevent triggering the parent's click
-                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                        this.deleteGrid(name);
-                    }
+                    this.showDeleteConfirmationModal(name);
                 });
                 
                 gridActions.appendChild(deleteButton);
@@ -929,6 +972,78 @@ class UIView {
         
         // Return true only if both have finished
         return dijkstraFinished && astarFinished;
+    }
+
+    /**
+     * Show the delete confirmation modal
+     * @param {string} name - The name of the grid to delete
+     */
+    showDeleteConfirmationModal(name) {
+        const modal = document.getElementById('delete-confirmation-modal');
+        const gridNameElement = document.getElementById('grid-to-delete-name');
+        
+        if (modal && gridNameElement) {
+            // Store the grid name to delete
+            gridNameElement.textContent = name;
+            modal.style.display = 'block';
+            
+            // Add event listeners for the confirm and cancel buttons
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+            const closeBtn = modal.querySelector('.close-btn');
+            
+            // Remove any existing event listeners to prevent duplicates
+            if (confirmDeleteBtn._listener) {
+                confirmDeleteBtn.removeEventListener('click', confirmDeleteBtn._listener);
+            }
+            if (cancelDeleteBtn._listener) {
+                cancelDeleteBtn.removeEventListener('click', cancelDeleteBtn._listener);
+            }
+            if (closeBtn._listener) {
+                closeBtn.removeEventListener('click', closeBtn._listener);
+            }
+            
+            // Create listeners
+            confirmDeleteBtn._listener = () => {
+                this.deleteGrid(name);
+                this.hideDeleteConfirmationModal();
+            };
+            
+            cancelDeleteBtn._listener = closeBtn._listener = () => {
+                this.hideDeleteConfirmationModal();
+            };
+            
+            // Add the event listeners
+            confirmDeleteBtn.addEventListener('click', confirmDeleteBtn._listener);
+            cancelDeleteBtn.addEventListener('click', cancelDeleteBtn._listener);
+            closeBtn.addEventListener('click', closeBtn._listener);
+        }
+    }
+
+    /**
+     * Hide the delete confirmation modal
+     */
+    hideDeleteConfirmationModal() {
+        const modal = document.getElementById('delete-confirmation-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    /**
+     * Handle the delete confirmation
+     */
+    handleDeleteConfirmation() {
+        const modal = document.getElementById('delete-confirmation-modal');
+        const gridName = document.getElementById('grid-name');
+        
+        if (modal && gridName) {
+            const name = gridName.textContent.trim();
+            
+            if (this.deleteGrid(name)) {
+                this.hideDeleteConfirmationModal();
+            }
+        }
     }
 }
 

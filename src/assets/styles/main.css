@@ -461,8 +461,9 @@ select {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(100% - 40px); /* Reduced height reserved for footer */
+        height: calc(100% - 55px); /* Increased space for footer to prevent cutoff */
         overflow: hidden; /* Prevent overflow */
+        margin-top: -5px; /* Move grid up slightly to compensate */
     }
     
     /* Ensure algorithm header is well-spaced */
@@ -477,7 +478,7 @@ select {
     
     /* Ensure the path info has proper spacing */
     .path-info {
-        margin-top: 0.2rem; /* Reduced from 0.3rem */
+        margin-top: 0.1rem; /* Further reduced margin */
         border-radius: 4px;
         border: 1px solid rgba(255, 255, 255, 0.2);
         background-color: rgba(0, 0, 0, 0.6);
@@ -538,7 +539,7 @@ select {
 @media (min-width: 769px) {
     .algorithm-container {
         min-width: 0;
-        padding: 0.35rem; /* Reduced from 0.4rem */
+        padding: 0.25rem; /* Further reduced padding */
         transform: scale(0.95); /* Slightly reduce size to prevent cutoff */
         transform-origin: center;
     }
@@ -683,9 +684,9 @@ select {
 /* Path info section */
 .path-info {
     flex-shrink: 0;
-    padding: 6px 10px;
-    font-size: 1.1rem;
-    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 1.3rem;
+    min-height: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -695,6 +696,7 @@ select {
     color: white;
     text-shadow: 1px 1px 0 #000;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .path-info p {
@@ -705,18 +707,43 @@ select {
 }
 
 .path-info p i {
-    margin-right: 8px;
-    color: var(--minecraft-gold);
-    font-size: 1.2rem;
+    margin-right: 10px;
+    font-size: 1.4rem;
+}
+
+/* Add specific styling for the stats and values */
+.path-info span {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-size: 1.5rem;
+}
+
+/* Algorithm-specific path info styling */
+.dijkstra-container .path-info i {
+    color: var(--dijkstra-color);
+}
+
+.dijkstra-container .path-info span {
+    color: var(--dijkstra-color);
+}
+
+.astar-container .path-info i {
+    color: var(--astar-color);
+}
+
+.astar-container .path-info span {
+    color: var(--astar-color);
 }
 
 /* Desktop specific path info styling */
 @media (min-width: 769px) {
     .path-info {
         flex-shrink: 0;
-        padding: 8px 12px;
-        font-size: 1.1rem;
-        min-height: 40px;
+        padding: 10px 15px;
+        font-size: 1.2rem;
+        min-height: 52px;
         display: flex;
         align-items: center;
         margin-top: 0.25rem;
@@ -733,8 +760,13 @@ select {
     }
     
     .path-info p i {
-        margin-right: 8px;
-        font-size: 1.2rem;
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+    
+    .path-info span {
+        padding: 3px 10px;
+        font-size: 1.6rem;
     }
 }
 
@@ -899,13 +931,14 @@ select {
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
     height: auto;
-    padding: 5px 0;
+    padding: 1px 0; /* Minimal padding */
+    line-height: 1.1;
 }
 
 .algorithm-header h2 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin: 0;
     font-weight: bold;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
@@ -1041,9 +1074,18 @@ select {
     
     /* Mobile path-info adjustments */
     .path-info {
-        font-size: 1rem;
-        padding: 5px 8px;
-        min-height: 36px;
+        font-size: 1.05rem;
+        padding: 6px 10px;
+        min-height: 40px;
+    }
+    
+    .path-info span {
+        font-size: 1.2rem;
+        padding: 2px 6px;
+    }
+    
+    .path-info p i {
+        font-size: 1.2rem;
     }
     
     /* Mobile algorithm header adjustments */
@@ -1863,5 +1905,37 @@ button.touch-active {
 @media (max-width: 768px) {
     .mobile-hidden {
         display: none !important;
+    }
+}
+
+/* GitHub Button Styles */
+.github-section {
+    margin-top: auto;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.github-btn {
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+    background-color: #333;
+    border-color: var(--minecraft-gold);
+}
+
+.github-btn:hover {
+    background-color: #444;
+    transform: scale(1.05);
+    border-color: var(--minecraft-gold);
+}
+
+.github-btn i {
+    margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+    .github-section {
+        padding-bottom: 10px;
     }
 } 
