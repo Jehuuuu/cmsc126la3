@@ -78,6 +78,8 @@ class Grid {
         if (node) {
             node.isStart = true;
             node.isWall = false; // Ensure start node is not a wall
+            node.isWeighted = false; // Also ensure it's not weighted
+            node.weight = 1; // Reset to default weight
             if (node === this.endNode) {
                 this.endNode = null; // Clear end node if it's the same as start
             }
@@ -98,6 +100,8 @@ class Grid {
         if (node) {
             node.isEnd = true;
             node.isWall = false; // Ensure end node is not a wall
+            node.isWeighted = false; // Also ensure it's not weighted
+            node.weight = 1; // Reset to default weight
             if (node === this.startNode) {
                 this.startNode = null; // Clear start node if it's the same as end
             }
@@ -114,6 +118,12 @@ class Grid {
         const node = this.getNode(row, col);
         if (node && !node.isStart && !node.isEnd) {
             node.isWall = !node.isWall;
+            
+            // If toggling to a wall, clear weighted status
+            if (node.isWall) {
+                node.isWeighted = false;
+                node.weight = 1;
+            }
         }
     }
 
@@ -127,6 +137,12 @@ class Grid {
         const node = this.getNode(row, col);
         if (node && !node.isStart && !node.isEnd) {
             node.isWall = isWall;
+            
+            // If setting to a wall, clear weighted status
+            if (isWall) {
+                node.isWeighted = false;
+                node.weight = 1;
+            }
         }
     }
 
