@@ -5,7 +5,7 @@
   
   ### Compare Dijkstra's Algorithm vs A* in real-time!
   
-  [View Demo](https://jehuuuu.github.io/cmsc126le3/) | [GitHub Repository](https://github.com/Jehuuuu/cmsc126le3)
+  [View Demo](https://cs126le3.vercel.app/) | [GitHub Repository](https://github.com/Jehuuuu/cmsc126le3)
 </div>
 
 ---
@@ -46,13 +46,6 @@
 - [x] Keyboard shortcuts for faster interaction
 - [x] Mobile support with touch controls
 - [x] Interactive help modal
-
-### Fixed Issues
-- [x] Proper visualization reset when switching from step-by-step to auto mode
-- [x] Consistent algorithm container border colors when swapping
-- [x] Proper notification when step-by-step mode completes
-- [x] Superior drag for start/end nodes (replacing walls AND weighted nodes)
-- [x] Centered and properly sized help modal
 
 ---
 
@@ -96,6 +89,21 @@
 | **Clear Grid** | Reset the entire grid | `C` |
 | **Help** | Show detailed instructions | `H` |
 
+### Randomization Tools
+| Tool | Description | Shortcut |
+|------|-------------|----------|
+| **Random Maze** | Generate a random maze pattern | `R` |
+| **Random Weights** | Add random weighted nodes | - |
+| **Random Start/End** | Randomly place start and end points | - |
+
+### Grid Management
+| Tool | Description |
+|------|-------------|
+| **Save Grid** | Save the current grid configuration to local storage |
+| **Load Grid** | Load previously saved grid configurations |
+| **Delete Grid** | Remove a saved grid from storage |
+| **Swap Algorithms** | Swap the position of Dijkstra's and A* containers to compare different scenarios |
+
 ---
 
 ## 💡 Algorithm Comparison
@@ -127,11 +135,18 @@
 │   │
 │   ├── assets/                 # Static assets
 │   │   ├── images/             # Images and icons
-│   │   └── styles/             # CSS files
+│   │   │  
+│   │   │
+│   │   │
+│   │   │  
+│   │   │
+│   │   └── styles/             # CSS stylesheets
 │   │       ├── main.css        # Main styling
-│   │       ├── sidebar.css     # Sidebar styling
+│   │       ├── sidebar.css     # Sidebar navigation
 │   │       ├── modals.css      # Modal windows styling
-│   │       └── ...
+│   │       ├── floating-buttons.css # Floating action buttons
+│   │       ├── overlays.css    # Overlay elements
+│   │       └── tileset-grid.css # Grid and node styling
 │   │
 │   ├── controllers/            # Control logic
 │   │   ├── GameController.js   # Main game controller
@@ -150,11 +165,13 @@
 │   │   ├── GridView.js         # Grid view/rendering
 │   │   └── UIView.js           # User interface elements
 │   │
-│   └── index.js                # Main entry point
+│   └── index.js                # Main application entry point
 │
 ├── index.html                  # Main HTML file
-├── README.md                   # Documentation
-└── Lab Activity 3.md           # Assignment details
+├── index.js                    # Root JavaScript file
+├── package.json                # Project metadata and scripts
+├── vercel.json                 # Vercel deployment configuration
+└── README.md                   # Project documentation
 ```
 
 ## 🛠️ Technical Implementation
@@ -200,5 +217,5 @@ The visualizer is fully responsive and works on mobile devices with touch contro
 
 <div align="center">
   <p>Created for CMSC 126 Web Engineering Lab Activity 3</p>
-  <p>By: Jehu Garcia © 2023</p>
+  <p>By: Kenz Jehu C. Barina <p>
 </div> 
