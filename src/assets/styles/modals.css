@@ -32,9 +32,15 @@
 
 /* Help modal - wider content */
 #help-modal .modal-content {
-    width: 1500px; /* Wider content */
-    max-height: 100%;
+    width: 800px; /* More reasonable width */
+    max-height: 80vh; /* Not too tall */
     overflow-y: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0; /* Override the default margin */
+    z-index: 1100; /* Ensure it's above everything */
 }
 
 #help-modal .modal-content h2 {
@@ -333,6 +339,10 @@
     #help-modal .modal-content {
         width: 95%;
         max-height: 85vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
     }
 }
 
