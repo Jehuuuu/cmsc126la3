@@ -1,0 +1,327 @@
+/* Sidebar CSS for desktop view */
+
+/* Main layout container */
+.app-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    min-width: 240px;
+    background-color: #1a0e0e; /* Darker reddish-brown to match logo background */
+    border-right: 4px solid var(--minecraft-dirt);
+    padding: 0.5rem; /* Reduced from 0.8rem */
+    position: fixed; /* Fixed position instead of absolute */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100; /* Ensure it stays above other content */
+    /* Remove transform property */
+    /* Add custom scrollbar styling */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: var(--minecraft-gold) rgba(0, 0, 0, 0.3); /* For Firefox */
+}
+
+/* Custom scrollbar styling for WebKit browsers (Chrome, Safari, newer Edge) */
+.sidebar::-webkit-scrollbar {
+    width: 10px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--minecraft-gold);
+    border-radius: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #ffcc33;
+}
+
+/* Remove toggle button styles */
+
+/* Remove collapsed sidebar styles */
+
+/* Main content wrapper - fixed margin for sidebar */
+.main-content-wrapper {
+    flex: 1;
+    padding: 0.75rem;
+    margin-left: 240px; /* Fixed margin for sidebar width */
+    width: calc(100% - 240px); /* Fixed width accounting for sidebar */
+    box-sizing: border-box;
+    /* Remove transitions */
+}
+
+/* For screens smaller than 768px (mobile) */
+@media (max-width: 768px) {
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* Adjust header */
+.sidebar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.8rem; /* Reduced from 1.5rem */
+    position: relative;
+    padding-right: 10px;
+}
+
+/* Sidebar sections */
+.sidebar-section {
+    margin-bottom: 0.5rem; /* Reduced from 0.7rem */
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 0.4rem; /* Reduced from 0.5rem */
+    border: 1px solid rgba(100, 60, 60, 0.3); /* Thinner border */
+}
+
+.sidebar-section-title {
+    font-size: 0.95rem; /* Reduced from 1.1rem */
+    margin-top: 0;
+    margin-bottom: 0.3rem; /* Reduced from 0.4rem */
+    color: var(--minecraft-gold);
+    text-shadow: 1px 1px 0 #000;
+    text-align: center;
+    border-bottom: 1px solid rgba(168, 102, 50, 0.4); /* Reddish-brown to match theme */
+    padding-bottom: 0.2rem; /* Reduced from 0.3rem */
+}
+
+/* Controls in sidebar */
+.sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem; /* Reduced from 0.8rem */
+}
+
+/* Horizontal controls styling - increased specificity */
+.sidebar-controls.horizontal-controls {
+    gap: 0.25rem; /* Tighter spacing */
+}
+
+.sidebar-controls.horizontal-controls .control-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 28px;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar-controls.horizontal-controls .control-group label {
+    width: 50px; /* Fixed width for labels */
+    font-size: 0.85rem;
+    text-align: right;
+    padding-right: 8px;
+    color: var(--minecraft-gold);
+    flex-shrink: 0;
+    margin-right: 0;
+    white-space: nowrap;
+}
+
+.sidebar-controls.horizontal-controls .control-group select {
+    flex-grow: 1;
+    min-height: 26px;
+    font-size: 0.85rem;
+    padding: 2px 5px;
+    background-color: var(--minecraft-dirt);
+    border: 1px solid #000;
+    color: white;
+    border-radius: 3px;
+    width: 0; /* This forces the select to shrink */
+    min-width: 70px;
+}
+
+/* Style for truncating text */
+.truncate-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%; /* Ensure the width is constrained */
+}
+
+.truncate-text option {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Fix for select element text display - increased specificity */
+.sidebar-controls.horizontal-controls .control-group select.truncate-text {
+    appearance: none; /* Remove default browser styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffd700' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 5px) center;
+    padding-right: 24px; /* Space for custom dropdown arrow */
+}
+
+/* Hide browser dropdown indicator */
+.sidebar-controls.horizontal-controls .control-group select.truncate-text::-ms-expand {
+    display: none;
+}
+
+/* Additional Edge/IE specific fix */
+@supports (-ms-ime-align:auto) {
+    .sidebar-controls.horizontal-controls .control-group select.truncate-text {
+        padding-right: 0; /* Reset padding for Edge */
+        background-image: none; /* Remove custom arrow for Edge */
+    }
+}
+
+/* Compact controls specific styling */
+.compact-controls {
+    gap: 0.25rem; /* Even tighter spacing between control groups */
+}
+
+.compact-controls .control-group {
+    height: 28px; /* Fixed height for each control group */
+}
+
+.sidebar-controls .control-group {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-controls .control-group label {
+    width: 45px; /* Smaller fixed width for labels */
+    font-size: 0.85rem;
+    margin-right: 0.3rem;
+    white-space: nowrap;
+}
+
+.sidebar-controls .control-group select {
+    flex: 1;
+    min-height: 26px; /* Slightly smaller height */
+    padding: 0.15rem 0.3rem;
+    font-size: 0.85rem;
+    border-radius: 3px;
+    background-color: var(--minecraft-dirt);
+    border: 1px solid #000;
+    color: white;
+}
+
+/* Tools in sidebar */
+.sidebar-tools, .sidebar-randomizers, .sidebar-save-load, .sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem; /* Reduced from 0.6rem */
+}
+
+/* Compact tools styling */
+.compact-tools {
+    gap: 0.3rem; /* Even tighter spacing */
+}
+
+.compact-tools .tool-btn,
+.compact-tools .randomizer-btn,
+.compact-tools .action-btn {
+    min-height: 28px; /* Smaller height */
+    padding: 3px 6px; /* Smaller padding */
+    font-size: 0.8rem; /* Smaller font */
+}
+
+.compact-tools .step-controls {
+    gap: 0.25rem; /* Tighter spacing for step controls */
+    margin-top: 0.3rem; /* Less margin */
+}
+
+.sidebar-tools .tool-btn, 
+.sidebar-randomizers .randomizer-btn, 
+.sidebar-save-load .randomizer-btn, 
+.sidebar-actions .action-btn {
+    width: 100%;
+    margin: 0;
+    min-height: 30px; /* Reduced from 34px */
+    padding: 4px 6px; /* Reduced from 6px 8px */
+    font-size: 0.9rem; /* Reduced from 0.95rem */
+}
+
+/* Step controls */
+.step-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem; /* Reduced from 0.8rem */
+    margin-top: 0.4rem; /* Reduced from 0.8rem */
+}
+
+/* Desktop header in main content */
+.desktop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    border: 2px solid var(--minecraft-dirt);
+    height: 32px; /* Fixed height for consistency */
+    overflow: hidden;
+}
+
+.desktop-header .subtitle {
+    margin: 0;
+    flex: 1;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.desktop-header .help-btn {
+    position: static;
+    transform: none;
+    margin-left: 0.5rem;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* Hide desktop elements on mobile */
+@media (max-width: 768px) {
+    .sidebar, .desktop-header {
+        display: none;
+    }
+    
+    .app-container {
+        flex-direction: column;
+    }
+    
+    .main-content-wrapper {
+        padding: 0;
+    }
+}
+
+/* Hide mobile elements on desktop */
+@media (min-width: 769px) {
+    .mobile-only-header {
+        display: none;
+    }
+}
+
+/* Logo container and image styles */
+.logo-container {
+    max-width: 180px;
+    overflow: hidden;
+}
+
+.app-logo {
+    max-width: 100%;
+    height: auto;
+    display: block;
+} 

@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up the mobile controls toggle
     setupMobileControlsToggle();
     
+    // Set up the desktop sidebar toggle
+    setupSidebarToggle();
+    
     // Create the grid models
     const defaultSize = 10;
     const dijkstraGrid = new Grid(defaultSize, defaultSize);
@@ -435,9 +438,11 @@ function setupStepByStepMenu() {
     if (mobileStepRunBtn) {
         mobileStepRunBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            // Trigger both algorithms to run
-            if (window.dijkstraController) window.dijkstraController.startVisualization();
-            if (window.astarController) window.astarController.startVisualization();
+            // Trigger both algorithms to run in parallel
+            Promise.all([
+                window.dijkstraController ? window.dijkstraController.startVisualization() : Promise.resolve(),
+                window.astarController ? window.astarController.startVisualization() : Promise.resolve()
+            ]);
             
             // Show visual feedback
             mobileStepRunBtn.classList.add('touch-active');
@@ -865,10 +870,9 @@ function toggleHelpModal(show) {
  */
 function setupSwapButtons() {
     const algorithmComparison = document.querySelector('.algorithm-comparison');
-    const swapDijkstraBtn = document.getElementById('swap-dijkstra-btn');
-    const swapAstarBtn = document.getElementById('swap-astar-btn');
+    const centerSwapBtn = document.getElementById('center-swap-btn');
     
-    if (algorithmComparison && swapDijkstraBtn && swapAstarBtn) {
+    if (algorithmComparison && centerSwapBtn) {
         const swapAlgorithms = () => {
             // Get the algorithm containers
             const containers = algorithmComparison.querySelectorAll('.algorithm-container');
@@ -885,8 +889,49 @@ function setupSwapButtons() {
             }
         };
         
-        // Add click handlers for both swap buttons
-        swapDijkstraBtn.addEventListener('click', swapAlgorithms);
-        swapAstarBtn.addEventListener('click', swapAlgorithms);
+        // Add click handler for center swap button
+        centerSwapBtn.addEventListener('click', swapAlgorithms);
+    }
+}
+
+/**
+ * Set up the desktop sidebar toggle
+ */
+function setupSidebarToggle() {
+    const sidebarToggleBtn = document.getElementById('toggle-sidebar-btn');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggleBtn && sidebar) {
+        // Initially collapse sidebar on mobile, expand on desktop
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            sidebar.classList.add('collapsed');
+            sidebarToggleBtn.setAttribute('aria-expanded', 'false');
+        } else {
+            // On desktop, always show sidebar content
+            sidebar.classList.remove('collapsed');
+            sidebarToggleBtn.setAttribute('aria-expanded', 'true');
+        }
+        
+        // Toggle sidebar when button is clicked
+        sidebarToggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            
+            // Toggle active state for the button
+            sidebarToggleBtn.classList.toggle('active');
+            
+            // Announce state change for accessibility
+            const isExpanded = !sidebar.classList.contains('collapsed');
+            sidebarToggleBtn.setAttribute('aria-expanded', isExpanded.toString());
+            
+            // If collapsed, scroll to ensure grid is visible
+            if (!isExpanded && window.matchMedia("(max-width: 768px)").matches) {
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    setTimeout(() => {
+                        mainContent.scrollIntoView({ behavior: 'smooth' });
+                    }, 300); // Wait for collapse animation
+                }
+            }
+        });
     }
 } 

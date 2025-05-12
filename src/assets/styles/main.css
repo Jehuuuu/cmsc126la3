@@ -49,7 +49,7 @@
 body {
     font-family: 'Pixelify Sans', sans-serif;
     line-height: 1.6;
-    background-color: var(--minecraft-stone);
+    background-color: #1a0e0e; /* Match sidebar background color */
     color: #fff;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AkEBhwY1uQEBAAAAVlJREFUaN7tmMENwjAMReUmjMAIHYER2IAj3JiADRiBEToCG8AGZQRGyJGTUSulJI4TN/ZfchWK0vcbJ66doVLKqvHi/NKyDm+dXkaRvO/7LgXkDEhe8GSQtGATDJIYsgkCSQW2ZJCsA8CNGRx1R6aUpEhJLHVQI7K3mqT3hqQxUkNSSE1JJzUmldSQdFJh0kglSSMVJoVUkhRSaeJJDYkl9SSG1JRQUlcCSX0JIg0liLRE8prQcUhqK0AUSaM8YaY2kgbzHBLzXMX8boL53Unzkw/NrdqUbFLcHjB3QUzeojE3lMxtcLNOGZjbQmsdczAaQzgaizhSizBikzBymzBCpwgjeIsworcII3yLMOK7CGMILcKYSoswxtYijLm2CGOQLcKYbYswhtwFjJHTB1BHBCzFbdurVlQoIkuMMWAeVyCo4DGqQRDB41SDIIJrqQJBBNdXEgQRPFc5QGzBsxYT4gsgjOBe+wHddtk+c8R3eQAAAABJRU5ErkJggg==');
     image-rendering: pixelated;
@@ -65,7 +65,7 @@ body {
 header {
     text-align: center;
     margin-bottom: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(26, 14, 14, 0.9); /* Match sidebar background color */
     padding: 1rem;
     border: 4px solid var(--minecraft-dirt);
     border-radius: 5px;
@@ -94,101 +94,31 @@ header {
     text-align: center;
 }
 
+/* Adjust help button styling */
 .help-btn {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
+    position: relative;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background-color: var(--minecraft-gold);
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     border: 2px solid #000;
-    margin-left: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .help-btn:hover {
     background-color: #ffcc00;
-    transform: translateY(-50%) scale(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(3px);
-}
-
-.modal-content {
-    background-color: var(--minecraft-stone);
-    margin: 5% auto;
-    padding: 20px;
-    border: 4px solid var(--minecraft-dirt);
-    border-radius: 5px;
-    width: 80%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    position: relative;
-}
-
-.close-btn {
-    color: var(--minecraft-gold);
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    color: #ffcc00;
-}
-
-.help-content {
-    margin-top: 20px;
-    text-align: left;
-}
-
-.help-content h3 {
-    color: var(--minecraft-gold);
-    margin-top: 15px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid var(--minecraft-dirt);
-    padding-bottom: 5px;
-}
-
-.help-content ul {
-    list-style-type: square;
-    margin-left: 20px;
-    margin-bottom: 15px;
-}
-
-.help-content li {
-    margin-bottom: 8px;
-}
-
-.help-content strong {
-    color: var(--minecraft-sky);
-}
+/* Help content and app description styles are now in modals.css */
 
 main {
     margin-bottom: 1.5rem;
@@ -420,12 +350,169 @@ select {
     opacity: 0.7;
 }
 
-/* Algorithm comparison layout */
+/* Algorithm comparison layout - adjust for sidebar layout */
 .algorithm-comparison {
     display: flex;
-    gap: 20px;
+    gap: 15px; /* Reduced from 20px */
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    position: relative; /* Add position relative for positioning the center swap button */
+}
+
+/* New centered swap button style */
+.center-swap-btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--minecraft-gold);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 3px solid #000;
+    padding: 0;
+}
+
+.center-swap-btn:hover {
+    background-color: #ffcc00;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.center-swap-btn:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+/* Remove the individual swap buttons */
+.swap-btn {
+    display: none !important;
+}
+
+/* Mobile styles for center swap button */
+@media (max-width: 768px) {
+    .center-swap-btn {
+        top: auto;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .center-swap-btn:hover {
+        transform: translateX(-50%) scale(1.1);
+    }
+    
+    .center-swap-btn:active {
+        transform: translateX(-50%) scale(0.95);
+    }
+}
+
+/* Desktop layout with sidebar */
+@media (min-width: 769px) {
+    .main-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* Full viewport height */
+        overflow: hidden; /* Prevent scrolling */
+        /* Remove width/margin properties to avoid conflicts with sidebar.css */
+    }
+    
+    .algorithm-comparison {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 15px;
+        flex: 1;
+        overflow: hidden; /* Prevent overflow */
+        min-height: 0; /* Allow shrinking below content size */
+        height: calc(100vh - 60px); /* Adjusted for floating buttons */
+    }
+    
+    .algorithm-container {
+        flex: 1;
+        min-width: 0; /* Allow containers to shrink below content size */
+        max-width: 50%;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%; /* Limit to available space */
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    .main-content {
+        min-height: 0; /* Allow content to shrink */
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    /* Ensure grid container takes exactly the right amount of space */
+    .grid-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(100% - 40px); /* Reduced height reserved for footer */
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    /* Ensure algorithm header is well-spaced */
+    .algorithm-header {
+        margin-bottom: 0.2rem;
+        height: 28px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Ensure the path info has proper spacing */
+    .path-info {
+        margin-top: 0.2rem; /* Reduced from 0.3rem */
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Make grid a perfect square based on available height */
+    .grid {
+        width: auto;
+        height: 90%; /* Reduced from calc(100% - 5px) */
+        max-width: 90%; /* Reduced from 100% */
+        max-height: 90%; /* Reduced from 100% */
+        aspect-ratio: 1/1;
+        z-index: 10; /* Ensure grid is on top */
+    }
+    
+    /* Path info at bottom, keep small */
+    .path-info {
+        flex-shrink: 0;
+        padding: 2px 8px; /* Reduced vertical padding */
+        font-size: 0.8rem; /* Reduced from 0.85rem */
+        min-height: 30px; /* Reduced from 34px */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.2rem; /* Reduced from 0.3rem */
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* Mobile layout - already stacking algorithm containers */
+@media (max-width: 768px) {
+    .algorithm-comparison {
+        flex-direction: column;
+    }
+    
+    .algorithm-container {
+        width: 100%;
+    }
 }
 
 .algorithm-container {
@@ -433,9 +520,41 @@ select {
     min-width: 300px;
     border: 4px solid #000;
     border-radius: 0;
-    padding: 1rem;
-    background-color: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem; /* Reduced from 0.75rem */
+    background-color: rgba(26, 14, 14, 0.9); /* Match sidebar background color */
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); /* Match sidebar animation */
+}
+
+/* Desktop specific container adjustments */
+@media (min-width: 769px) {
+    .algorithm-container {
+        min-width: 0;
+        padding: 0.35rem; /* Reduced from 0.4rem */
+        transform: scale(0.95); /* Slightly reduce size to prevent cutoff */
+        transform-origin: center;
+    }
+    
+    .algorithm-header {
+        margin-bottom: 0.2rem;
+        height: 25px; /* Reduced from 28px */
+    }
+    
+    .algorithm-header h2 {
+        font-size: 1.1rem; /* Reduced from 1.2rem */
+        margin: 0;
+    }
+    
+    .path-info {
+        font-size: 0.8rem; /* Reduced from 0.85rem */
+        padding: 2px 4px; /* Reduced from 4px */
+        height: 22px; /* Reduced from 24px */
+        margin-top: 0.2rem; /* Reduced from 0.2rem */
+    }
 }
 
 .algorithm-container:first-child {
@@ -447,13 +566,17 @@ select {
 }
 
 .main-content {
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    overflow: hidden;
 }
 
 .grid-container {
-    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .grid {
@@ -465,6 +588,7 @@ select {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
+    width: 100%;
 }
 
 .grid::before {
@@ -554,19 +678,60 @@ select {
 
 /* Path info section */
 .path-info {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 1.1rem;
+    min-height: 38px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 8px;
-    border: 2px solid #000;
-    border-radius: 0;
+    margin-top: 0.3rem;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    font-size: 1.2rem;
     text-shadow: 1px 1px 0 #000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .path-info p {
     margin: 0;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.path-info p i {
+    margin-right: 8px;
+    color: var(--minecraft-gold);
+    font-size: 1.2rem;
+}
+
+/* Desktop specific path info styling */
+@media (min-width: 769px) {
+    .path-info {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        font-size: 1.1rem;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        margin-top: 0.25rem;
+        justify-content: space-between;
+    }
+    
+    .path-info p {
+        margin: 0;
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+    
+    .path-info p i {
+        margin-right: 8px;
+        font-size: 1.2rem;
+    }
 }
 
 /* Alternative path section */
@@ -730,38 +895,108 @@ select {
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
+    height: auto;
+    padding: 5px 0;
 }
 
-/* Swap button styling */
-.swap-btn {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background-color: var(--minecraft-gold);
-    font-size: 0.9rem;
+.algorithm-header h2 {
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Mobile step controls styling */
+.mobile-step-controls {
+    width: 100%;
+    margin-top: 8px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    border: 2px solid #000;
-    padding: 0;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.swap-btn:hover {
-    background-color: #ffcc00;
-    transform: translateY(-50%) scale(1.1);
+.tool-menu-item.step-btn {
+    background-color: var(--minecraft-sky);
 }
 
-.swap-btn:active {
-    transform: translateY(-50%) scale(0.95);
+.tool-menu-item.step-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.tool-menu-item.step-btn:not(:disabled):hover {
+    background-color: #67a4c1;
+    transform: scale(1.02);
+}
+
+.tool-menu-item.run-btn {
+    background-color: var(--minecraft-green);
+}
+
+.tool-menu-item.run-btn:hover {
+    background-color: #4a9c27;
+    transform: scale(1.02);
+}
+
+/* Hide mobile step controls on desktop */
+@media (min-width: 769px) {
+    .mobile-step-controls {
+        display: none;
+    }
+}
+
+/* Step by step menu */
+.step-by-step-menu {
+    display: none;
+    position: fixed;
+    width: 220px;
+    height: auto;
+    bottom: 170px;
+    right: 90px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 3px solid var(--minecraft-sky);
+    z-index: 89;
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: right center;
+    transform: translateX(20px);
+    opacity: 0;
+    padding: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.step-by-step-menu.visible {
+    display: block;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.mini-action-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.drawing-tools-btn.active {
+    background-color: #ffcc33;
+    color: #333;
+    box-shadow: 0 0 15px rgba(255, 204, 51, 0.7);
+    transform: scale(1.1);
+}
+
+.random-features-btn.active {
+    background-color: #6f4e37;
+    box-shadow: 0 0 15px rgba(111, 78, 55, 0.7);
+    transform: scale(1.1);
+}
+
+.mini-action-btn:hover, .drawing-tools-btn:hover, .random-features-btn:hover, .step-by-step-btn:hover {
+    transform: scale(1.1);
+}
+
+.drawing-tools-btn:active, .random-features-btn:active, .step-by-step-btn:active {
+    transform: scale(0.95);
 }
 
 /* Mobile styles for the reorganized header */
@@ -798,6 +1033,18 @@ select {
     /* Make sure Clear Grid button is visible on mobile */
     #clear-grid-btn {
         display: flex !important;
+    }
+    
+    /* Mobile path-info adjustments */
+    .path-info {
+        font-size: 1rem;
+        padding: 5px 8px;
+        min-height: 36px;
+    }
+    
+    /* Mobile algorithm header adjustments */
+    .algorithm-header h2 {
+        font-size: 1.3rem;
     }
 }
 
@@ -1345,98 +1592,6 @@ button.touch-active {
     }
 }
 
-/* Mobile step controls styling */
-.mobile-step-controls {
-    width: 100%;
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.tool-menu-item.step-btn {
-    background-color: var(--minecraft-sky);
-}
-
-.tool-menu-item.step-btn:disabled {
-    background-color: #555;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.tool-menu-item.step-btn:not(:disabled):hover {
-    background-color: #67a4c1;
-    transform: scale(1.02);
-}
-
-.tool-menu-item.run-btn {
-    background-color: var(--minecraft-green);
-}
-
-.tool-menu-item.run-btn:hover {
-    background-color: #4a9c27;
-    transform: scale(1.02);
-}
-
-/* Hide mobile step controls on desktop */
-@media (min-width: 769px) {
-    .mobile-step-controls {
-        display: none;
-    }
-}
-
-/* Step by step menu */
-.step-by-step-menu {
-    display: none;
-    position: fixed;
-    width: 220px;
-    height: auto;
-    bottom: 170px;
-    right: 90px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 15px;
-    border: 3px solid var(--minecraft-sky);
-    z-index: 89;
-    transition: transform 0.3s, opacity 0.3s;
-    transform-origin: right center;
-    transform: translateX(20px);
-    opacity: 0;
-    padding: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-}
-
-.step-by-step-menu.visible {
-    display: block;
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.mini-action-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.drawing-tools-btn.active {
-    background-color: #ffcc33;
-    color: #333;
-    box-shadow: 0 0 15px rgba(255, 204, 51, 0.7);
-    transform: scale(1.1);
-}
-
-.random-features-btn.active {
-    background-color: #6f4e37;
-    box-shadow: 0 0 15px rgba(111, 78, 55, 0.7);
-    transform: scale(1.1);
-}
-
-.mini-action-btn:hover, .drawing-tools-btn:hover, .random-features-btn:hover, .step-by-step-btn:hover {
-    transform: scale(1.1);
-}
-
-.drawing-tools-btn:active, .random-features-btn:active, .step-by-step-btn:active {
-    transform: scale(0.95);
-}
-
 /* Mobile floating action buttons display rule */
 @media (max-width: 768px) {
     .mini-action-btn, .drawing-tools-btn, .random-features-btn {
@@ -1450,49 +1605,7 @@ button.touch-active {
     }
 }
 
-/* Specialized styling for the weight input modal */
-#weight-modal .modal-content {
-    width: 250px;
-    max-width: 90%;
-    padding: 15px;
-}
-
-#weight-modal h3 {
-    margin-top: 0;
-    font-size: 16px;
-}
-
-#weight-modal p {
-    margin: 8px 0;
-    font-size: 14px;
-}
-
-#weight-modal input {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#weight-modal .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
-#weight-modal button {
-    padding: 6px 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#weight-modal #cancel-weight-btn {
-    background-color: #f44336;
-}
+/* Weight modal styles are now in modals.css */
 
 /* Section titles for tool groups */
 .section-title {
@@ -1567,62 +1680,91 @@ button.touch-active {
     justify-content: space-evenly;
 }
 
-/* Saved grids list styles */
-.saved-grids-list {
-    max-height: 300px;
-    overflow-y: auto;
-    margin: 15px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.9);
+/* Saved grid list styles are now in modals.css */
+
+/* Logo styling for mobile header */
+.app-logo-mobile {
+    max-height: 36px;
+    width: auto;
+    display: block;
 }
 
-.grid-item {
+.title-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    max-width: calc(100% - 50px);
+}
+
+/* Desktop header in main content */
+.desktop-header {
+    display: none; /* Don't display the old header */
+}
+
+/* Header actions container */
+.header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+/* Header button styling */
+.header-btn {
+    min-height: 30px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    background-color: var(--minecraft-dirt);
+    border: 2px solid #000;
+    color: white;
+    display: flex;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+    border-radius: 3px;
+    white-space: nowrap;
 }
 
-.grid-item:hover {
-    background-color: #f5f5f5;
+.header-btn i {
+    margin-right: 5px;
+    font-size: 0.9rem;
 }
 
-.grid-item:last-child {
-    border-bottom: none;
+.header-btn:hover {
+    background-color: var(--minecraft-gold);
+    transform: scale(1.05);
 }
 
-.grid-item .grid-name {
-    font-weight: bold;
+/* Special styling for the action button in header */
+.header-btn.action-btn {
+    background-color: var(--minecraft-green);
 }
 
-.grid-item .grid-actions {
-    display: flex;
-    gap: 10px;
+.header-btn.action-btn:hover {
+    background-color: #4a9c27;
 }
 
-.grid-item .delete-grid {
-    color: #d9534f;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 5px;
-    font-size: 16px;
+/* Hide mobile elements on desktop - updated to account for new layout */
+@media (min-width: 769px) {
+    .mobile-only-header {
+        display: none;
+    }
 }
 
-.no-saved-grids {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-style: italic;
-}
-
-/* Ensure modals have good max width */
-.modal-content {
-    max-width: 500px;
-    width: 100%;
+/* Make sure algorithm containers have proper spacing */
+@media (min-width: 769px) {
+    .main-content {
+        min-height: 0;
+        gap: 0.5rem;
+    }
+    
+    .grid-container {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+    }
+    
+    .algorithm-container {
+        display: flex;
+        flex-direction: column;
+    }
 } 

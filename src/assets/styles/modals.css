@@ -1,0 +1,456 @@
+/* Minecraft themed modal styling */
+
+/* Modal container */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #3c2a21; /* Dark brown background */
+    color: #fff;
+    margin: 10% auto;
+    width: 380px;
+    max-width: 90%;
+    border: 4px solid #986c44; /* Minecraft dirt border color */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding: 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    image-rendering: pixelated;
+    overflow: hidden;
+}
+
+/* Help modal - wider content */
+#help-modal .modal-content {
+    width: 600px; /* Wider content */
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#help-modal .modal-content h2 {
+    background-color: #986c44; /* Minecraft dirt color */
+    color: #fff;
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 1.3rem;
+    text-shadow: 1px 1px 0 #000;
+    border-bottom: 4px solid #000;
+}
+
+/* Help content styling */
+.help-content {
+    margin: 20px;
+    text-align: left;
+}
+
+.help-content h3 {
+    color: var(--minecraft-gold);
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--minecraft-dirt);
+    padding-bottom: 5px;
+}
+
+.help-content ul {
+    list-style-type: square;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.help-content li {
+    margin-bottom: 8px;
+}
+
+.help-content strong {
+    color: var(--minecraft-sky);
+}
+
+/* App description in help modal */
+.app-description {
+    margin: 10px 15px 5px;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    color: var(--minecraft-gold);
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Make Save Grid modal more compact */
+#save-grid-modal .modal-content {
+    width: 320px; /* Smaller width */
+    height: 250px;
+}
+
+#save-grid-modal .modal-content p {
+    padding: 10px 15px 0; /* Reduced top/bottom padding */
+    font-size: 0.95rem;
+}
+
+#save-grid-modal .modal-content input[type="text"] {
+    margin: 10px 15px; /* Reduced margin */
+}
+
+#save-grid-modal .modal-buttons {
+    padding: 0 15px 10px; /* Reduced bottom padding */
+}
+
+/* Modal header */
+.modal-content h3 {
+    background-color: #986c44; /* Minecraft dirt color */
+    color: #fff;
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 0 #000;
+    border-bottom: 4px solid #000;
+}
+
+/* Modal body */
+.modal-content p {
+    padding: 15px 15px 5px;
+    margin: 0;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Close button */
+.modal-content .close-btn {
+    color: #d9a334; /* Gold color */
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.modal-content .close-btn:hover {
+    color: #ffcc00;
+}
+
+/* Input styling */
+.modal-content input[type="text"],
+.modal-content input[type="number"] {
+    width: calc(100% - 30px);
+    margin: 0 15px 15px;
+    padding: 8px 10px;
+    background-color: #2c1e16; /* Darker brown */
+    border: 3px solid #000; /* Thicker border to match buttons */
+    color: #fff;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Deeper inset shadow */
+    letter-spacing: 0.5px; /* Match button text spacing */
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="number"]:focus {
+    outline: none;
+    border-color: #d9a334; /* Gold color */
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 5px #d9a334;
+}
+
+/* Modal buttons container */
+.modal-buttons {
+    display: flex;
+    padding: 0 15px 15px;
+    gap: 10px;
+}
+
+/* Modal button styling */
+.modal-buttons button {
+    flex: 1;
+    padding: 8px 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    background-color: #986c44; /* Minecraft dirt color */
+    color: white;
+    border: 3px solid #000; /* Thicker border */
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+    transition: all 0.2s;
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Minecraft-style button shadows */
+    letter-spacing: 0.5px; /* Slightly spaced out text */
+}
+
+.modal-buttons button:active {
+    transform: translateY(1px);
+    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Save/confirm button */
+#confirm-save-btn, 
+#confirm-weight-btn {
+    background-color: #5bac38; /* Green */
+}
+
+#confirm-save-btn:hover, 
+#confirm-weight-btn:hover {
+    background-color: #4a9c27;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Cancel button */
+#cancel-save-btn, 
+#cancel-weight-btn, 
+#cancel-load-btn {
+    background-color: #e74c3c; /* Red */
+}
+
+#cancel-save-btn:hover, 
+#cancel-weight-btn:hover, 
+#cancel-load-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Saved grid list styling */
+.saved-grids-list {
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 15px;
+    background-color: #2c1e16; /* Darker brown */
+    border: 2px solid #000;
+}
+
+.grid-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.grid-item:last-child {
+    border-bottom: none;
+}
+
+.grid-item:hover {
+    background-color: #4a3527; /* Slightly lighter brown */
+}
+
+.grid-item .grid-name {
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.grid-item .delete-grid {
+    color: #e74c3c; /* Red */
+    font-size: 1.2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.grid-item .delete-grid:hover {
+    color: #c0392b;
+}
+
+.no-saved-grids {
+    padding: 15px;
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Scrollbar styling */
+.saved-grids-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.saved-grids-list::-webkit-scrollbar-track {
+    background: #2c1e16;
+}
+
+.saved-grids-list::-webkit-scrollbar-thumb {
+    background: #986c44;
+    border: 1px solid #000;
+}
+
+.saved-grids-list::-webkit-scrollbar-thumb:hover {
+    background: #d9a334;
+}
+
+/* Help modal scrollbar */
+#help-modal .modal-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+#help-modal .modal-content::-webkit-scrollbar-track {
+    background: #2c1e16;
+}
+
+#help-modal .modal-content::-webkit-scrollbar-thumb {
+    background: #986c44;
+    border: 1px solid #000;
+}
+
+#help-modal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #d9a334;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 90%;
+        margin: 15% auto;
+    }
+    
+    .modal-content h3 {
+        font-size: 1.1rem;
+        padding: 8px 12px;
+    }
+    
+    .modal-content input[type="text"],
+    .modal-content input[type="number"] {
+        padding: 6px 8px;
+        font-size: 0.95rem;
+    }
+    
+    .modal-buttons button {
+        padding: 7px 0;
+        font-size: 0.95rem;
+    }
+    
+    #help-modal .modal-content {
+        width: 95%;
+        max-height: 85vh;
+    }
+}
+
+#save-grid-modal .modal-content h3 {
+    padding: 8px 15px; /* Smaller padding for header */
+    font-size: 1.1rem; /* Slightly smaller font */
+}
+
+#save-grid-modal .close-btn {
+    right: 12px;
+    top: 3px;
+    font-size: 1.6rem; /* Slightly smaller close button */
+}
+
+/* Toast Notification System */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 250px;
+    max-width: 350px;
+    margin-bottom: 10px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 4px solid #000;
+    background-color: #3c2a21;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    font-family: 'Pixelify Sans', sans-serif;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, transparent, #d9a334, transparent);
+    animation: toast-progress 3s linear forwards;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.toast-success {
+    border-color: #5bac38;
+    background-color: rgba(60, 42, 33, 0.95);
+}
+
+.toast.toast-error {
+    border-color: #e74c3c;
+    background-color: rgba(60, 42, 33, 0.95);
+}
+
+.toast.toast-info {
+    border-color: #89c4e1;
+    background-color: rgba(60, 42, 33, 0.95);
+}
+
+.toast-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.toast-success .toast-icon {
+    color: #5bac38;
+}
+
+.toast-error .toast-icon {
+    color: #e74c3c;
+}
+
+.toast-info .toast-icon {
+    color: #89c4e1;
+}
+
+.toast-content {
+    flex: 1;
+    text-shadow: 1px 1px 0 #000;
+}
+
+@keyframes toast-progress {
+    0% { width: 100%; }
+    100% { width: 0%; }
+}
+
+@media (max-width: 480px) {
+    .toast-container {
+        bottom: 70px; /* Higher on mobile to avoid floating action buttons */
+        width: 90%;
+    }
+    
+    .toast {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 15px;
+    }
+} 
