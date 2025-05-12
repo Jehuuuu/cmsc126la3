@@ -9,7 +9,7 @@ class GameController {
      * @param {VisualizationController[]} visualizationControllers - Array of visualization controllers
      */
     constructor(grids, gridViews, visualizationControllers) {
-        console.log("GameController: Initializing with", grids.length, "grids");
+        // console.log("GameController: Initializing with", grids.length, "grids");
         
         // Handle both single grid and multiple grid scenarios
         this.grids = Array.isArray(grids) ? grids : [grids];
@@ -26,7 +26,7 @@ class GameController {
      * Set default start and end nodes
      */
     setDefaultStartEnd() {
-        console.log("GameController: Setting default start/end nodes for all grids");
+        // console.log("GameController: Setting default start/end nodes for all grids");
         
         // Safety check - make sure grids exist
         if (!this.grids || this.grids.length === 0) {
@@ -42,7 +42,7 @@ class GameController {
         const endRow = Math.floor(this.grids[0].rows * 3 / 4);
         const endCol = Math.floor(this.grids[0].cols * 3 / 4);
         
-        console.log(`Setting start node at (${startRow}, ${startCol}) and end node at (${endRow}, ${endCol})`);
+        // console.log(`Setting start node at (${startRow}, ${startCol}) and end node at (${endRow}, ${endCol})`);
         
         // Apply to all grids
         this.grids.forEach((grid, index) => {
@@ -55,8 +55,8 @@ class GameController {
             grid.setStartNode(startRow, startCol);
             grid.setEndNode(endRow, endCol);
             
-            console.log(`Grid ${index}: Start node set:`, !!grid.startNode);
-            console.log(`Grid ${index}: End node set:`, !!grid.endNode);
+            // console.log(`Grid ${index}: Start node set:`, !!grid.startNode);
+            // console.log(`Grid ${index}: End node set:`, !!grid.endNode);
             
             // Update grid view if available
             if (this.gridViews && this.gridViews[index]) {
@@ -121,7 +121,7 @@ class GameController {
      * Set random start and end nodes
      */
     setRandomStartEnd() {
-        console.log("GameController: Setting random start/end for all grids");
+        // console.log("GameController: Setting random start/end for all grids");
         
         // Reset any existing visualization
         this.resetVisualizationState();
@@ -179,7 +179,7 @@ class GameController {
      * @param {number} density - Wall density (0-1)
      */
     generateRandomMaze(density = 0.3) {
-        console.log("GameController: Generating random maze for all grids");
+        // console.log("GameController: Generating random maze for all grids");
         
         // Reset any existing visualization
         this.resetVisualizationState();
@@ -245,7 +245,7 @@ class GameController {
      * @param {number} cols - Number of columns
      */
     resizeGrid(rows, cols) {
-        console.log(`GameController: Resizing all grids to ${rows}x${cols}`);
+        // console.log(`GameController: Resizing all grids to ${rows}x${cols}`);
         
         // Stop any running visualizations
         this.visualizationControllers.forEach(controller => {
@@ -270,7 +270,7 @@ class GameController {
      * Clear all grids (walls and path)
      */
     clearGrid() {
-        console.log("GameController: Clearing all grids");
+        // console.log("GameController: Clearing all grids");
         
         // Stop any running visualizations with stronger reset
         this.visualizationControllers.forEach(controller => {
@@ -330,7 +330,7 @@ class GameController {
      * @param {string} tool - The tool to set
      */
     setCurrentTool(tool) {
-        console.log("GameController: Setting tool to", tool);
+        // console.log("GameController: Setting tool to", tool);
         this.gridViews.forEach(gridView => {
             if (gridView) gridView.setCurrentTool(tool);
         });
@@ -345,7 +345,7 @@ class GameController {
      * @param {number} customValue - Optional custom value for weighted nodes
      */
     handleNodeAction(gridIndex, row, col, action, customValue = null) {
-        console.log(`GameController: Grid ${gridIndex} - ${action} at (${row}, ${col})`);
+        // console.log(`GameController: Grid ${gridIndex} - ${action} at (${row}, ${col})`);
         
         // Safety check - validate grids array
         if (!this.grids || this.grids.length === 0) {
@@ -619,7 +619,7 @@ class GameController {
      * @param {number} density - Weighted node density (0-1)
      */
     generateRandomWeights(density = 0.15) {
-        console.log("GameController: Generating random weighted nodes");
+        // console.log("GameController: Generating random weighted nodes");
         
         // Reset any existing visualization
         this.resetVisualizationState();

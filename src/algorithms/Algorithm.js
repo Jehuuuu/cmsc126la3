@@ -106,33 +106,21 @@ class Algorithm {
      * Update progress for step-by-step visualization
      * @param {number} currentStep - Current step index
      */
-    updateProgress(currentStep) {
-        console.log(`Algorithm: Updating to step ${currentStep}, total steps: ${this.visitedNodesInOrder.length}`);
-        
-        if (currentStep < 0 || currentStep >= this.visitedNodesInOrder.length) {
-            console.warn(`Algorithm: Invalid step index ${currentStep}`);
-            return;
+    updateStep(currentStep) {
+        // Clear previous visualization
+        if (this.grid) {
+            this.grid.resetPath();
         }
         
-        // Reset all nodes' visualization state
-        for (let row = 0; row < this.grid.rows; row++) {
-            for (let col = 0; col < this.grid.cols; col++) {
-                const node = this.grid.nodes[row][col];
-                node.isVisited = false;
-                node.isPath = false;
-                node.isCurrent = false;
-            }
-        }
-        
-        // Mark nodes up to current step as visited
-        for (let i = 0; i <= currentStep; i++) {
-            console.log(`Algorithm: Marking node (${this.visitedNodesInOrder[i].row}, ${this.visitedNodesInOrder[i].col}) as visited`);
+        // Visualize all nodes visited up to current step
+        for (let i = 0; i <= currentStep && i < this.visitedNodesInOrder.length; i++) {
             this.visitedNodesInOrder[i].isVisited = true;
         }
         
         // Mark current node
-        const currentNode = this.visitedNodesInOrder[currentStep];
-        console.log(`Algorithm: Marking current node (${currentNode.row}, ${currentNode.col})`);
-        currentNode.isCurrent = true;
+        if (currentStep < this.visitedNodesInOrder.length) {
+            const currentNode = this.visitedNodesInOrder[currentStep];
+            currentNode.isCurrent = true;
+        }
     }
 } 

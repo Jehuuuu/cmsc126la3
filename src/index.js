@@ -2,7 +2,8 @@
  * Main entry point for the pathfinding visualizer and algorithm comparison
  */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM loaded, initializing app");
+    // Initialize the application when the DOM is loaded
+    // console.log("DOM loaded, initializing app");
     
     // Check if using mobile device and apply optimizations
     checkAndApplyMobileOptimizations();
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Log that everything is set up
-    console.log("Pathfinding visualizer initialized successfully");
+    // console.log("Pathfinding visualizer initialized successfully");
 });
 
 /**
@@ -219,7 +220,7 @@ function checkAndApplyMobileOptimizations() {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     
     if (isMobile) {
-        console.log("Mobile device detected, applying optimizations");
+        // console.log("Mobile device detected, applying optimizations");
         
         // Improve touch target sizes
         document.querySelectorAll('button, select').forEach(el => {
@@ -335,7 +336,7 @@ function setupStepByStepMenu() {
     const modeSelect = document.getElementById('visualization-mode');
     
     if (!stepByStepMenu) {
-        console.error("Step-by-step menu element not found");
+        // console.error("Step-by-step menu element not found");
         return;
     }
     
@@ -353,13 +354,13 @@ function setupStepByStepMenu() {
         // Add a direct change event listener to respond immediately
         modeSelect.addEventListener('change', (event) => {
             const isStepMode = event.target.value === 'step';
-            console.log('Mode changed to:', event.target.value);
+            // console.log('Mode changed to:', event.target.value);
             toggleStepByStepButton(isStepMode);
         });
         
         // Set initial state based on current mode
         const isStepMode = modeSelect.value === 'step';
-        console.log('Initial mode is step mode:', isStepMode);
+        // console.log('Initial mode is step mode:', isStepMode);
         toggleStepByStepButton(isStepMode);
     }
     
@@ -473,7 +474,7 @@ function toggleStepByStepButton(show) {
         if (show) {
             // Show step button and adjust other buttons
             stepByStepBtn.classList.add('enabled');
-            console.log('Showing step-by-step button');
+            // console.log('Showing step-by-step button');
             
             // Adjust positions of other buttons when step button is shown
             if (drawingToolsBtn) {
@@ -485,7 +486,7 @@ function toggleStepByStepButton(show) {
         } else {
             // Hide step button and adjust other buttons
             stepByStepBtn.classList.remove('enabled');
-            console.log('Hiding step-by-step button');
+            // console.log('Hiding step-by-step button');
             
             // Adjust positions of other buttons when step button is hidden
             if (drawingToolsBtn) {
@@ -516,7 +517,7 @@ function setupAssistiveTouch(gameController) {
     const toolMenuItems = document.querySelectorAll('.tool-menu-item:not(.step-btn)');
     
     if (!assistiveMenu) {
-        console.error("Assistive menu element not found");
+        // console.error("Assistive menu element not found");
         return;
     }
     
@@ -598,7 +599,7 @@ function setupRandomFeaturesMenu(gameController) {
     const randomMenuItems = document.querySelectorAll('.random-menu-item');
     
     if (!randomMenu) {
-        console.error("Random menu element not found");
+        // console.error("Random menu element not found");
         return;
     }
     
@@ -678,7 +679,7 @@ function setupRandomFeaturesMenu(gameController) {
 function handleAssistiveMenuAction(tool, gameController) {
     // Special handling for clear grid to make it work anytime
     if (tool === 'clear') {
-        console.log('Assistive touch: forcing grid clear');
+        // console.log('Assistive touch: forcing grid clear');
         
         // Force stop any ongoing visualizations
         if (window.dijkstraController) {
@@ -729,7 +730,7 @@ function handleAssistiveMenuAction(tool, gameController) {
         if (buttonMap[tool]) {
             const button = document.getElementById(buttonMap[tool]);
             if (button) {
-                console.log(`Assistive touch: activating ${tool} tool`);
+                // console.log(`Assistive touch: activating ${tool} tool`);
                 button.click();
             }
         }
@@ -744,7 +745,7 @@ function handleAssistiveMenuAction(tool, gameController) {
 function handleRandomMenuAction(action, gameController) {
     // Special handling for clear grid to make it work anytime
     if (action === 'clear-grid') {
-        console.log('Random menu: forcing grid clear');
+        // console.log('Random menu: forcing grid clear');
         
         // Force stop any ongoing visualizations
         if (window.dijkstraController) {
@@ -784,13 +785,13 @@ function handleRandomMenuAction(action, gameController) {
     } else if (action === 'random-weights') {
         // Handle random weights action
         if (gameController && typeof gameController.generateRandomWeights === 'function') {
-            console.log('Random menu: generating random weights');
+            // console.log('Random menu: generating random weights');
             gameController.generateRandomWeights();
             return;
         }
     } else if (action === 'save-grid') {
         // Handle save grid action
-        console.log('Random menu: showing save grid modal');
+        // console.log('Random menu: showing save grid modal');
         const saveButton = document.getElementById('save-grid-btn');
         if (saveButton) {
             saveButton.click();
@@ -798,7 +799,7 @@ function handleRandomMenuAction(action, gameController) {
         return;
     } else if (action === 'load-grid') {
         // Handle load grid action
-        console.log('Random menu: showing load grid modal');
+        // console.log('Random menu: showing load grid modal');
         const loadButton = document.getElementById('load-grid-btn');
         if (loadButton) {
             loadButton.click();
@@ -815,7 +816,7 @@ function handleRandomMenuAction(action, gameController) {
         if (buttonMap[action]) {
             const button = document.getElementById(buttonMap[action]);
             if (button) {
-                console.log(`Random menu: activating ${action}`);
+                // console.log(`Random menu: activating ${action}`);
                 button.click();
             }
         }
@@ -850,7 +851,7 @@ function setupHelpModal() {
             }
         });
     } else {
-        console.error('Help modal elements not found');
+        // console.error('Help modal elements not found');
     }
 }
 

@@ -70,7 +70,7 @@ class VisualizationController {
         this.uiView.setGridInteractionsDisabled(true);
         
         // Run algorithm to find path
-        console.log("Running algorithm:", this.algorithm.constructor.name);
+        // console.log("Running algorithm:", this.algorithm.constructor.name);
         const result = this.algorithm.run(true);
         this.visitedNodesInOrder = result.visited;
         this.pathNodesInOrder = result.path;

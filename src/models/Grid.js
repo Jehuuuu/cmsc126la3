@@ -8,21 +8,26 @@ class Grid {
      * @param {number} cols - Number of columns in the grid
      */
     constructor(rows = 10, cols = 10) {
-        console.log("Grid: Creating grid with dimensions", rows, "x", cols);
+        // console.log("Grid: Creating grid with dimensions", rows, "x", cols);
+        
         this.rows = rows;
         this.cols = cols;
         this.nodes = [];
         this.startNode = null;
         this.endNode = null;
-        this.initializeGrid();
+        
+        // Initialize the grid with nodes
+        this.initGrid();
     }
 
     /**
      * Initialize the grid with nodes
      */
-    initializeGrid() {
-        console.log("Grid: Initializing nodes");
+    initGrid() {
+        // console.log("Grid: Initializing nodes");
+        
         this.nodes = [];
+        
         for (let row = 0; row < this.rows; row++) {
             const currentRow = [];
             for (let col = 0; col < this.cols; col++) {
@@ -30,7 +35,8 @@ class Grid {
             }
             this.nodes.push(currentRow);
         }
-        console.log("Grid: Created", this.rows * this.cols, "nodes");
+        
+        // console.log("Grid: Created", this.rows * this.cols, "nodes");
     }
 
     /**
@@ -41,7 +47,7 @@ class Grid {
     resize(newRows, newCols) {
         this.rows = newRows;
         this.cols = newCols;
-        this.initializeGrid();
+        this.initGrid();
         this.startNode = null;
         this.endNode = null;
     }

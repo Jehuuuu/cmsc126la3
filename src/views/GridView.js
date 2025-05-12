@@ -15,10 +15,10 @@ class GridView {
         this.grid = grid;
         this.gridContainerId = gridContainerId;
         this.gridContainer = document.getElementById(gridContainerId);
-        console.log(`GridView: Grid container '${gridContainerId}' found:`, !!this.gridContainer);
+        // console.log(`GridView: Grid container '${gridContainerId}' found:`, !!this.gridContainer);
         
         if (!this.gridContainer) {
-            console.error(`Grid container with ID "${gridContainerId}" not found!`);
+            // console.error(`Grid container with ID "${gridContainerId}" not found!`);
             return;
         }
         
@@ -60,7 +60,7 @@ class GridView {
      * Initialize the grid view
      */
     initialize() {
-        console.log(`GridView (${this.gridContainerId}): Initializing`);
+        // console.log(`GridView (${this.gridContainerId}): Initializing`);
         this.render();
         this.setupEventListeners();
     }
@@ -69,11 +69,11 @@ class GridView {
      * Re-render the grid
      */
     render() {
-        console.log(`GridView (${this.gridContainerId}): Rendering grid`, this.grid.rows, "x", this.grid.cols);
+        // console.log(`GridView (${this.gridContainerId}): Rendering grid`, this.grid.rows, "x", this.grid.cols);
         
         // Clear the grid container
         if (!this.gridContainer) {
-            console.error(`Grid container '${this.gridContainerId}' is null, cannot render grid`);
+            // console.error(`Grid container '${this.gridContainerId}' is null, cannot render grid`);
             return;
         }
         
@@ -105,7 +105,7 @@ class GridView {
             }
         }
         
-        console.log(`GridView (${this.gridContainerId}): Grid rendered with`, this.grid.rows * this.grid.cols, "nodes");
+        // console.log(`GridView (${this.gridContainerId}): Grid rendered with`, this.grid.rows * this.grid.cols, "nodes");
     }
 
     /**
@@ -416,7 +416,7 @@ class GridView {
         const gameController = this.gameController || window.gameController;
         
         if (!gameController) {
-            console.error("GridView: No gameController found, cannot handle node action");
+            // console.error("GridView: No gameController found, cannot handle node action");
             return;
         }
         
@@ -537,16 +537,16 @@ class GridView {
                 
                 // Add error handling
                 startImg.onerror = function() {
-                    console.error(`ERROR: Failed to load start image at (${row}, ${col})`);
+                    // console.error(`ERROR: Failed to load start image at (${row}, ${col})`);
                 };
                 
                 // Add the start image on top of the node
                 nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
                 nodeElement.appendChild(startImg);
                 
-                console.log(`Added start image to node at (${row}, ${col})`);
+                // console.log(`Added start image to node at (${row}, ${col})`);
             } catch (error) {
-                console.error('Error adding start image:', error);
+                // console.error('Error adding start image:', error);
             }
         }
     }
@@ -606,16 +606,16 @@ class GridView {
                 
                 // Add error handling
                 endImg.onerror = function() {
-                    console.error(`ERROR: Failed to load end image at (${row}, ${col})`);
+                    // console.error(`ERROR: Failed to load end image at (${row}, ${col})`);
                 };
                 
                 // Add the end image on top of the node
                 nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
                 nodeElement.appendChild(endImg);
                 
-                console.log(`Added end image to node at (${row}, ${col})`);
+                // console.log(`Added end image to node at (${row}, ${col})`);
             } catch (error) {
-                console.error('Error adding end image:', error);
+                // console.error('Error adding end image:', error);
             }
         }
     }
@@ -662,7 +662,7 @@ class GridView {
                 obstacleImg.className = 'obstacle-overlay';
                 // Add error handler
                 obstacleImg.onerror = function() {
-                    console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                    // console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
                     obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
                 };
                 nodeElement.appendChild(obstacleImg);
@@ -721,7 +721,7 @@ class GridView {
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
         if (gameController) {
-            console.log(`GridView (${this.gridContainerId}): Moving start node to (${row}, ${col})`);
+            // console.log(`GridView (${this.gridContainerId}): Moving start node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'start');
             return;
         }
@@ -743,7 +743,7 @@ class GridView {
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
         if (gameController) {
-            console.log(`GridView (${this.gridContainerId}): Moving end node to (${row}, ${col})`);
+            // console.log(`GridView (${this.gridContainerId}): Moving end node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'end');
             return;
         }
@@ -763,7 +763,7 @@ class GridView {
      * Update the grid view based on the model
      */
     update() {
-        console.log(`GridView (${this.gridContainerId}): Updating view`);
+        // console.log(`GridView (${this.gridContainerId}): Updating view`);
         
         // Use direct DOM access instead of nodeElements array that might not be initialized
         for (let row = 0; row < this.grid.rows; row++) {
@@ -775,7 +775,7 @@ class GridView {
                 
                 // Skip if nodeElement doesn't exist
                 if (!nodeElement) {
-                    console.warn(`GridView (${this.gridContainerId}): NodeElement at [${row}][${col}] not found, skipping`);
+                    // console.warn(`GridView (${this.gridContainerId}): NodeElement at [${row}][${col}] not found, skipping`);
                     continue;
                 }
                 
@@ -817,7 +817,7 @@ class GridView {
                     obstacleImg.className = 'obstacle-overlay';
                     // Add error handler
                     obstacleImg.onerror = function() {
-                        console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                        // console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
                         obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
                     };
                     nodeElement.appendChild(obstacleImg);
@@ -845,7 +845,7 @@ class GridView {
                     `;
                     // Add error handler
                     startImg.onerror = function() {
-                        console.error('Failed to load start.png, trying alternate path');
+                        // console.error('Failed to load start.png, trying alternate path');
                         startImg.src = './src/assets/images/start.png';
                     };
                     nodeElement.style.position = 'relative';
@@ -871,7 +871,7 @@ class GridView {
                     `;
                     // Add error handler
                     endImg.onerror = function() {
-                        console.error('Failed to load end.png, trying alternate path');
+                        // console.error('Failed to load end.png, trying alternate path');
                         endImg.src = './src/assets/images/end.png';
                     };
                     nodeElement.style.position = 'relative';
@@ -897,7 +897,7 @@ class GridView {
                     `;
                     // Handle error case
                     weightedImg.onerror = function() {
-                        console.error('Failed to load monster.gif, trying absolute path');
+                        // console.error('Failed to load monster.gif, trying absolute path');
                         weightedImg.src = 'C:/Users/kenzj/Desktop/cmsc126le3/src/assets/gifs/monster.gif';
                     };
                     nodeElement.style.position = 'relative';

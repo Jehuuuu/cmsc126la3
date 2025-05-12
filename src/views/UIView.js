@@ -8,7 +8,6 @@ class UIView {
      */
     constructor(controllers) {
         this.controllers = controllers;
-        console.log("UIView: Setting up event listeners");
         this.setupEventListeners();
         this.activeToolButton = null;
     }
@@ -17,9 +16,11 @@ class UIView {
      * Set up event listeners for UI controls
      */
     setupEventListeners() {
+        // console.log("UIView: Setting up event listeners");
+        
         // Grid size control - desktop
         const gridSizeSelect = document.getElementById('grid-size');
-        console.log("Grid size select found:", !!gridSizeSelect);
+        // console.log("Grid size select found:", !!gridSizeSelect);
         if (gridSizeSelect) {
             gridSizeSelect.addEventListener('change', () => {
                 const size = parseInt(gridSizeSelect.value);
@@ -59,7 +60,7 @@ class UIView {
         
         // Visualization speed control - desktop
         const speedSelect = document.getElementById('visualization-speed');
-        console.log("Speed select found:", !!speedSelect);
+        // console.log("Speed select found:", !!speedSelect);
         if (speedSelect) {
             speedSelect.addEventListener('change', () => {
                 const speed = speedSelect.value;
@@ -91,11 +92,11 @@ class UIView {
         
         // Visualization mode control - desktop
         const modeSelect = document.getElementById('visualization-mode');
-        console.log("Mode select found:", !!modeSelect);
+        // console.log("Mode select found:", !!modeSelect);
         if (modeSelect) {
             modeSelect.addEventListener('change', (event) => {
                 const selectedMode = event.target.value;
-                console.log(`UIView: Mode changed to ${selectedMode}`);
+                // console.log(`UIView: Mode changed to ${selectedMode}`);
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
@@ -122,7 +123,7 @@ class UIView {
         if (modeMobileSelect) {
             modeMobileSelect.addEventListener('change', (event) => {
                 const selectedMode = event.target.value;
-                console.log(`UIView: Mode changed to ${selectedMode} (mobile)`);
+                // console.log(`UIView: Mode changed to ${selectedMode} (mobile)`);
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
@@ -159,7 +160,7 @@ class UIView {
         
         // Random maze button - desktop
         const randomMazeButton = document.getElementById('random-maze-btn');
-        console.log("Random maze button found:", !!randomMazeButton);
+        // console.log("Random maze button found:", !!randomMazeButton);
         if (randomMazeButton) {
             randomMazeButton.addEventListener('click', () => {
                 this.controllers.game.generateRandomMaze();
@@ -176,7 +177,7 @@ class UIView {
         
         // Random weights button - desktop
         const randomWeightsButton = document.getElementById('random-weights-btn');
-        console.log("Random weights button found:", !!randomWeightsButton);
+        // console.log("Random weights button found:", !!randomWeightsButton);
         if (randomWeightsButton) {
             randomWeightsButton.addEventListener('click', () => {
                 this.controllers.game.generateRandomWeights();
@@ -193,7 +194,7 @@ class UIView {
         
         // Random start/end button - desktop
         const randomStartEndButton = document.getElementById('random-start-end-btn');
-        console.log("Random start/end button found:", !!randomStartEndButton);
+        // console.log("Random start/end button found:", !!randomStartEndButton);
         if (randomStartEndButton) {
             randomStartEndButton.addEventListener('click', () => {
                 this.controllers.game.setRandomStartEnd();
@@ -210,7 +211,7 @@ class UIView {
         
         // Save grid button - desktop
         const saveGridButton = document.getElementById('save-grid-btn');
-        console.log("Save grid button found:", !!saveGridButton);
+        // console.log("Save grid button found:", !!saveGridButton);
         if (saveGridButton) {
             saveGridButton.addEventListener('click', () => {
                 this.showSaveGridModal();
@@ -227,7 +228,7 @@ class UIView {
         
         // Load grid button - desktop
         const loadGridButton = document.getElementById('load-grid-btn');
-        console.log("Load grid button found:", !!loadGridButton);
+        // console.log("Load grid button found:", !!loadGridButton);
         if (loadGridButton) {
             loadGridButton.addEventListener('click', () => {
                 this.showLoadGridModal();
@@ -319,7 +320,7 @@ class UIView {
         
         // Clear grid button - desktop
         const clearGridButton = document.getElementById('clear-grid-btn');
-        console.log("Clear grid button found:", !!clearGridButton);
+        // console.log("Clear grid button found:", !!clearGridButton);
         if (clearGridButton) {
             clearGridButton.addEventListener('click', () => {
                 this.handleClearGrid();
@@ -336,7 +337,7 @@ class UIView {
         
         // Start button (find path) - desktop
         const startButton = document.getElementById('start-btn');
-        console.log("Start button found:", !!startButton);
+        // console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
                 // Run both algorithms in parallel using Promise.all
@@ -361,7 +362,7 @@ class UIView {
         
         // Step controls - desktop
         const nextStepButton = document.getElementById('next-step-btn');
-        console.log("Next step button found:", !!nextStepButton);
+        // console.log("Next step button found:", !!nextStepButton);
         if (nextStepButton) {
             nextStepButton.addEventListener('click', () => {
                 this.controllers.dijkstra.nextStep();
@@ -370,7 +371,7 @@ class UIView {
         }
         
         const prevStepButton = document.getElementById('prev-step-btn');
-        console.log("Previous step button found:", !!prevStepButton);
+        // console.log("Previous step button found:", !!prevStepButton);
         if (prevStepButton) {
             prevStepButton.addEventListener('click', () => {
                 this.controllers.dijkstra.prevStep();
@@ -398,7 +399,7 @@ class UIView {
         // Alternative path selection
         for (let i = 1; i <= 3; i++) {
             const pathPreview = document.getElementById(`path-preview-${i}`);
-            console.log(`Path preview ${i} found:`, !!pathPreview);
+            // console.log(`Path preview ${i} found:`, !!pathPreview);
             if (pathPreview) {
                 pathPreview.addEventListener('click', () => {
                     this.controllers.visualization.selectAlternativePath(i - 1);
@@ -414,7 +415,7 @@ class UIView {
      */
     setupToolButton(buttonId, tool) {
         const button = document.getElementById(buttonId);
-        console.log(`Tool button '${buttonId}' found:`, !!button);
+        // console.log(`Tool button '${buttonId}' found:`, !!button);
         if (button) {
             button.addEventListener('click', () => {
                 this.setActiveTool(button, tool);
