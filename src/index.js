@@ -438,9 +438,11 @@ function setupStepByStepMenu() {
     if (mobileStepRunBtn) {
         mobileStepRunBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            // Trigger both algorithms to run
-            if (window.dijkstraController) window.dijkstraController.startVisualization();
-            if (window.astarController) window.astarController.startVisualization();
+            // Trigger both algorithms to run in parallel
+            Promise.all([
+                window.dijkstraController ? window.dijkstraController.startVisualization() : Promise.resolve(),
+                window.astarController ? window.astarController.startVisualization() : Promise.resolve()
+            ]);
             
             // Show visual feedback
             mobileStepRunBtn.classList.add('touch-active');
@@ -868,10 +870,9 @@ function toggleHelpModal(show) {
  */
 function setupSwapButtons() {
     const algorithmComparison = document.querySelector('.algorithm-comparison');
-    const swapDijkstraBtn = document.getElementById('swap-dijkstra-btn');
-    const swapAstarBtn = document.getElementById('swap-astar-btn');
+    const centerSwapBtn = document.getElementById('center-swap-btn');
     
-    if (algorithmComparison && swapDijkstraBtn && swapAstarBtn) {
+    if (algorithmComparison && centerSwapBtn) {
         const swapAlgorithms = () => {
             // Get the algorithm containers
             const containers = algorithmComparison.querySelectorAll('.algorithm-container');
@@ -888,9 +889,8 @@ function setupSwapButtons() {
             }
         };
         
-        // Add click handlers for both swap buttons
-        swapDijkstraBtn.addEventListener('click', swapAlgorithms);
-        swapAstarBtn.addEventListener('click', swapAlgorithms);
+        // Add click handler for center swap button
+        centerSwapBtn.addEventListener('click', swapAlgorithms);
     }
 }
 

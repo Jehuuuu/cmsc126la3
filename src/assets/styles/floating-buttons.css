@@ -1,0 +1,115 @@
+/* Floating buttons styles */
+.floating-actions-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 50;
+    padding: 0 4px;
+}
+
+.left-actions, .right-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Base floating button style */
+.floating-btn {
+    height: 44px;
+    padding: 0 18px;
+    font-size: 1rem; /* Consistent font size for all buttons */
+    border: 2px solid #000;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.floating-btn i {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+.floating-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Find Path button */
+#start-btn-header {
+    background-color: #5bac38; /* Green */
+    border-color: #27ae60;
+}
+
+#start-btn-header:hover {
+    background-color: #4a9c27;
+}
+
+/* Clear Grid button (red) */
+#clear-grid-btn-header {
+    background-color: #e74c3c; /* Red */
+    border-color: #c0392b;
+}
+
+#clear-grid-btn-header:hover {
+    background-color: #c0392b;
+}
+
+/* Save Grid button (green) */
+#save-grid-btn-header {
+    background-color: #5bac38; /* Green */
+    border-color: #27ae60;
+}
+
+#save-grid-btn-header:hover {
+    background-color: #4a9c27;
+}
+
+/* Load Grid button (blue) */
+#load-grid-btn-header {
+    background-color: #3498db; /* Blue */
+    border-color: #2980b9;
+}
+
+#load-grid-btn-header:hover {
+    background-color: #2980b9;
+}
+
+/* Help button style for consistency */
+.help-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #d9a334; /* Gold */
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid #000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    margin-left: 5px;
+}
+
+.help-btn:hover {
+    background-color: #ffcc00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* For mobile view */
+@media (max-width: 768px) {
+    .floating-actions-container {
+        display: none;
+    }
+} 

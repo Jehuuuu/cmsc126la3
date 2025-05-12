@@ -9,9 +9,10 @@
     aspect-ratio: 1/1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to prevent cutoff */
     background-color: #222; /* Dark background behind grid */
     user-select: none; /* Prevent text selection on grid */
+    margin: 0 auto; /* Center the grid */
 }
 
 /* Remove standard grid effects as we'll use our own */

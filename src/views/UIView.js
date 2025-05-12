@@ -25,6 +25,11 @@ class UIView {
                 const size = parseInt(gridSizeSelect.value);
                 this.controllers.game.resizeGrid(size, size);
                 
+                // Show toast notification for grid resize
+                if (window.Toast) {
+                    window.Toast.info(`Grid size changed to ${size}x${size}`);
+                }
+                
                 // Sync mobile control
                 const mobileSizeSelect = document.getElementById('grid-size-mobile');
                 if (mobileSizeSelect) {
@@ -39,6 +44,11 @@ class UIView {
             gridSizeMobileSelect.addEventListener('change', () => {
                 const size = parseInt(gridSizeMobileSelect.value);
                 this.controllers.game.resizeGrid(size, size);
+                
+                // Show toast notification for grid resize
+                if (window.Toast) {
+                    window.Toast.info(`Grid size changed to ${size}x${size}`);
+                }
                 
                 // Sync desktop control
                 if (gridSizeSelect) {
@@ -89,6 +99,11 @@ class UIView {
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
+                // Show toast notification for step-by-step mode
+                if (window.Toast && selectedMode === 'step') {
+                    window.Toast.info('Step-by-step mode activated');
+                }
+                
                 // Sync mobile control
                 const mobileModeSelect = document.getElementById('visualization-mode-mobile');
                 if (mobileModeSelect) {
@@ -110,6 +125,11 @@ class UIView {
                 console.log(`UIView: Mode changed to ${selectedMode} (mobile)`);
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
+                
+                // Show toast notification for step-by-step mode
+                if (window.Toast && selectedMode === 'step') {
+                    window.Toast.info('Step-by-step mode activated');
+                }
                 
                 // Sync desktop control
                 if (modeSelect) {
@@ -230,10 +250,20 @@ class UIView {
                 const gridName = nameInput.value.trim() || `Grid-${Date.now()}`;
                 
                 if (this.controllers.game.saveGrid(gridName)) {
-                    alert(`Grid saved as "${gridName}"`);
+                    // Use toast notification instead of alert
+                    if (window.Toast) {
+                        window.Toast.success(`Grid saved as "${gridName}"`);
+                    } else {
+                        alert(`Grid saved as "${gridName}"`);
+                    }
                     this.hideSaveGridModal();
                 } else {
-                    alert('Failed to save grid. Please try again.');
+                    // Use toast notification for error
+                    if (window.Toast) {
+                        window.Toast.error('Failed to save grid. Please try again.');
+                    } else {
+                        alert('Failed to save grid. Please try again.');
+                    }
                 }
             });
         }
@@ -309,9 +339,11 @@ class UIView {
         console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
-                // Run both algorithms simultaneously
-                this.controllers.dijkstra.startVisualization();
-                this.controllers.astar.startVisualization();
+                // Run both algorithms in parallel using Promise.all
+                Promise.all([
+                    this.controllers.dijkstra.startVisualization(),
+                    this.controllers.astar.startVisualization()
+                ]);
             });
         }
         
@@ -319,9 +351,11 @@ class UIView {
         const startMobileButton = document.getElementById('start-btn-mobile');
         if (startMobileButton) {
             startMobileButton.addEventListener('click', () => {
-                // Run both algorithms simultaneously
-                this.controllers.dijkstra.startVisualization();
-                this.controllers.astar.startVisualization();
+                // Run both algorithms in parallel using Promise.all
+                Promise.all([
+                    this.controllers.dijkstra.startVisualization(),
+                    this.controllers.astar.startVisualization()
+                ]);
             });
         }
         
@@ -672,10 +706,20 @@ class UIView {
      */
     loadGrid(name) {
         if (this.controllers.game.loadGrid(name)) {
-            alert(`Grid "${name}" loaded successfully`);
+            // Use toast notification instead of alert
+            if (window.Toast) {
+                window.Toast.success(`Grid "${name}" loaded successfully`);
+            } else {
+                alert(`Grid "${name}" loaded successfully`);
+            }
             this.hideLoadGridModal();
         } else {
-            alert(`Failed to load grid "${name}"`);
+            // Use toast notification for error
+            if (window.Toast) {
+                window.Toast.error(`Failed to load grid "${name}"`);
+            } else {
+                alert(`Failed to load grid "${name}"`);
+            }
         }
     }
     
@@ -698,12 +742,21 @@ class UIView {
                 // Refresh the modal
                 this.showLoadGridModal();
                 
-                alert(`Grid "${name}" deleted successfully`);
+                // Use toast notification instead of alert
+                if (window.Toast) {
+                    window.Toast.info(`Grid "${name}" deleted successfully`);
+                } else {
+                    alert(`Grid "${name}" deleted successfully`);
+                }
                 return true;
             }
             return false;
         } catch (error) {
             console.error('Error deleting grid:', error);
+            // Use toast notification for error
+            if (window.Toast) {
+                window.Toast.error('Error deleting grid');
+            }
             return false;
         }
     }
@@ -736,6 +789,11 @@ class UIView {
         
         // Then clear the grid using the game controller
         this.controllers.game.clearGrid();
+        
+        // Show toast notification for grid clear
+        if (window.Toast) {
+            window.Toast.info('Grid cleared');
+        }
         
         // Enable user interactions after clearing
         const toolButtons = document.querySelectorAll('.tool-btn');

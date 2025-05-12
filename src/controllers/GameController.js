@@ -90,6 +90,15 @@ class GameController {
                         controller.stopVisualization();
                     }
                 }
+                
+                // Reset UI stats to zero
+                if (controller.elementIds) {
+                    const visitedCountElement = document.getElementById(controller.elementIds.visitedCountId);
+                    const pathLengthElement = document.getElementById(controller.elementIds.pathLengthId);
+                    
+                    if (visitedCountElement) visitedCountElement.textContent = '0';
+                    if (pathLengthElement) pathLengthElement.textContent = '0';
+                }
             }
         });
         
@@ -97,6 +106,13 @@ class GameController {
         this.grids.forEach(grid => {
             if (grid) {
                 grid.resetPath();
+            }
+        });
+        
+        // Ensure grid views are updated to reflect the reset
+        this.gridViews.forEach(gridView => {
+            if (gridView && typeof gridView.update === 'function') {
+                gridView.update();
             }
         });
     }
@@ -336,6 +352,10 @@ class GameController {
             console.error("GameController: No grids available for node action");
             return;
         }
+        
+        // Reset any existing visualization to ensure we start with a clean slate
+        // This is especially important after a "no path found" scenario
+        this.resetVisualizationState();
         
         // Determine obstacle type only once for consistent wall appearance across grids
         let sharedObstacleType = null;

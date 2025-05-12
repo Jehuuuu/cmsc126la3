@@ -5,7 +5,7 @@
     display: flex;
     width: 100%;
     min-height: 100vh;
-    position: relative; /* Added to position the toggle button properly */
+    position: relative;
 }
 
 /* Sidebar */
@@ -15,13 +15,12 @@
     background-color: #1a0e0e; /* Darker reddish-brown to match logo background */
     border-right: 4px solid var(--minecraft-dirt);
     padding: 0.5rem; /* Reduced from 0.8rem */
-    transition: all 0.3s ease;
-    position: relative;
+    position: fixed; /* Fixed position instead of absolute */
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
     height: 100vh;
     overflow-y: auto;
-    position: sticky;
-    top: 0;
+    z-index: 100; /* Ensure it stays above other content */
+    /* Remove transform property */
     /* Add custom scrollbar styling */
     scrollbar-width: thin; /* For Firefox */
     scrollbar-color: var(--minecraft-gold) rgba(0, 0, 0, 0.3); /* For Firefox */
@@ -47,67 +46,29 @@
     background-color: #ffcc33;
 }
 
-/* Reposition toggle button to the leftmost edge of the screen */
-.toggle-sidebar-btn {
-    position: fixed;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: var(--minecraft-dirt);
-    border: 2px solid #000;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 0 50% 50% 0; /* Rounded on the right side only */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Match the sidebar transition */
-    z-index: 1000; /* Ensure it's always on top */
+/* Remove toggle button styles */
+
+/* Remove collapsed sidebar styles */
+
+/* Main content wrapper - fixed margin for sidebar */
+.main-content-wrapper {
+    flex: 1;
+    padding: 0.75rem;
+    margin-left: 240px; /* Fixed margin for sidebar width */
+    width: calc(100% - 240px); /* Fixed width accounting for sidebar */
+    box-sizing: border-box;
+    /* Remove transitions */
 }
 
-.toggle-sidebar-btn:hover {
-    background-color: var(--minecraft-gold);
+/* For screens smaller than 768px (mobile) */
+@media (max-width: 768px) {
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
 }
 
-/* Update the rotate icon for collapsed state */
-.sidebar.collapsed + .toggle-sidebar-btn i {
-    transform: rotate(180deg);
-}
-
-/* Enhanced collapsed sidebar styling */
-.sidebar.collapsed {
-    width: 0px;
-    min-width: 0px;
-    padding: 0;
-    border-right-width: 0px;
-    overflow: hidden;
-}
-
-/* Hide content when sidebar is collapsed */
-.sidebar.collapsed .sidebar-content,
-.sidebar.collapsed .sidebar-header,
-.sidebar.collapsed .logo-container {
-    display: none;
-}
-
-/* Move the toggle button along with the sidebar when it's expanded/collapsed */
-.sidebar:not(.collapsed) + .toggle-sidebar-btn {
-    left: 240px;
-}
-
-.sidebar.collapsed + .toggle-sidebar-btn {
-    left: 0;
-}
-
-/* Adjust main content when sidebar is collapsed */
-.sidebar.collapsed + .toggle-sidebar-btn + .main-content-wrapper {
-    padding-left: 0.75rem;
-    margin-left: 32px; /* Space for the collapsed button */
-}
-
-/* Adjust header to accommodate the new button position */
+/* Adjust header */
 .sidebar-header {
     display: flex;
     justify-content: center;
@@ -115,14 +76,6 @@
     margin-bottom: 0.8rem; /* Reduced from 1.5rem */
     position: relative;
     padding-right: 10px;
-}
-
-/* Main content wrapper */
-.main-content-wrapper {
-    flex: 1;
-    padding: 0.75rem;
-    transition: all 0.3s ease;
-    min-width: 0; /* Allow shrinking below content size */
 }
 
 /* Sidebar sections */
@@ -371,9 +324,4 @@
     max-width: 100%;
     height: auto;
     display: block;
-}
-
-/* Hide logo when sidebar is collapsed */
-.sidebar.collapsed .logo-container {
-    display: none;
 } 

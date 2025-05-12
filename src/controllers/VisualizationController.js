@@ -78,8 +78,8 @@ class VisualizationController {
         // Update stats
         this.updateStats(this.visitedNodesInOrder.length, this.pathNodesInOrder.length);
         
-        // Generate alternative path - COMMENTED OUT
-        // this.generateAlternativePath();
+        // Store pathFound status for toast notification after animation
+        this.pathFound = result.pathFound;
         
         if (this.mode === 'auto') {
             // Auto mode: animate the visualization
@@ -88,6 +88,12 @@ class VisualizationController {
                 this.pathNodesInOrder, 
                 this.speed[this.currentSpeed]
             );
+            
+            // After animation is complete, show the "no path found" toast if needed
+            // and if this is the Dijkstra algorithm (to avoid duplicate toasts)
+            if (!this.pathFound && window.Toast && this.algorithm instanceof DijkstraAlgorithm) {
+                window.Toast.error('No possible path found to destination');
+            }
             
             this.isVisualizing = false;
             this.uiView.setGridInteractionsDisabled(false);
