@@ -6,6 +6,7 @@
     <title>PathCraft Adventure - Algorithm Explorer</title>
     <link rel="stylesheet" href="src/assets/styles/main.css">
     <link rel="stylesheet" href="src/assets/styles/tileset-grid.css">
+    <link rel="stylesheet" href="src/assets/styles/overlays.css">
     <link rel="icon" href="data:,">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -59,6 +60,7 @@
                             <button id="start-node-btn" class="tool-btn"><i class="fas fa-flag-checkered"></i> Set Start</button>
                             <button id="end-node-btn" class="tool-btn"><i class="fas fa-bullseye"></i> Set End</button>
                             <button id="wall-btn" class="tool-btn"><i class="fas fa-th"></i> Add Walls</button>
+                            <button id="weighted-node-btn" class="tool-btn"><i class="fas fa-weight-hanging"></i> Add Weights</button>
                             <button id="erase-btn" class="tool-btn"><i class="fas fa-eraser"></i> Erase</button>
                             <button id="random-maze-btn" class="tool-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
                             <button id="random-start-end-btn" class="tool-btn"><i class="fas fa-random"></i> Random Start/End</button>
@@ -98,6 +100,9 @@
             </button>
             <button class="tool-menu-item wall" data-tool="wall" aria-label="Add Walls">
                 <span class="icon"><i class="fas fa-th"></i></span> Draw Walls
+            </button>
+            <button class="tool-menu-item weighted" data-tool="weighted" aria-label="Add Weighted">
+                <span class="icon"><i class="fas fa-weight-hanging"></i></span> Add Weights
             </button>
             <button class="tool-menu-item erase" data-tool="erase" aria-label="Erase">
                 <span class="icon"><i class="fas fa-eraser"></i></span> Erase Items
@@ -151,6 +156,7 @@
                         <li><strong>Set Start</strong>: Set the starting point for the algorithm</li>
                         <li><strong>Set End</strong>: Set the destination point</li>
                         <li><strong>Add Walls</strong>: Create obstacles the algorithm must navigate around</li>
+                        <li><strong>Add Weights</strong>: Add weighted nodes that are costly to traverse (value 2-10)</li>
                         <li><strong>Erase</strong>: Remove walls or obstacles</li>
                         <li><strong>Random Maze</strong>: Generate a random maze of obstacles</li>
                         <li><strong>Random Start/End</strong>: Randomly place start and end points</li>
@@ -172,10 +178,29 @@
             </div>
         </div>
         
+        <!-- Weight input modal -->
+        <div id="weight-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Set Node Weight</h3>
+                <p>Enter a weight value (2-10):</p>
+                <input type="number" id="weight-input" min="2" max="10" value="2">
+                <div class="modal-buttons">
+                    <button id="confirm-weight-btn">Confirm</button>
+                    <button id="cancel-weight-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
         <main>
             <section class="algorithm-comparison">
                 <article class="algorithm-container">
-                    <h2>Dijkstra's Algorithm</h2>
+                    <div class="algorithm-header">
+                        <h2>Dijkstra's Algorithm</h2>
+                        <button id="swap-dijkstra-btn" class="swap-btn" aria-label="Swap Position">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
                     <div class="main-content">
                         <div class="grid-container">
                             <div id="dijkstra-grid" class="grid" aria-label="Dijkstra's algorithm grid"></div>
@@ -189,7 +214,12 @@
                 </article>
                 
                 <article class="algorithm-container">
-                    <h2>A* Algorithm</h2>
+                    <div class="algorithm-header">
+                        <h2>A* Algorithm</h2>
+                        <button id="swap-astar-btn" class="swap-btn" aria-label="Swap Position">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
                     <div class="main-content">
                         <div class="grid-container">
                             <div id="astar-grid" class="grid" aria-label="A* algorithm grid"></div>
@@ -203,38 +233,6 @@
                 </article>
             </section>
         </main>
-        
-        <aside class="legend-container">
-            <section class="legend" aria-label="Legend for grid elements">
-                <h3>Legend</h3>
-                <dl class="legend-items">
-                    <div class="legend-item">
-                        <dt><div class="legend-color start-node"></div></dt>
-                        <dd>Start Node</dd>
-                    </div>
-                    <div class="legend-item">
-                        <dt><div class="legend-color end-node"></div></dt>
-                        <dd>End Node</dd>
-                    </div>
-                    <div class="legend-item">
-                        <dt><div class="legend-color wall-node"></div></dt>
-                        <dd>Wall</dd>
-                    </div>
-                    <div class="legend-item">
-                        <dt><div class="legend-color visited-node"></div></dt>
-                        <dd>Visited Node</dd>
-                    </div>
-                    <div class="legend-item">
-                        <dt><div class="legend-color path-node"></div></dt>
-                        <dd>Path Node</dd>
-                    </div>
-                    <div class="legend-item">
-                        <dt><div class="legend-color current-node"></div></dt>
-                        <dd>Current Node</dd>
-                    </div>
-                </dl>
-            </section>
-        </aside>
     </div>
 
     <!-- Scripts with proper loading order -->

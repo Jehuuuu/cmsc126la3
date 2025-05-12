@@ -58,6 +58,7 @@ class UIView {
         this.setupToolButton('start-node-btn', 'start');
         this.setupToolButton('end-node-btn', 'end');
         this.setupToolButton('wall-btn', 'wall');
+        this.setupToolButton('weighted-node-btn', 'weighted');
         this.setupToolButton('erase-btn', 'erase');
         
         // Random maze button

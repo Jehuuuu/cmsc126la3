@@ -28,6 +28,12 @@ class GameController {
     setDefaultStartEnd() {
         console.log("GameController: Setting default start/end nodes for all grids");
         
+        // Safety check - make sure grids exist
+        if (!this.grids || this.grids.length === 0) {
+            console.error("GameController: No grids available to set start/end nodes");
+            return;
+        }
+        
         // Default start node at top-left quarter
         const startRow = Math.floor(this.grids[0].rows / 4);
         const startCol = Math.floor(this.grids[0].cols / 4);
@@ -40,15 +46,26 @@ class GameController {
         
         // Apply to all grids
         this.grids.forEach((grid, index) => {
+            // Skip if grid is not properly initialized
+            if (!grid || !grid.setStartNode || !grid.setEndNode) {
+                console.error(`Grid ${index} is not properly initialized`);
+                return;
+            }
+            
             grid.setStartNode(startRow, startCol);
             grid.setEndNode(endRow, endCol);
             
             console.log(`Grid ${index}: Start node set:`, !!grid.startNode);
             console.log(`Grid ${index}: End node set:`, !!grid.endNode);
             
-            // Update grid view
-            if (this.gridViews[index]) {
-                this.gridViews[index].update();
+            // Update grid view if available
+            if (this.gridViews && this.gridViews[index]) {
+                try {
+                    this.gridViews[index].render(); // Render first to ensure nodes exist
+                    this.gridViews[index].update();
+                } catch (error) {
+                    console.error(`Error updating grid view ${index}:`, error);
+                }
             }
         });
     }
@@ -242,41 +259,88 @@ class GameController {
      * @param {number} row - The row of the node
      * @param {number} col - The column of the node
      * @param {string} action - The action to perform ('wall', 'start', 'end', 'erase')
+     * @param {number} customValue - Optional custom value for weighted nodes
      */
-    handleNodeAction(gridIndex, row, col, action) {
+    handleNodeAction(gridIndex, row, col, action, customValue = null) {
         console.log(`GameController: Grid ${gridIndex} - ${action} at (${row}, ${col})`);
+        
+        // Safety check - validate grids array
+        if (!this.grids || this.grids.length === 0) {
+            console.error("GameController: No grids available for node action");
+            return;
+        }
         
         // Perform the action on all grids
         this.grids.forEach((grid, index) => {
-            switch(action) {
-                case 'wall':
-                    grid.setWall(row, col, true);
-                    break;
-                case 'start':
-                    grid.setStartNode(row, col);
-                    break;
-                case 'end':
-                    grid.setEndNode(row, col);
-                    break;
-                case 'erase':
-                    grid.setWall(row, col, false);
-                    break;
-                // Add a special case for toggling walls
-                case 'toggleWall':
-                    const node = grid.getNode(row, col);
-                    if (node && !node.isStart && !node.isEnd) {
-                        node.isWall = !node.isWall;
-                    }
-                    break;
+            // Skip if grid is not properly initialized
+            if (!grid) {
+                console.error(`Grid ${index} is not properly initialized`);
+                return;
+            }
+            
+            try {
+                switch(action) {
+                    case 'wall':
+                        if (typeof grid.setWall === 'function') {
+                            grid.setWall(row, col, true);
+                        }
+                        break;
+                    case 'start':
+                        if (typeof grid.setStartNode === 'function') {
+                            grid.setStartNode(row, col);
+                        }
+                        break;
+                    case 'end':
+                        if (typeof grid.setEndNode === 'function') {
+                            grid.setEndNode(row, col);
+                        }
+                        break;
+                    case 'weighted':
+                        const weightedNode = grid.getNode(row, col);
+                        if (weightedNode && !weightedNode.isStart && !weightedNode.isEnd) {
+                            weightedNode.isWall = false; // Ensure it's not a wall
+                            weightedNode.isWeighted = true; // Mark as weighted
+                            weightedNode.weight = customValue || 2; // Set weight value
+                        }
+                        break;
+                    case 'erase':
+                        const node = grid.getNode(row, col);
+                        if (node) {
+                            node.isWall = false;
+                            node.isWeighted = false;
+                            node.weight = 1;
+                        }
+                        break;
+                    // Add a special case for toggling walls
+                    case 'toggleWall':
+                        const toggleNode = grid.getNode(row, col);
+                        if (toggleNode && !toggleNode.isStart && !toggleNode.isEnd) {
+                            toggleNode.isWall = !toggleNode.isWall;
+                            // If turning into a wall, remove weighted status
+                            if (toggleNode.isWall) {
+                                toggleNode.isWeighted = false;
+                                toggleNode.weight = 1;
+                            }
+                        }
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error performing ${action} action on grid ${index}:`, error);
             }
         });
         
         // Make sure both grid views are updated
-        this.gridViews.forEach(gridView => {
-            if (gridView) {
-                gridView.update();
-            }
-        });
+        if (this.gridViews) {
+            this.gridViews.forEach((gridView, index) => {
+                if (gridView && typeof gridView.update === 'function') {
+                    try {
+                        gridView.update();
+                    } catch (error) {
+                        console.error(`Error updating grid view ${index}:`, error);
+                    }
+                }
+            });
+        }
     }
 
     /**

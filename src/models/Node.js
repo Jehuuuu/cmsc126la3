@@ -16,6 +16,7 @@ class Node {
         this.isVisited = false;
         this.isPath = false;
         this.isCurrent = false;
+        this.isWeighted = false; // Flag for weighted nodes
         this.distance = Infinity;
         this.previousNode = null;
         this.weight = 1; // Default weight for normal terrain
@@ -46,6 +47,7 @@ class Node {
         this.isStart = false;
         this.isEnd = false;
         this.isWall = false;
+        this.isWeighted = false;
         this.weight = 1;
         this.reset();
     }

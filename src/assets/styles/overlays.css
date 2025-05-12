@@ -1,0 +1,48 @@
+/* Clean overlay styling for grid nodes */
+
+/* Common properties for all image overlays */
+.start-overlay,
+.end-overlay,
+.obstacle-overlay {
+    display: block !important;
+    position: absolute !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+    image-rendering: pixelated !important;
+}
+
+/* Image overlay styling for wall nodes - full size */
+.obstacle-overlay {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Image overlay styling for start and end nodes - smaller size */
+.start-overlay,
+.end-overlay {
+    top: 15% !important;
+    left: 15% !important;
+    width: 70% !important;
+    height: 70% !important;
+    object-fit: contain !important;
+}
+
+/* Remove highlight colors and effects from start and end nodes */
+.node.start,
+.node.end {
+    background-color: transparent !important;
+}
+
+/* Ensure no background effects from ::before and ::after pseudo-elements */
+.node.start::before,
+.node.end::before,
+.node.start::after,
+.node.end::after {
+    display: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+} 

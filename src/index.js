@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set global reference to game controller first, so grid views can access it
     window.gameController = gameController;
     
+    // Set up swap functionality for algorithm containers
+    setupSwapButtons();
+    
     // Create visualization controllers
     const dijkstraController = new VisualizationController(dijkstraGrid, dijkstraGridView, null, dijkstraAlgorithm, {
         visitedCountId: 'dijkstra-visited-count',
@@ -713,6 +716,7 @@ function handleAssistiveMenuAction(tool, gameController) {
             'start': 'start-node-btn',
             'end': 'end-node-btn',
             'wall': 'wall-btn',
+            'weighted': 'weighted-node-btn',
             'erase': 'erase-btn'
         };
         
@@ -830,5 +834,36 @@ function toggleHelpModal(show) {
     const helpModal = document.getElementById('help-modal');
     if (helpModal) {
         helpModal.style.display = show ? 'block' : 'none';
+    }
+}
+
+/**
+ * Set up the swap buttons to swap algorithm positions
+ */
+function setupSwapButtons() {
+    const algorithmComparison = document.querySelector('.algorithm-comparison');
+    const swapDijkstraBtn = document.getElementById('swap-dijkstra-btn');
+    const swapAstarBtn = document.getElementById('swap-astar-btn');
+    
+    if (algorithmComparison && swapDijkstraBtn && swapAstarBtn) {
+        const swapAlgorithms = () => {
+            // Get the algorithm containers
+            const containers = algorithmComparison.querySelectorAll('.algorithm-container');
+            if (containers.length !== 2) return;
+            
+            // Swap the containers by moving the first to the end
+            algorithmComparison.appendChild(containers[0]);
+            
+            // Update any active DOM elements or styles
+            if (window.gameController) {
+                window.gameController.gridViews.forEach(view => {
+                    if (view) view.update();
+                });
+            }
+        };
+        
+        // Add click handlers for both swap buttons
+        swapDijkstraBtn.addEventListener('click', swapAlgorithms);
+        swapAstarBtn.addEventListener('click', swapAlgorithms);
     }
 } 

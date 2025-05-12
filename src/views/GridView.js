@@ -2,6 +2,10 @@
  * GridView class for rendering and interacting with the grid
  */
 class GridView {
+    // Static property to share across all GridView instances
+    static sharedTilesetMap = new Map();
+    static sharedObstacleMap = new Map();
+    
     /**
      * Create a new GridView
      * @param {Grid} grid - The grid model
@@ -25,10 +29,29 @@ class GridView {
         this.gridIndex = gridContainerId.includes('dijkstra') ? 0 : 1; // Get grid index based on ID
         this.animationTimeouts = []; // Store animation timeouts for cancellation
         
+        // Store a reference to the global gameController
+        this.gameController = window.gameController;
+        
         // Tileset configuration
         this.tileVariations = 4; // Number of different tile variations (can adjust based on your tileset)
         this.tilesetWidth = 32; // Width of a single tile in the tileset (adjust to match)
         this.tilesetHeight = 32; // Height of a single tile in the tileset (adjust to match)
+        
+        // Available tilesets
+        this.tilesets = [
+            'src/assets/images/tileset.png',
+            'src/assets/images/tileset2.png',
+            'src/assets/images/tileset3.png',
+            'src/assets/images/tileset4.png'
+        ];
+        
+        // Available obstacles
+        this.obstacles = [
+            'src/assets/images/obstacle1.png'
+        ];
+        
+        // Use the shared tileset map instead of a local one
+        // This ensures both grids have the same tile randomization pattern
         
         this.initialize();
     }
@@ -60,6 +83,12 @@ class GridView {
         this.gridContainer.style.gridTemplateColumns = `repeat(${this.grid.cols}, 1fr)`;
         this.gridContainer.style.gridTemplateRows = `repeat(${this.grid.rows}, 1fr)`;
         
+        // Initialize the nodeElements 2D array
+        this.nodeElements = [];
+        for (let row = 0; row < this.grid.rows; row++) {
+            this.nodeElements[row] = [];
+        }
+        
         // Create nodes
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
@@ -68,6 +97,9 @@ class GridView {
                 
                 // Store reference to DOM element in node
                 node.element = nodeElement;
+                
+                // Store reference to DOM element in our 2D array
+                this.nodeElements[row][col] = nodeElement;
                 
                 this.gridContainer.appendChild(nodeElement);
             }
@@ -94,11 +126,25 @@ class GridView {
         nodeElement.style.backgroundSize = '100% 100%';
         nodeElement.style.backgroundRepeat = 'no-repeat';
         
-        // Generate a consistent but seemingly random tile variation based on position
-        // This ensures the same node always gets the same tile but creates a diverse pattern
+        // Get random tileset for this node position
+        const tilesetIndex = this.getTilesetIndex(row, col);
+        
+        // For variation, we can still use position-based pseudorandom to prevent
+        // variations from changing when node states change
         const tileVariation = this.getTileVariation(row, col);
-        this.applyTileVariation(nodeElement, tileVariation);
+        
+        // Apply both the tileset and variation
+        this.applyTileVariation(nodeElement, tileVariation, tilesetIndex);
+        
+        // Store variation and tileset index for later reference
         nodeElement.dataset.tileVariation = tileVariation;
+        nodeElement.dataset.tilesetIndex = tilesetIndex;
+        
+        // If this is a wall, get obstacle type
+        if (node.isWall) {
+            const obstacleIndex = this.getObstacleIndex(row, col);
+            nodeElement.dataset.obstacleIndex = obstacleIndex;
+        }
         
         // Add status class if any
         const status = node.getStatus();
@@ -124,15 +170,59 @@ class GridView {
     }
     
     /**
+     * Get tileset index for a node based on position
+     * @param {number} row - The row of the node
+     * @param {number} col - The column of the node
+     * @returns {number} The index of the tileset to use
+     */
+    getTilesetIndex(row, col) {
+        const nodeKey = `${row}-${col}`;
+        
+        // If this node already has an assigned tileset in the shared map, use it
+        if (GridView.sharedTilesetMap.has(nodeKey)) {
+            return GridView.sharedTilesetMap.get(nodeKey);
+        }
+        
+        // Assign a completely random tileset for this position
+        const randomIndex = Math.floor(Math.random() * this.tilesets.length);
+        GridView.sharedTilesetMap.set(nodeKey, randomIndex);
+        return randomIndex;
+    }
+    
+    /**
+     * Get obstacle index for a node based on position
+     * @param {number} row - The row of the node
+     * @param {number} col - The column of the node
+     * @returns {number} The index of the obstacle to use
+     */
+    getObstacleIndex(row, col) {
+        const nodeKey = `${row}-${col}`;
+        
+        // If this node already has an assigned obstacle in the shared map, use it
+        if (GridView.sharedObstacleMap.has(nodeKey)) {
+            return GridView.sharedObstacleMap.get(nodeKey);
+        }
+        
+        // Assign a completely random obstacle for this position
+        const randomIndex = Math.floor(Math.random() * this.obstacles.length);
+        GridView.sharedObstacleMap.set(nodeKey, randomIndex);
+        return randomIndex;
+    }
+    
+    /**
      * Apply a specific tile variation to a node element
      * @param {HTMLElement} nodeElement - The DOM element of the node
      * @param {number} variation - The variation index to apply
+     * @param {number} tilesetIndex - The index of the tileset to use
      */
-    applyTileVariation(nodeElement, variation) {
+    applyTileVariation(nodeElement, variation, tilesetIndex = 0) {
+        // Set background image to the selected tileset
+        nodeElement.style.backgroundImage = `url('${this.tilesets[tilesetIndex]}')`;
         nodeElement.style.backgroundPosition = `0% 0%`;
         
-        // Store the variation for later reference
+        // Store the variation and tileset for later reference
         nodeElement.dataset.tileVariation = variation;
+        nodeElement.dataset.tilesetIndex = tilesetIndex;
     }
 
     /**
@@ -296,48 +386,84 @@ class GridView {
     }
 
     /**
-     * Handle node click based on current tool
+     * Handle node click
      * @param {number} row - Row of the clicked node
      * @param {number} col - Column of the clicked node
      */
     handleNodeClick(row, col) {
         const node = this.grid.getNode(row, col);
         
-        // Don't do anything during visualization
-        if (node.isVisited || node.isPath) return;
-        
-        // Always use global gameController if available to sync grids
-        const gameController = window.gameController;
-        
-        if (gameController) {
-            console.log(`GridView (${this.gridContainerId}): Calling gameController with action ${this.currentTool}`);
-            
-            // Map the current tool to the right action
-            let action = this.currentTool;
-            
-            // Special case for wall tool - use toggleWall
-            if (action === 'wall') {
-                gameController.handleNodeAction(this.gridIndex, row, col, 'toggleWall');
-            } else {
-                gameController.handleNodeAction(this.gridIndex, row, col, action);
-            }
+        if (!node || node.isStart || node.isEnd) {
             return;
         }
         
-        // Fallback to direct modification if game controller not available
-        switch (this.currentTool) {
-            case 'start':
-                this.setStartNode(row, col);
-                break;
-            case 'end':
-                this.setEndNode(row, col);
-                break;
-            case 'wall':
-                this.toggleWall(row, col);
-                break;
-            case 'erase':
-                this.eraseNode(row, col);
-                break;
+        // Get the gameController from either instance property or global reference
+        const gameController = this.gameController || window.gameController;
+        
+        if (!gameController) {
+            console.error("GridView: No gameController found, cannot handle node action");
+            return;
+        }
+        
+        if (this.currentTool === 'weighted') {
+            // Show the weight selection modal
+            const weightModal = document.getElementById('weight-modal');
+            const weightInput = document.getElementById('weight-input');
+            const confirmBtn = document.getElementById('confirm-weight-btn');
+            const cancelBtn = document.getElementById('cancel-weight-btn');
+            const closeBtn = weightModal.querySelector('.close-btn');
+            
+            // Default to current value if node is already weighted
+            weightInput.value = node.isWeighted ? node.weight : 2;
+            
+            // Show modal
+            weightModal.style.display = 'block';
+            weightInput.focus();
+            
+            // Function to confirm weight
+            const confirmWeight = () => {
+                const weight = parseInt(weightInput.value);
+                if (weight >= 2 && weight <= 10) {
+                    gameController.handleNodeAction(this.gridIndex, row, col, 'weighted', weight);
+                }
+                weightModal.style.display = 'none';
+                
+                // Clean up event listeners
+                confirmBtn.removeEventListener('click', confirmWeight);
+                cancelBtn.removeEventListener('click', cancelAction);
+                closeBtn.removeEventListener('click', cancelAction);
+                document.removeEventListener('keydown', handleKeydown);
+            };
+            
+            // Function to cancel
+            const cancelAction = () => {
+                weightModal.style.display = 'none';
+                
+                // Clean up event listeners
+                confirmBtn.removeEventListener('click', confirmWeight);
+                cancelBtn.removeEventListener('click', cancelAction);
+                closeBtn.removeEventListener('click', cancelAction);
+                document.removeEventListener('keydown', handleKeydown);
+            };
+            
+            // Function to handle keyboard events
+            const handleKeydown = (e) => {
+                if (e.key === 'Enter') {
+                    confirmWeight();
+                } else if (e.key === 'Escape') {
+                    cancelAction();
+                }
+            };
+            
+            // Add event listeners
+            confirmBtn.addEventListener('click', confirmWeight);
+            cancelBtn.addEventListener('click', cancelAction);
+            closeBtn.addEventListener('click', cancelAction);
+            document.addEventListener('keydown', handleKeydown);
+        } else {
+            // Handle other tools
+            const action = this.currentTool === 'wall' ? 'toggleWall' : this.currentTool;
+            gameController.handleNodeAction(this.gridIndex, row, col, action);
         }
     }
 
@@ -350,6 +476,12 @@ class GridView {
         // Remove start class from previous start node if it exists
         if (this.grid.startNode && this.grid.startNode.element) {
             this.grid.startNode.element.classList.remove('start');
+            
+            // Remove any existing start image overlay
+            const existingStartImg = this.grid.startNode.element.querySelector('.start-overlay');
+            if (existingStartImg) {
+                this.grid.startNode.element.removeChild(existingStartImg);
+            }
         }
         
         // Set new start node
@@ -358,7 +490,49 @@ class GridView {
         // Add start class to new start node
         const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
+            // Preserve the tileset and variation when changing node state
+            const variation = nodeElement.dataset.tileVariation || 0;
+            const tilesetIndex = nodeElement.dataset.tilesetIndex || 0;
+            
             nodeElement.className = 'node start';
+            this.applyTileVariation(nodeElement, variation, tilesetIndex);
+            
+            // Add start.png overlay
+            // Get absolute URL for the start image
+            const startUrl = 'src/assets/images/start.png';
+            
+            try {
+                // Create a new img element for the start icon
+                const startImg = document.createElement('img');
+                startImg.src = startUrl;
+                startImg.alt = 'Start Node';
+                startImg.className = 'start-overlay';
+                
+                // Set inline styles for the start image overlay
+                startImg.style.cssText = `
+                    position: absolute;
+                    top: 15%;
+                    left: 15%;
+                    width: 70%;
+                    height: 70%;
+                    z-index: 10;
+                    pointer-events: none;
+                    object-fit: contain;
+                `;
+                
+                // Add error handling
+                startImg.onerror = function() {
+                    console.error(`ERROR: Failed to load start image at (${row}, ${col})`);
+                };
+                
+                // Add the start image on top of the node
+                nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
+                nodeElement.appendChild(startImg);
+                
+                console.log(`Added start image to node at (${row}, ${col})`);
+            } catch (error) {
+                console.error('Error adding start image:', error);
+            }
         }
     }
 
@@ -371,6 +545,12 @@ class GridView {
         // Remove end class from previous end node if it exists
         if (this.grid.endNode && this.grid.endNode.element) {
             this.grid.endNode.element.classList.remove('end');
+            
+            // Remove any existing end image overlay
+            const existingEndImg = this.grid.endNode.element.querySelector('.end-overlay');
+            if (existingEndImg) {
+                this.grid.endNode.element.removeChild(existingEndImg);
+            }
         }
         
         // Set new end node
@@ -379,7 +559,49 @@ class GridView {
         // Add end class to new end node
         const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
+            // Preserve the tileset and variation when changing node state
+            const variation = nodeElement.dataset.tileVariation || 0;
+            const tilesetIndex = nodeElement.dataset.tilesetIndex || 0;
+            
             nodeElement.className = 'node end';
+            this.applyTileVariation(nodeElement, variation, tilesetIndex);
+            
+            // Add end.png overlay
+            // Get URL for the end image
+            const endUrl = 'src/assets/images/end.png';
+            
+            try {
+                // Create a new img element for the end icon
+                const endImg = document.createElement('img');
+                endImg.src = endUrl;
+                endImg.alt = 'End Node';
+                endImg.className = 'end-overlay';
+                
+                // Set inline styles for the end image overlay
+                endImg.style.cssText = `
+                    position: absolute;
+                    top: 15%;
+                    left: 15%;
+                    width: 70%;
+                    height: 70%;
+                    z-index: 10;
+                    pointer-events: none;
+                    object-fit: contain;
+                `;
+                
+                // Add error handling
+                endImg.onerror = function() {
+                    console.error(`ERROR: Failed to load end image at (${row}, ${col})`);
+                };
+                
+                // Add the end image on top of the node
+                nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
+                nodeElement.appendChild(endImg);
+                
+                console.log(`Added end image to node at (${row}, ${col})`);
+            } catch (error) {
+                console.error('Error adding end image:', error);
+            }
         }
     }
 
@@ -401,9 +623,66 @@ class GridView {
         const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
             if (node.isWall) {
+                // Add wall class for tracking
                 nodeElement.classList.add('wall');
+                
+                // Clear out any existing obstacle overlay
+                const existingObstacle = nodeElement.querySelector('.obstacle-overlay');
+                if (existingObstacle) {
+                    nodeElement.removeChild(existingObstacle);
+                }
+                
+                // Get absolute URL for the obstacle image
+                const obstacleUrl = window.location.origin + '/src/assets/images/obstacle1.png';
+                console.log(`Using absolute URL for obstacle: ${obstacleUrl}`);
+                
+                try {
+                    // Create a new img element for the obstacle
+                    const obstacleImg = document.createElement('img');
+                    obstacleImg.src = obstacleUrl;
+                    obstacleImg.alt = 'Wall Obstacle';
+                    obstacleImg.className = 'obstacle-overlay';
+                    
+                    // Set inline styles for the obstacle
+                    obstacleImg.style.cssText = `
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 10;
+                        pointer-events: none;
+                        object-fit: cover;
+                    `;
+                    
+                    // Add load and error event handlers
+                    obstacleImg.onload = function() {
+                        console.log(`SUCCESS: Obstacle image loaded at (${row}, ${col})`, obstacleImg);
+                    };
+                    
+                    obstacleImg.onerror = function(e) {
+                        console.error(`ERROR: Failed to load obstacle image at (${row}, ${col})`, e);
+                        // Try with relative URL as fallback
+                        obstacleImg.src = 'src/assets/images/obstacle1.png';
+                    };
+                    
+                    // Add the obstacle image on top of the node
+                    nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
+                    nodeElement.appendChild(obstacleImg);
+                    
+                    console.log(`Added obstacle image to node at (${row}, ${col})`, obstacleImg);
+                } catch (error) {
+                    console.error('Error adding obstacle image:', error);
+                }
             } else {
+                // Remove wall class
                 nodeElement.classList.remove('wall');
+                
+                // Remove any obstacle overlay
+                const obstacleImg = nodeElement.querySelector('.obstacle-overlay');
+                if (obstacleImg) {
+                    nodeElement.removeChild(obstacleImg);
+                }
             }
         }
     }
@@ -425,7 +704,14 @@ class GridView {
         // Update class
         const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
         if (nodeElement) {
+            // Remove wall class
             nodeElement.classList.remove('wall');
+            
+            // Remove any obstacle overlay
+            const obstacleImg = nodeElement.querySelector('.obstacle-overlay');
+            if (obstacleImg) {
+                nodeElement.removeChild(obstacleImg);
+            }
         }
     }
 
@@ -441,7 +727,7 @@ class GridView {
         if (node.isEnd || node.isWall) return;
         
         // Update all grids via the game controller if it exists
-        const gameController = window.gameController;
+        const gameController = this.gameController || window.gameController;
         if (gameController) {
             console.log(`GridView (${this.gridContainerId}): Moving start node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'start');
@@ -463,7 +749,7 @@ class GridView {
         if (node.isStart || node.isWall) return;
         
         // Update all grids via the game controller if it exists
-        const gameController = window.gameController;
+        const gameController = this.gameController || window.gameController;
         if (gameController) {
             console.log(`GridView (${this.gridContainerId}): Moving end node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'end');
@@ -482,49 +768,170 @@ class GridView {
     }
 
     /**
-     * Update the view to reflect the current state of the grid
-     * This method should only update nodes that are not being animated currently
+     * Update the grid view based on the model
      */
     update() {
         console.log(`GridView (${this.gridContainerId}): Updating view`);
         
+        // Use direct DOM access instead of nodeElements array that might not be initialized
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
                 const node = this.grid.nodes[row][col];
+                
+                // Get the node element directly from the DOM using its ID
                 const nodeElement = document.getElementById(`${this.gridContainerId}-node-${row}-${col}`);
                 
-                if (nodeElement) {
-                    // Skip nodes that are currently being animated by the visualize method
-                    // But allow updates for nodes in step-by-step mode or other manual updates
-                    if (nodeElement.classList.contains('animate')) {
-                        continue;
-                    }
+                // Skip if nodeElement doesn't exist
+                if (!nodeElement) {
+                    console.warn(`GridView (${this.gridContainerId}): NodeElement at [${row}][${col}] not found, skipping`);
+                    continue;
+                }
+                
+                // Clear existing classes and overlays
+                nodeElement.className = 'node';
+                nodeElement.innerHTML = '';
+                
+                // Handle path
+                if (node.isPath) {
+                    nodeElement.classList.add('path');
+                }
+                
+                // Handle visited status
+                if (node.isVisited && !node.isPath) {
+                    nodeElement.classList.add('visited');
+                }
+                
+                // Handle current node in visualization
+                if (node.isCurrent) {
+                    nodeElement.classList.add('current');
+                }
+                
+                // Handle wall
+                if (node.isWall) {
+                    nodeElement.classList.add('wall');
                     
-                    // Store current variation
-                    const currentVariation = nodeElement.dataset.tileVariation || 0;
+                    // Add obstacle image overlay (50% chance of obstacle1 or obstacle2)
+                    const obstacleNum = Math.random() < 0.5 ? 1 : 2;
+                    const obstacleUrl = `src/assets/images/obstacle${obstacleNum}.png`;
+                    const obstacleImg = document.createElement('img');
+                    obstacleImg.src = obstacleUrl;
+                    obstacleImg.alt = 'Obstacle';
+                    obstacleImg.className = 'obstacle-overlay';
+                    // Add error handler
+                    obstacleImg.onerror = function() {
+                        console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                        obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
+                    };
+                    nodeElement.appendChild(obstacleImg);
+                }
+                
+                // Add appropriate classes based on node state
+                if (node.isStart) {
+                    nodeElement.classList.add('start');
                     
-                    // Clear all state classes
-                    nodeElement.className = 'node';
+                    // Add start image overlay
+                    const startUrl = 'src/assets/images/start.png';
+                    const startImg = document.createElement('img');
+                    startImg.src = startUrl;
+                    startImg.alt = 'Start Node';
+                    startImg.className = 'start-overlay';
+                    startImg.style.cssText = `
+                        position: absolute;
+                        top: 15%;
+                        left: 15%;
+                        width: 70%;
+                        height: 70%;
+                        z-index: 10;
+                        pointer-events: none;
+                        object-fit: contain;
+                    `;
+                    // Add error handler
+                    startImg.onerror = function() {
+                        console.error('Failed to load start.png, trying alternate path');
+                        startImg.src = './src/assets/images/start.png';
+                    };
+                    nodeElement.style.position = 'relative';
+                    nodeElement.appendChild(startImg);
+                } else if (node.isEnd) {
+                    nodeElement.classList.add('end');
                     
-                    // Reapply tile variation
-                    this.applyTileVariation(nodeElement, currentVariation);
+                    // Add end image overlay
+                    const endUrl = 'src/assets/images/end.png';
+                    const endImg = document.createElement('img');
+                    endImg.src = endUrl;
+                    endImg.alt = 'End Node';
+                    endImg.className = 'end-overlay';
+                    endImg.style.cssText = `
+                        position: absolute;
+                        top: 15%;
+                        left: 15%;
+                        width: 70%;
+                        height: 70%;
+                        z-index: 10;
+                        pointer-events: none;
+                        object-fit: contain;
+                    `;
+                    // Add error handler
+                    endImg.onerror = function() {
+                        console.error('Failed to load end.png, trying alternate path');
+                        endImg.src = './src/assets/images/end.png';
+                    };
+                    nodeElement.style.position = 'relative';
+                    nodeElement.appendChild(endImg);
+                } else if (node.isWeighted) {
+                    nodeElement.classList.add('weighted');
                     
-                    // Add appropriate classes based on node state
-                    if (node.isStart) {
-                        nodeElement.classList.add('start');
-                    } else if (node.isEnd) {
-                        nodeElement.classList.add('end');
-                    } else if (node.isWall) {
-                        nodeElement.classList.add('wall');
-                    } else if (node.isCurrent) {
-                        nodeElement.classList.add('current');
-                    } else if (node.isPath) {
-                        nodeElement.classList.add('path');
-                    } else if (node.isVisited) {
-                        nodeElement.classList.add('visited');
-                    }
+                    // Add weighted image overlay (monster.gif)
+                    const weightedUrl = 'src/assets/gifs/monster.gif';
+                    const weightedImg = document.createElement('img');
+                    weightedImg.src = weightedUrl;
+                    weightedImg.alt = 'Weighted Node';
+                    weightedImg.className = 'weighted-overlay';
+                    weightedImg.style.cssText = `
+                        position: absolute;
+                        top: 15%;
+                        left: 15%;
+                        width: 70%;
+                        height: 70%;
+                        z-index: 10;
+                        pointer-events: none;
+                        object-fit: contain;
+                    `;
+                    // Handle error case
+                    weightedImg.onerror = function() {
+                        console.error('Failed to load monster.gif, trying absolute path');
+                        weightedImg.src = 'C:/Users/kenzj/Desktop/cmsc126le3/src/assets/gifs/monster.gif';
+                    };
+                    nodeElement.style.position = 'relative';
+                    nodeElement.appendChild(weightedImg);
+                    
+                    // Add weight value display
+                    const weightValue = document.createElement('div');
+                    weightValue.className = 'weight-value';
+                    weightValue.textContent = node.weight;
+                    weightValue.style.cssText = `
+                        position: absolute;
+                        bottom: 2px;
+                        right: 2px;
+                        background-color: rgba(0, 0, 0, 0.7);
+                        color: white;
+                        border-radius: 50%;
+                        width: 16px;
+                        height: 16px;
+                        font-size: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 11;
+                    `;
+                    nodeElement.appendChild(weightValue);
                 }
             }
+        }
+        
+        // If updateNodeCounts function exists, call it
+        if (typeof this.updateNodeCounts === 'function') {
+            this.updateNodeCounts();
         }
     }
 
@@ -552,11 +959,12 @@ class GridView {
                     if (nodeElement.classList.contains('visited') || nodeElement.classList.contains('path')) {
                         const node = this.grid.getNode(row, col);
                         const currentVariation = nodeElement.dataset.tileVariation || 0;
+                        const currentTileset = nodeElement.dataset.tilesetIndex || 0;
                         
                         // Reset to base state if it's not a special node
                         if (!node.isStart && !node.isEnd && !node.isWall) {
                             nodeElement.className = 'node';
-                            this.applyTileVariation(nodeElement, currentVariation);
+                            this.applyTileVariation(nodeElement, currentVariation, currentTileset);
                         }
                     }
                 }
@@ -719,6 +1127,42 @@ class GridView {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Update node counts in the UI
+     */
+    updateNodeCounts() {
+        // Define this function if it doesn't exist to prevent errors
+        // Find the visited count and path length elements
+        const visitedCountElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-visited-count`);
+        const pathLengthElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-path-length`);
+        
+        if (visitedCountElement) {
+            // Count visited nodes
+            let visitedCount = 0;
+            for (let row = 0; row < this.grid.rows; row++) {
+                for (let col = 0; col < this.grid.cols; col++) {
+                    if (this.grid.nodes[row][col].isVisited) {
+                        visitedCount++;
+                    }
+                }
+            }
+            visitedCountElement.textContent = visitedCount;
+        }
+        
+        if (pathLengthElement) {
+            // Count path nodes
+            let pathLength = 0;
+            for (let row = 0; row < this.grid.rows; row++) {
+                for (let col = 0; col < this.grid.cols; col++) {
+                    if (this.grid.nodes[row][col].isPath) {
+                        pathLength++;
+                    }
+                }
+            }
+            pathLengthElement.textContent = pathLength;
         }
     }
 } 
