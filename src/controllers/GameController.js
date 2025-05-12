@@ -71,10 +71,44 @@ class GameController {
     }
 
     /**
+     * Reset visualization state across all visualization controllers
+     * Used before making grid changes to ensure clean slate
+     */
+    resetVisualizationState() {
+        // Reset visualization controllers more thoroughly
+        this.visualizationControllers.forEach(controller => {
+            if (controller) {
+                // Force a complete visualization reset
+                if (typeof controller.forceReset === 'function') {
+                    controller.forceReset();
+                } else {
+                    // Fallback to basic reset if forceReset isn't available
+                    if (typeof controller.reset === 'function') {
+                        controller.reset();
+                    }
+                    if (typeof controller.stopVisualization === 'function') {
+                        controller.stopVisualization();
+                    }
+                }
+            }
+        });
+        
+        // Reset path visualization in all grids
+        this.grids.forEach(grid => {
+            if (grid) {
+                grid.resetPath();
+            }
+        });
+    }
+
+    /**
      * Set random start and end nodes
      */
     setRandomStartEnd() {
         console.log("GameController: Setting random start/end for all grids");
+        
+        // Reset any existing visualization
+        this.resetVisualizationState();
         
         // Generate random positions ensuring they are different
         const rows = this.grids[0].rows;
@@ -131,10 +165,8 @@ class GameController {
     generateRandomMaze(density = 0.3) {
         console.log("GameController: Generating random maze for all grids");
         
-        // Stop any running visualizations
-        this.visualizationControllers.forEach(controller => {
-            if (controller) controller.stopVisualization();
-        });
+        // Reset any existing visualization
+        this.resetVisualizationState();
         
         // Generate the same random maze for all grids
         const rows = this.grids[0].rows;
@@ -529,10 +561,8 @@ class GameController {
     generateRandomWeights(density = 0.15) {
         console.log("GameController: Generating random weighted nodes");
         
-        // Stop any running visualizations
-        this.visualizationControllers.forEach(controller => {
-            if (controller) controller.stopVisualization();
-        });
+        // Reset any existing visualization
+        this.resetVisualizationState();
         
         // Generate the same weights pattern for all grids
         const rows = this.grids[0].rows;
