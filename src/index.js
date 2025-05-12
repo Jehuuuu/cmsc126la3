@@ -783,6 +783,22 @@ function handleRandomMenuAction(action, gameController) {
             gameController.generateRandomWeights();
             return;
         }
+    } else if (action === 'save-grid') {
+        // Handle save grid action
+        console.log('Random menu: showing save grid modal');
+        const saveButton = document.getElementById('save-grid-btn');
+        if (saveButton) {
+            saveButton.click();
+        }
+        return;
+    } else if (action === 'load-grid') {
+        // Handle load grid action
+        console.log('Random menu: showing load grid modal');
+        const loadButton = document.getElementById('load-grid-btn');
+        if (loadButton) {
+            loadButton.click();
+        }
+        return;
     } else {
         // Map the action to the corresponding button ID
         const buttonMap = {

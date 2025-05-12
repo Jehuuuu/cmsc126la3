@@ -1565,4 +1565,64 @@ button.touch-active {
 /* Action buttons section spacing */
 .action-buttons {
     justify-content: space-evenly;
+}
+
+/* Saved grids list styles */
+.saved-grids-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.grid-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.grid-item:hover {
+    background-color: #f5f5f5;
+}
+
+.grid-item:last-child {
+    border-bottom: none;
+}
+
+.grid-item .grid-name {
+    font-weight: bold;
+}
+
+.grid-item .grid-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.grid-item .delete-grid {
+    color: #d9534f;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.no-saved-grids {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+
+/* Ensure modals have good max width */
+.modal-content {
+    max-width: 500px;
+    width: 100%;
 } 

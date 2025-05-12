@@ -447,14 +447,27 @@ class GameController {
             cols: this.grids[0].cols,
             start: this.grids[0].startNode ? { row: this.grids[0].startNode.row, col: this.grids[0].startNode.col } : null,
             end: this.grids[0].endNode ? { row: this.grids[0].endNode.row, col: this.grids[0].endNode.col } : null,
-            walls: []
+            walls: [],
+            weights: [] // Add array to store weighted nodes
         };
         
-        // Save wall positions
+        // Save wall positions and weighted nodes
         for (let row = 0; row < this.grids[0].rows; row++) {
             for (let col = 0; col < this.grids[0].cols; col++) {
-                if (this.grids[0].nodes[row][col].isWall) {
-                    gridData.walls.push({ row, col });
+                const node = this.grids[0].nodes[row][col];
+                if (node.isWall) {
+                    gridData.walls.push({ 
+                        row, 
+                        col, 
+                        obstacleType: node.obstacleType || 1 // Save obstacle type
+                    });
+                }
+                if (node.isWeighted) {
+                    gridData.weights.push({
+                        row,
+                        col,
+                        weight: node.weight
+                    });
                 }
             }
         }
@@ -494,6 +507,9 @@ class GameController {
             
             const gridData = savedGrids[name];
             
+            // Reset visualization state
+            this.resetVisualizationState();
+            
             // Resize grid if needed
             if (gridData.rows !== this.grids[0].rows || gridData.cols !== this.grids[0].cols) {
                 this.grids.forEach((grid, index) => {
@@ -522,13 +538,37 @@ class GameController {
                 });
             }
             
-            // Set walls
+            // Set walls with obstacle types
             for (const wall of gridData.walls) {
                 this.grids.forEach((grid, index) => {
                     grid.setWall(wall.row, wall.col, true);
+                    
+                    // Set obstacle type if available
+                    if (wall.obstacleType) {
+                        const node = grid.getNode(wall.row, wall.col);
+                        if (node) {
+                            node.obstacleType = wall.obstacleType;
+                        }
+                    }
                 });
             }
             
+            // Set weighted nodes if available
+            if (gridData.weights && Array.isArray(gridData.weights)) {
+                for (const weightedNode of gridData.weights) {
+                    this.grids.forEach((grid, index) => {
+                        const node = grid.getNode(weightedNode.row, weightedNode.col);
+                        if (node) {
+                            node.isWall = false; // Ensure it's not a wall
+                            node.obstacleType = null;
+                            node.isWeighted = true;
+                            node.weight = weightedNode.weight || 2; // Default to 2 if weight not specified
+                        }
+                    });
+                }
+            }
+            
+            // Update all grid views
             this.gridViews.forEach((gridView, index) => {
                 if (gridView) gridView.update();
             });

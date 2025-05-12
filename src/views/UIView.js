@@ -88,6 +88,67 @@ class UIView {
             });
         }
         
+        // Save grid button
+        const saveGridButton = document.getElementById('save-grid-btn');
+        console.log("Save grid button found:", !!saveGridButton);
+        if (saveGridButton) {
+            saveGridButton.addEventListener('click', () => {
+                this.showSaveGridModal();
+            });
+        }
+        
+        // Load grid button
+        const loadGridButton = document.getElementById('load-grid-btn');
+        console.log("Load grid button found:", !!loadGridButton);
+        if (loadGridButton) {
+            loadGridButton.addEventListener('click', () => {
+                this.showLoadGridModal();
+            });
+        }
+        
+        // Save confirmation
+        const confirmSaveButton = document.getElementById('confirm-save-btn');
+        if (confirmSaveButton) {
+            confirmSaveButton.addEventListener('click', () => {
+                const nameInput = document.getElementById('grid-name-input');
+                const gridName = nameInput.value.trim() || `Grid-${Date.now()}`;
+                
+                if (this.controllers.game.saveGrid(gridName)) {
+                    alert(`Grid saved as "${gridName}"`);
+                    this.hideSaveGridModal();
+                } else {
+                    alert('Failed to save grid. Please try again.');
+                }
+            });
+        }
+        
+        // Cancel save
+        const cancelSaveButton = document.getElementById('cancel-save-btn');
+        if (cancelSaveButton) {
+            cancelSaveButton.addEventListener('click', () => {
+                this.hideSaveGridModal();
+            });
+        }
+        
+        // Cancel load
+        const cancelLoadButton = document.getElementById('cancel-load-btn');
+        if (cancelLoadButton) {
+            cancelLoadButton.addEventListener('click', () => {
+                this.hideLoadGridModal();
+            });
+        }
+        
+        // Close buttons for modals
+        document.querySelectorAll('.close-btn').forEach(closeBtn => {
+            closeBtn.addEventListener('click', (e) => {
+                // Find the parent modal of this close button
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
         // Clear grid button
         const clearGridButton = document.getElementById('clear-grid-btn');
         console.log("Clear grid button found:", !!clearGridButton);
@@ -302,6 +363,145 @@ class UIView {
         const clearGridBtn = document.getElementById('clear-grid-btn');
         if (clearGridBtn) {
             clearGridBtn.disabled = false;
+        }
+    }
+
+    /**
+     * Show the save grid modal
+     */
+    showSaveGridModal() {
+        const modal = document.getElementById('save-grid-modal');
+        const input = document.getElementById('grid-name-input');
+        
+        if (modal) {
+            modal.style.display = 'flex';
+            // Clear previous input and focus
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+    
+    /**
+     * Hide the save grid modal
+     */
+    hideSaveGridModal() {
+        const modal = document.getElementById('save-grid-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
+    /**
+     * Show the load grid modal and populate with saved grids
+     */
+    showLoadGridModal() {
+        const modal = document.getElementById('load-grid-modal');
+        const savedGridsList = document.getElementById('saved-grids-list');
+        const noSavedGrids = document.getElementById('no-saved-grids');
+        
+        if (modal && savedGridsList) {
+            // Clear previous content except the "no saved grids" message
+            const items = savedGridsList.querySelectorAll('.grid-item');
+            items.forEach(item => item.remove());
+            
+            // Get saved grids
+            const savedGridNames = this.controllers.game.getSavedGrids();
+            
+            // Show/hide the "no saved grids" message
+            if (noSavedGrids) {
+                noSavedGrids.style.display = savedGridNames.length > 0 ? 'none' : 'block';
+            }
+            
+            // Create list items for each saved grid
+            savedGridNames.forEach(name => {
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                
+                const gridName = document.createElement('div');
+                gridName.className = 'grid-name';
+                gridName.textContent = name;
+                
+                const gridActions = document.createElement('div');
+                gridActions.className = 'grid-actions';
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-grid';
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent triggering the parent's click
+                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                        this.deleteGrid(name);
+                    }
+                });
+                
+                gridActions.appendChild(deleteButton);
+                gridItem.appendChild(gridName);
+                gridItem.appendChild(gridActions);
+                
+                // Add click handler to load the grid
+                gridItem.addEventListener('click', () => {
+                    this.loadGrid(name);
+                });
+                
+                savedGridsList.appendChild(gridItem);
+            });
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+    }
+    
+    /**
+     * Hide the load grid modal
+     */
+    hideLoadGridModal() {
+        const modal = document.getElementById('load-grid-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
+    /**
+     * Load a grid by name
+     * @param {string} name - The name of the grid to load
+     */
+    loadGrid(name) {
+        if (this.controllers.game.loadGrid(name)) {
+            alert(`Grid "${name}" loaded successfully`);
+            this.hideLoadGridModal();
+        } else {
+            alert(`Failed to load grid "${name}"`);
+        }
+    }
+    
+    /**
+     * Delete a saved grid
+     * @param {string} name - The name of the grid to delete
+     */
+    deleteGrid(name) {
+        try {
+            // Get saved grids
+            const savedGrids = JSON.parse(localStorage.getItem('savedGrids') || '{}');
+            
+            // Delete the specified grid
+            if (savedGrids[name]) {
+                delete savedGrids[name];
+                
+                // Save back to local storage
+                localStorage.setItem('savedGrids', JSON.stringify(savedGrids));
+                
+                // Refresh the modal
+                this.showLoadGridModal();
+                
+                alert(`Grid "${name}" deleted successfully`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error deleting grid:', error);
+            return false;
         }
     }
 }
