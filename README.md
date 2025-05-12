@@ -1,4 +1,4 @@
-# 🧠 Pathfinding Algorithm Visualizer
+# 🧠 Pathfinding Algorithm Visualizer (Latest Version)
 
 <div align="center">
   <img src="src/assets/images/app_logo.png" alt="Pathfinding Visualizer Logo" width="180">
