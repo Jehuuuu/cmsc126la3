@@ -100,12 +100,12 @@ class GameController {
                 continue;
             }
             
-            // Check for walls in any grid
+            // Check for walls or weighted nodes in any grid
             for (const grid of this.grids) {
                 const startNode = grid.getNode(startRow, startCol);
                 const endNode = grid.getNode(endRow, endCol);
                 
-                if (startNode.isWall || endNode.isWall) {
+                if (startNode.isWall || endNode.isWall || startNode.isWeighted || endNode.isWeighted) {
                     validPositions = false;
                     break;
                 }
@@ -140,13 +140,33 @@ class GameController {
         const rows = this.grids[0].rows;
         const cols = this.grids[0].cols;
         
-        // Reset all grids
-        this.grids.forEach(grid => grid.resetGrid());
+        // Clear only the path visualization, keeping weights
+        this.grids.forEach(grid => {
+            // First clear all walls but preserve everything else
+            for (let row = 0; row < grid.rows; row++) {
+                for (let col = 0; col < grid.cols; col++) {
+                    const node = grid.getNode(row, col);
+                    if (node && node.isWall) {
+                        node.isWall = false;
+                        node.obstacleType = null;
+                    }
+                }
+            }
+            // Reset path visualization
+            grid.resetPath();
+        });
         
         // Generate the same wall pattern for all grids
         const wallPattern = [];
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
+                const node = this.grids[0].getNode(row, col);
+                
+                // Skip if the node is start, end, or weighted
+                if (node.isStart || node.isEnd || node.isWeighted) {
+                    continue;
+                }
+                
                 // Random wall generation based on density
                 if (Math.random() < density) {
                     wallPattern.push({ row, col });
@@ -157,12 +177,13 @@ class GameController {
         // Apply walls to all grids
         this.grids.forEach(grid => {
             wallPattern.forEach(wall => {
-                grid.setWall(wall.row, wall.col, true);
+                const node = grid.getNode(wall.row, wall.col);
+                // Double check the node is not special before setting as wall
+                if (!node.isStart && !node.isEnd && !node.isWeighted) {
+                    grid.setWall(wall.row, wall.col, true);
+                }
             });
         });
-        
-        // Set random start and end positions
-        this.setRandomStartEnd();
         
         // Update all grid views
         this.gridViews.forEach(gridView => {
