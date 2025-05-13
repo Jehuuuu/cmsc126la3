@@ -1,4 +1,4 @@
-# 🧠 Pathfinding Algorithm Visualizer (Latest Version)
+# 🧠 Pathfinding Algorithm Visualizer (Latest Version 2.0.1 - Fixed Issues - May 2025)
 
 <div align="center">
   <img src="src/assets/images/app_logo.png" alt="Pathfinding Visualizer Logo" width="180">
