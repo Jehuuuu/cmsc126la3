@@ -19,18 +19,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
-    <!-- Script to detect platform early -->
+    <!-- Simple platform detection for responsive behavior -->
     <script>
-        // Simple platform detection at page load
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0 || 
-                      navigator.userAgent.toUpperCase().indexOf('MAC') >= 0;
-        
-        // Mark the document early
-        if (isMac) {
-            document.documentElement.classList.add('mac-device');
-            console.log("Mac device detected in early checks");
-        }
-        
         // Function to handle responsive display
         function handleResponsiveDisplay() {
             // When user uses responsive display on any device
@@ -436,7 +426,6 @@
     <!-- Scripts with proper loading order -->
     <!-- Utilities -->
     <script src="src/utils/PlatformDetector.js" defer></script>
-    <script src="src/utils/ResponsiveTester.js" defer></script>
     <script src="src/utils/PriorityQueue.js" defer></script>
     <script src="src/utils/PathUtils.js" defer></script>
     <script src="src/utils/ToastNotification.js" defer></script>

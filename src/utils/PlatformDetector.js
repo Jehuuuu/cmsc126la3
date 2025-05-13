@@ -34,7 +34,7 @@
         
         /**
          * Sets up an observer to watch for class changes on the documentElement
-         * This allows us to respond to manual toggling of classes from the responsive tester
+         * This allows us to respond to manual toggling of classes
          */
         setupClassObserver() {
             // Use MutationObserver if available
@@ -56,7 +56,6 @@
                 });
                 
                 observer.observe(document.documentElement, { attributes: true });
-                console.log('Set up class change observer for document element');
             }
         }
 
@@ -68,7 +67,6 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     this.applyMacStyles();
                     this.setupResizeHandler();
-                    console.log("Mac device detected, applying Mac-specific styles");
                 });
             } else {
                 // Even if not a Mac, set up resize handler for responsive behavior
@@ -89,7 +87,6 @@
                 link.rel = 'stylesheet';
                 link.href = 'src/assets/styles/mac-compatibility.css';
                 document.head.appendChild(link);
-                console.log('Added Mac compatibility CSS');
             }
             
             // Add a class to the body for any additional styling
@@ -156,7 +153,6 @@
                     }
                 });
                 
-                console.log('Applied Mac-specific large grid sizing');
                 return;
             }
             
@@ -175,8 +171,6 @@
                     grid.style.width = `${idealSize}px`;
                 }
             });
-            
-            console.log(`Adjusted grid sizes: ${idealSize}px × ${idealSize}px`);
         }
         
         /**
@@ -197,8 +191,6 @@
                 grid.style.maxHeight = '90vw';
                 grid.style.aspectRatio = '1/1';
             });
-            
-            console.log('Applied responsive fixes for mobile/narrow view');
         }
     }
 
