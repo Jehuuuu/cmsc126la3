@@ -29,6 +29,9 @@ class DijkstraAlgorithm extends Algorithm {
         
         // Initialize priority queue with start node
         const unvisitedNodes = new PriorityQueue();
+        
+        // Add start node to open set
+        this.grid.startNode.inOpenSet = true;
         unvisitedNodes.enqueue(this.grid.startNode);
         
         let pathFound = false;
@@ -37,6 +40,9 @@ class DijkstraAlgorithm extends Algorithm {
         while (!unvisitedNodes.isEmpty() && !this.shouldStop) {
             // Get node with smallest distance
             const currentNode = unvisitedNodes.dequeue();
+            
+            // Mark as no longer in open set
+            currentNode.inOpenSet = false;
             
             // Skip if already visited (should not happen with proper queue updates)
             if (this.hasNodeBeenVisited(currentNode)) {
@@ -105,7 +111,13 @@ class DijkstraAlgorithm extends Algorithm {
                 neighbor.previousNode = node;
                 
                 // Add or update in priority queue
-                unvisitedNodes.enqueue(neighbor);
+                if (!neighbor.inOpenSet) {
+                    neighbor.inOpenSet = true;
+                    unvisitedNodes.enqueue(neighbor);
+                } else {
+                    // Just update the existing node in the queue
+                    unvisitedNodes.update(neighbor);
+                }
             }
         }
     }

@@ -55,8 +55,22 @@ class AStarAlgorithm extends Algorithm {
         this.isRunning = true;
         
         // Initialize priority queue with start node
-        // For A*, we use fScore (gScore + heuristic) as the priority
-        const openSet = new PriorityQueue((a, b) => a.fScore - b.fScore);
+        // For A*, we use fScore as the priority, with a lexicographical tie-breaker:
+        // - First compare fScore
+        // - If tied, prefer lower hScore (prefer nodes closer to the target)
+        const openSet = new PriorityQueue((a, b) => {
+            // First compare by fScore
+            const fScoreDiff = a.fScore - b.fScore;
+            if (fScoreDiff !== 0) return fScoreDiff;
+            
+            // If fScores are equal, break tie by preferring lower hScore
+            // This helps create straighter paths and avoids the "diagonal shimmy" effect
+            return this.calculateHeuristic(a, this.grid.endNode) - 
+                   this.calculateHeuristic(b, this.grid.endNode);
+        });
+        
+        // Add start node to open set
+        this.grid.startNode.inOpenSet = true;
         openSet.enqueue(this.grid.startNode);
         
         let pathFound = false;
@@ -65,6 +79,9 @@ class AStarAlgorithm extends Algorithm {
         while (!openSet.isEmpty() && !this.shouldStop) {
             // Get node with lowest fScore
             const currentNode = openSet.dequeue();
+            
+            // Mark as no longer in open set
+            currentNode.inOpenSet = false;
             
             // Skip if already visited
             if (this.hasNodeBeenVisited(currentNode)) {
@@ -129,7 +146,13 @@ class AStarAlgorithm extends Algorithm {
                 neighbor.fScore = tentativeGScore + this.calculateHeuristic(neighbor, this.grid.endNode);
                 
                 // Add to open set if not already there
-                openSet.enqueue(neighbor);
+                if (!neighbor.inOpenSet) {
+                    neighbor.inOpenSet = true;
+                    openSet.enqueue(neighbor);
+                } else {
+                    // Just update the existing node in the queue
+                    openSet.update(neighbor);
+                }
             }
         }
     }

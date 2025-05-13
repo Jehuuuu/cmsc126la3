@@ -25,6 +25,7 @@ class Node {
         this.gScore = Infinity; // For A* algorithm
         this.hScore = 0; // For A* algorithm
         this.element = null; // DOM element reference
+        this.inOpenSet = false; // Flag to track if node is in the open set
     }
 
     /**
@@ -39,6 +40,7 @@ class Node {
         this.fScore = Infinity;
         this.gScore = Infinity;
         this.hScore = 0;
+        this.inOpenSet = false; // Reset open set flag
     }
 
     /**
