@@ -1,4 +1,4 @@
-# 🧠 Pathfinding Algorithm Visualizer (Latest Version 2.0.1 - Fixed Issues - May 2025)
+# 🧠 Pathfinding Algorithm Visualizer (Version 2.1.0 - Fixed All Issues - May 2025)
 
 <div align="center">
   <img src="src/assets/images/app_logo.png" alt="Pathfinding Visualizer Logo" width="180">
@@ -46,6 +46,11 @@
 - [x] Keyboard shortcuts for faster interaction
 - [x] Mobile support with touch controls
 - [x] Interactive help modal
+
+### Bug Fixes
+- [x] Problem 1: Reset visualization when switching from step-by-step to auto mode
+- [x] Problem 2: Solid borders for algorithm containers
+- [x] Problem 4 & 5: Drag functionality and Help modal positioning
 
 ---
 
