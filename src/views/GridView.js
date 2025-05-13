@@ -715,8 +715,8 @@ class GridView {
     moveStartNode(row, col) {
         const node = this.grid.getNode(row, col);
         
-        // Don't move to end node or wall
-        if (node.isEnd || node.isWall) return;
+        // Don't move to end node
+        if (node.isEnd) return;
         
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
@@ -737,8 +737,8 @@ class GridView {
     moveEndNode(row, col) {
         const node = this.grid.getNode(row, col);
         
-        // Don't move to start node or wall
-        if (node.isStart || node.isWall) return;
+        // Don't move to start node
+        if (node.isStart) return;
         
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
@@ -981,6 +981,14 @@ class GridView {
         // Clear any previous animations
         this.stopAnimation();
         
+        // Get the elements to update in real-time
+        const visitedCountElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-visited-count`);
+        
+        // Reset stats
+        if (visitedCountElement) {
+            visitedCountElement.textContent = '0';
+        }
+        
         return new Promise((resolve) => {
             // First animate visited nodes
             for (let i = 0; i <= visitedNodesInOrder.length; i++) {
@@ -1017,6 +1025,11 @@ class GridView {
                                 nodeElement.classList.remove('animate');
                             }, 500); // Match the animation duration in CSS
                         }
+                        
+                        // Update the visited nodes count in real-time
+                        if (visitedCountElement) {
+                            visitedCountElement.textContent = (parseInt(visitedCountElement.textContent) + 1).toString();
+                        }
                     }
                 }, speed * i);
                 this.animationTimeouts.push(timeout);
@@ -1036,6 +1049,14 @@ class GridView {
      * @param {Function} resolve - Promise resolve function
      */
     animatePath(pathNodesInOrder, speed, resolve) {
+        // Get the path length element to update in real-time
+        const pathLengthElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-path-length`);
+        
+        // Reset path length counter
+        if (pathLengthElement) {
+            pathLengthElement.textContent = '0';
+        }
+        
         for (let i = 0; i < pathNodesInOrder.length; i++) {
             const node = pathNodesInOrder[i];
             const timeout = setTimeout(() => {
@@ -1055,6 +1076,11 @@ class GridView {
                         setTimeout(() => {
                             nodeElement.classList.remove('animate');
                         }, 500); // Match the animation duration in CSS
+                    }
+                    
+                    // Update the path length in real-time
+                    if (pathLengthElement) {
+                        pathLengthElement.textContent = (parseInt(pathLengthElement.textContent) + 1).toString();
                     }
                 }
                 

@@ -32,8 +32,10 @@
 
 /* Help modal - wider content */
 #help-modal .modal-content {
-    width: 1500px; /* Wider content */
-    max-height: 100%;
+    width: 80%; /* Wider content */
+    max-width: 900px; /* Maximum width */
+    max-height: 90vh;
+    margin: 5vh auto; /* Center vertically with some spacing */
     overflow-y: auto;
 }
 
@@ -452,5 +454,13 @@
         width: 100%;
         max-width: 100%;
         padding: 10px 15px;
+    }
+}
+
+/* For larger screens, adjust help modal further */
+@media (min-width: 1200px) {
+    #help-modal .modal-content {
+        width: 70%;
+        max-width: 1000px;
     }
 } 

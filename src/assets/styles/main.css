@@ -461,14 +461,14 @@ select {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(100% - 40px); /* Reduced height reserved for footer */
+        height: calc(100% - 50px); /* Adjusted height reserved for larger footer */
         overflow: hidden; /* Prevent overflow */
     }
     
     /* Ensure algorithm header is well-spaced */
     .algorithm-header {
-        margin-bottom: 0.2rem;
-        height: 28px;
+        margin-bottom: 0.3rem;
+        height: 30px;
         flex-shrink: 0;
         display: flex;
         align-items: center;
@@ -532,6 +532,7 @@ select {
     position: relative;
     z-index: 10;
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); /* Match sidebar animation */
+    padding-bottom: 0; /* Remove bottom padding to let footer touch the border */
 }
 
 /* Desktop specific container adjustments */
@@ -544,12 +545,12 @@ select {
     }
     
     .algorithm-header {
-        margin-bottom: 0.2rem;
-        height: 25px; /* Reduced from 28px */
+        margin-bottom: 0.3rem;
+        height: 30px;
     }
     
     .algorithm-header h2 {
-        font-size: 1.1rem; /* Reduced from 1.2rem */
+        font-size: 1.2rem;
         margin: 0;
     }
     
@@ -581,6 +582,7 @@ select {
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    margin-bottom: 0; /* Ensure no margin between grid and footer */
 }
 
 .grid {
@@ -683,18 +685,17 @@ select {
 /* Path info section */
 .path-info {
     flex-shrink: 0;
-    padding: 6px 10px;
-    font-size: 1.1rem;
-    min-height: 38px;
+    padding: 12px 18px;
+    font-size: 1.2rem;
+    min-height: 46px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.3rem;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    text-shadow: 1px 1px 0 #000;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 0;
+    background-color: #000000;
+    color: #ffffff;
+    text-shadow: none;
+    border: none;
 }
 
 .path-info p {
@@ -702,30 +703,57 @@ select {
     display: flex;
     align-items: center;
     font-weight: bold;
+    color: #ffffff; /* Text "Nodes visited" and "Path length" is white */
 }
 
 .path-info p i {
-    margin-right: 8px;
-    color: var(--minecraft-gold);
-    font-size: 1.2rem;
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.path-info p span {
+    margin-left: 6px; /* Add space between label and value */
+}
+
+/* Apply algorithm-specific colors to path info */
+.dijkstra-container .path-info p i {
+    color: var(--dijkstra-color);
+}
+
+.astar-container .path-info p i {
+    color: var(--astar-color);
+}
+
+/* Apply algorithm-specific text colors to match reference */
+.dijkstra-container .path-info span {
+    color: var(--dijkstra-color);
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.astar-container .path-info span {
+    color: var(--astar-color);
+    font-size: 1.4rem;
+    font-weight: bold;
 }
 
 /* Desktop specific path info styling */
 @media (min-width: 769px) {
     .path-info {
         flex-shrink: 0;
-        padding: 8px 12px;
-        font-size: 1.1rem;
-        min-height: 40px;
+        padding: 12px 18px;
+        font-size: 1.2rem;
+        min-height: 46px;
         display: flex;
         align-items: center;
-        margin-top: 0.25rem;
+        margin-top: 0;
         justify-content: space-between;
+        background-color: #000000;
     }
     
     .path-info p {
         margin: 0;
-        padding: 0 8px;
+        padding: 0 5px;
         display: flex;
         align-items: center;
         white-space: nowrap;
@@ -733,8 +761,48 @@ select {
     }
     
     .path-info p i {
-        margin-right: 8px;
+        margin-right: 10px;
+        font-size: 1.3rem;
+    }
+    
+    /* Larger values on desktop */
+    .path-info span {
+        font-size: 1.5rem;
+        position: relative;
+        top: 1px;
+    }
+}
+
+/* Mobile path-info adjustments */
+@media (max-width: 768px) {
+    .path-info {
+        font-size: 1.1rem;
+        padding: 10px 15px;
+        min-height: 42px;
+        background-color: #000000;
+        margin-top: 0;
+        border: none;
+        border-radius: 0;
+    }
+    
+    .path-info p {
+        color: #ffffff; /* Ensure text labels are white on mobile */
+    }
+    
+    .path-info p i {
         font-size: 1.2rem;
+        margin-right: 8px;
+    }
+    
+    /* Preserve algorithm-specific numeric value colors */
+    .dijkstra-container .path-info span {
+        color: var(--dijkstra-color);
+        font-size: 1.3rem;
+    }
+    
+    .astar-container .path-info span {
+        color: var(--astar-color);
+        font-size: 1.3rem;
     }
 }
 
@@ -900,12 +968,11 @@ select {
     align-items: center;
     position: relative;
     margin-bottom: 0.3rem;
-    height: auto;
-    padding: 5px 0;
+    height: 30px;
 }
 
 .algorithm-header h2 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     margin: 0;
     font-weight: bold;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
@@ -1509,6 +1576,18 @@ button.touch-active {
     background-color: #e74c3c; /* Match image */
 }
 
+/* GitHub repository menu item */
+.random-menu-item.github {
+    background-color: #333333;
+    text-decoration: none;
+    color: white;
+}
+
+.random-menu-item.github:hover {
+    background-color: #24292e;
+    transform: scale(1.02);
+}
+
 .random-menu-item:active {
     transform: scale(0.98);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -1677,6 +1756,28 @@ button.touch-active {
 
 #random-maze-btn:hover {
     background-color: #2980b9;
+}
+
+/* GitHub button styling */
+.github-btn {
+    background-color: #333333;
+    text-decoration: none; /* Remove underline from link */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.github-btn i {
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+.github-btn:hover {
+    background-color: #24292e; /* GitHub's darker color */
+    transform: scale(1.05);
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 /* Action buttons section spacing */

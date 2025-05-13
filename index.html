@@ -85,6 +85,16 @@
                     </div>
                 </div>
 
+                <!-- GitHub Repository Link -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Repository</h3>
+                    <div class="sidebar-tools compact-tools">
+                        <a href="https://github.com/Jehuuuu/cmsc126le3" target="_blank" rel="noopener noreferrer" class="tool-btn github-btn">
+                            <i class="fab fa-github"></i> GitHub Repo
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Add step controls in the sidebar (only visible in step-by-step mode) -->
                 <div id="step-controls-sidebar" class="sidebar-section step-controls-container" style="display:none;">
                     <h3 class="sidebar-section-title">Step Controls</h3>
@@ -267,14 +277,17 @@
             <button class="random-menu-item clear" data-action="clear-grid" aria-label="Clear Grid">
                 <span class="icon"><i class="fas fa-trash-alt"></i></span> Clear Grid
             </button>
+        <a href="https://github.com/Jehuuuu/cmsc126le3" target="_blank" rel="noopener noreferrer" class="random-menu-item github" aria-label="GitHub Repository">
+            <span class="icon"><i class="fab fa-github"></i></span> GitHub Repo
+        </a>
         </div>
         
         <!-- Help modal -->
         <div id="help-modal" class="modal">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
-                <h2>How to Use the Pathfinding Visualizer</h2>
-                <p class="app-description">Race from the stairwell to the abyssal hole in Stardew Valley's Skull Cavern while pitting Dijkstra's algorithm against A* for the optimal route.</p>
+                <h2>How to Use this App</h2>
+                <p class="app-description">A visual comparison between Dijkstra's algorithm and A* algorithm to find the shortest path through a grid with obstacles and weighted nodes.</p>
                 <div class="help-content">
                     <h3>About the Algorithms</h3>
                     <ul>

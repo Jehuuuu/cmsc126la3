@@ -310,6 +310,14 @@ class VisualizationController {
         this.currentStep++;
         this.algorithm.updateProgress(this.currentStep);
         
+        // Update visited nodes count in real-time
+        const visitedCountElement = document.getElementById(this.elementIds.visitedCountId);
+        if (visitedCountElement) {
+            // Count the visited nodes up to the current step
+            const visitedCount = Math.min(this.currentStep + 1, this.visitedNodesInOrder.length);
+            visitedCountElement.textContent = visitedCount;
+        }
+        
         // If we've reached the end node, show the path
         if (this.currentStep === this.maxStep) {
             this.showPath();
@@ -333,8 +341,22 @@ class VisualizationController {
     prevStep() {
         if (this.mode !== 'step' || this.currentStep <= 0) return;
         
+        // Update the path length to 0 when stepping back
+        const pathLengthElement = document.getElementById(this.elementIds.pathLengthId);
+        if (pathLengthElement) {
+            pathLengthElement.textContent = '0';
+        }
+        
         this.currentStep--;
         this.algorithm.updateProgress(this.currentStep);
+        
+        // Update visited nodes count in real-time
+        const visitedCountElement = document.getElementById(this.elementIds.visitedCountId);
+        if (visitedCountElement) {
+            // Count the visited nodes up to the current step
+            const visitedCount = Math.min(this.currentStep + 1, this.visitedNodesInOrder.length);
+            visitedCountElement.textContent = visitedCount;
+        }
         
         // If we had the path shown, hide it now
         for (const node of this.pathNodesInOrder) {
@@ -363,6 +385,14 @@ class VisualizationController {
             if (!node.isStart && !node.isEnd) {
                 node.isPath = true;
             }
+        }
+        
+        // Update path length
+        const pathLengthElement = document.getElementById(this.elementIds.pathLengthId);
+        if (pathLengthElement) {
+            // Count non-start, non-end nodes in the path
+            const pathLength = this.pathNodesInOrder.filter(node => !node.isStart && !node.isEnd).length;
+            pathLengthElement.textContent = pathLength;
         }
     }
 
