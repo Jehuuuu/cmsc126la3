@@ -1,4 +1,4 @@
-# Pathfinding Adventure
+# Skull Cavern Pathing
 
 A web-based interactive visualization tool that demonstrates how pathfinding algorithms work in real-time. Watch Dijkstra's algorithm find the shortest path between two points while learning about graph traversal in a fun, visual way!
 
@@ -87,13 +87,12 @@ This project is implemented using a modular, object-oriented approach with:
 - Model-View-Controller (MVC) architecture
 - Efficient implementation of Dijkstra's algorithm using a binary heap priority queue
 - Optimized path searching with early termination
-- Alternative path generation
 - Responsive UI design
 
 ## Project Structure
 
 ```
-/pathfinding-visualizer/
+/cmsc126la3/
   /src/
     /models/         # Data models (Grid, Node)
     /algorithms/     # Pathfinding algorithms
