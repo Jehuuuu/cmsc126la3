@@ -10,9 +10,43 @@
     <link rel="stylesheet" href="src/assets/styles/sidebar.css">
     <link rel="stylesheet" href="src/assets/styles/floating-buttons.css">
     <link rel="stylesheet" href="src/assets/styles/modals.css">
+    <!-- Mac compatibility styles will be loaded by PlatformDetector.js if needed -->
     <link rel="icon" href="data:,">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Meta tag for better mobile support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <!-- Script to detect platform early -->
+    <script>
+        // Simple platform detection at page load
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0 || 
+                      navigator.userAgent.toUpperCase().indexOf('MAC') >= 0;
+        
+        // Mark the document early
+        if (isMac) {
+            document.documentElement.classList.add('mac-device');
+            console.log("Mac device detected in early checks");
+        }
+        
+        // Function to handle responsive display
+        function handleResponsiveDisplay() {
+            // When user uses responsive display on any device
+            if (window.innerWidth <= 768) {
+                document.documentElement.classList.add('responsive-mode');
+            } else {
+                document.documentElement.classList.remove('responsive-mode');
+            }
+        }
+        
+        // Initial check
+        handleResponsiveDisplay();
+        
+        // Update on resize
+        window.addEventListener('resize', handleResponsiveDisplay);
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -401,6 +435,8 @@
 
     <!-- Scripts with proper loading order -->
     <!-- Utilities -->
+    <script src="src/utils/PlatformDetector.js" defer></script>
+    <script src="src/utils/ResponsiveTester.js" defer></script>
     <script src="src/utils/PriorityQueue.js" defer></script>
     <script src="src/utils/PathUtils.js" defer></script>
     <script src="src/utils/ToastNotification.js" defer></script>
@@ -468,6 +504,27 @@
                         this.value === 'step' ? 'block' : 'none';
                 });
             }
+            
+            // Handle responsive display
+            function checkResponsiveMode() {
+                // Check if we need to switch to responsive mode
+                if (window.innerWidth <= 768) {
+                    // Use mobile layout
+                    document.documentElement.classList.add('responsive-mode');
+                    
+                    // Additional mobile-specific adjustments
+                    const gridContainers = document.querySelectorAll('.grid-container');
+                    gridContainers.forEach(container => {
+                        container.style.height = 'auto';
+                    });
+                } else {
+                    document.documentElement.classList.remove('responsive-mode');
+                }
+            }
+            
+            // Run on load and resize
+            checkResponsiveMode();
+            window.addEventListener('resize', checkResponsiveMode);
         });
     </script>
 </body>
