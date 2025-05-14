@@ -104,13 +104,6 @@ This project is implemented using a modular, object-oriented approach with:
   README.md          # Documentation
 ```
 
-## Future Enhancements
-
-- Add more pathfinding algorithms (A*, BFS, DFS)
-- Implement weighted nodes for terrain effects
-- Add animation and visual enhancements
-- Include additional game elements and challenges
-- Implement touch support for mobile devices
 
 ## Getting Started
 

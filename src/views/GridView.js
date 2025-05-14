@@ -779,9 +779,16 @@ class GridView {
                     continue;
                 }
                 
+                // Preserve the original tileset and variation data
+                const tileVariation = nodeElement.dataset.tileVariation || 0;
+                const tilesetIndex = nodeElement.dataset.tilesetIndex || 0;
+                
                 // Clear existing classes and overlays
                 nodeElement.className = 'node';
                 nodeElement.innerHTML = '';
+                
+                // Reapply the original tileset image before adding status classes
+                this.applyTileVariation(nodeElement, tileVariation, tilesetIndex);
                 
                 // Handle path
                 if (node.isPath) {
@@ -960,7 +967,8 @@ class GridView {
                         const currentTileset = nodeElement.dataset.tilesetIndex || 0;
                         
                         // Reset to base state if it's not a special node
-                        if (!node.isStart && !node.isEnd && !node.isWall) {
+                        if (!node.isStart && !node.isEnd && !node.isWall && !node.isWeighted) {
+                            // Keep the original class as 'node' but reapply the correct tileset
                             nodeElement.className = 'node';
                             this.applyTileVariation(nodeElement, currentVariation, currentTileset);
                         }
@@ -1011,10 +1019,15 @@ class GridView {
                         // Get the node element
                         const nodeElement = document.getElementById(`${this.gridContainerId}-node-${node.row}-${node.col}`);
                         if (nodeElement) {
-                            // Clear previous classes but keep tile variation
+                            // Get the original tileset and variation
                             const currentVariation = nodeElement.dataset.tileVariation || 0;
+                            const currentTilesetIndex = nodeElement.dataset.tilesetIndex || 0;
+                            
+                            // Clear previous classes but preserve the node's base class
                             nodeElement.className = 'node';
-                            this.applyTileVariation(nodeElement, currentVariation);
+                            
+                            // Ensure the original tileset is reapplied
+                            this.applyTileVariation(nodeElement, currentVariation, currentTilesetIndex);
                             
                             // Add visited class and animation
                             nodeElement.classList.add('visited');
@@ -1067,8 +1080,17 @@ class GridView {
                     // Get the node element
                     const nodeElement = document.getElementById(`${this.gridContainerId}-node-${node.row}-${node.col}`);
                     if (nodeElement) {
-                        // Remove visited class and add path class with animation
+                        // Get the original tileset and variation
+                        const currentVariation = nodeElement.dataset.tileVariation || 0;
+                        const currentTilesetIndex = nodeElement.dataset.tilesetIndex || 0;
+                        
+                        // Remove visited class and maintain the base node class
                         nodeElement.classList.remove('visited');
+                        
+                        // Ensure we keep the original tileset applied
+                        this.applyTileVariation(nodeElement, currentVariation, currentTilesetIndex);
+                        
+                        // Add path class with animation
                         nodeElement.classList.add('path');
                         nodeElement.classList.add('animate');
                         

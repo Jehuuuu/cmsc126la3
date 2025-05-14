@@ -109,22 +109,22 @@
                     </div>
                 </div>
 
-                <!-- GitHub Repository Link -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-section-title">Repository</h3>
-                    <div class="sidebar-tools compact-tools">
-                        <a href="https://github.com/Jehuuuu/cmsc126le3" target="_blank" rel="noopener noreferrer" class="tool-btn github-btn">
-                            <i class="fab fa-github"></i> GitHub Repo
-                        </a>
-                    </div>
-                </div>
-
                 <!-- Add step controls in the sidebar (only visible in step-by-step mode) -->
                 <div id="step-controls-sidebar" class="sidebar-section step-controls-container" style="display:none;">
                     <h3 class="sidebar-section-title">Step Controls</h3>
                     <div class="sidebar-tools compact-tools">
                         <button id="next-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-forward"></i> Next Step</button>
                         <button id="prev-step-btn" class="action-btn step-control" disabled><i class="fas fa-step-backward"></i> Previous Step</button>
+                    </div>
+                </div>
+
+                <!-- GitHub Repository Link (will be moved/shown based on mode) -->
+                <div id="github-repo-sidebar" class="sidebar-section">
+                    <h3 class="sidebar-section-title">Repository</h3>
+                    <div class="sidebar-tools compact-tools">
+                        <a href="https://github.com/Jehuuuu/cmsc126le3" target="_blank" rel="noopener noreferrer" class="tool-btn github-btn">
+                            <i class="fab fa-github"></i> GitHub Repo
+                        </a>
                     </div>
                 </div>
             </div>
@@ -479,19 +479,92 @@
             
             // Show step controls in sidebar when mode is changed to step-by-step
             const modeSelect = document.getElementById('visualization-mode');
+            const modeSelectMobile = document.getElementById('visualization-mode-mobile');
             const stepControlsContainer = document.getElementById('step-controls-sidebar');
+            const stepControlsMobile = document.querySelector('.actions-section');
+            const githubRepoContainer = document.getElementById('github-repo-sidebar');
             
-            if (modeSelect && stepControlsContainer) {
-                // Initial check
-                if (modeSelect.value === 'step') {
-                    stepControlsContainer.style.display = 'block';
+            if (modeSelect && stepControlsContainer && githubRepoContainer) {
+                // Function to update UI based on selected mode
+                function updateUIBasedOnMode(mode) {
+                    // Update desktop layout
+                    if (mode === 'step') {
+                        stepControlsContainer.style.display = 'block';
+                        
+                        // Move the step controls directly after the Controls section
+                        let controlsSection = null;
+                        document.querySelectorAll('.sidebar-section').forEach(section => {
+                            const title = section.querySelector('.sidebar-section-title');
+                            if (title && title.textContent.trim() === 'Controls') {
+                                controlsSection = section;
+                            }
+                        });
+                        
+                        if (controlsSection) {
+                            controlsSection.parentNode.insertBefore(
+                                stepControlsContainer, 
+                                controlsSection.nextSibling
+                            );
+                        }
+                        
+                        // For mobile layout, ensure the step controls appear after the controls section
+                        if (stepControlsMobile) {
+                            stepControlsMobile.style.display = 'block';
+                            const mobileControls = document.querySelector('.collapsible-controls .controls');
+                            if (mobileControls) {
+                                mobileControls.parentNode.insertBefore(
+                                    stepControlsMobile,
+                                    mobileControls.nextSibling
+                                );
+                            }
+                        }
+                    } else {
+                        stepControlsContainer.style.display = 'none';
+                        
+                        // Hide mobile step controls when not in step mode
+                        if (stepControlsMobile) {
+                            stepControlsMobile.style.display = 'none';
+                        }
+                    }
+                    
+                    // Always move GitHub repo to the end of the sidebar content
+                    // This ensures it's always at the bottom regardless of mode
+                    const sidebarContent = document.querySelector('.sidebar-content');
+                    if (sidebarContent && githubRepoContainer) {
+                        // Append GitHub repo to the end of sidebar content
+                        sidebarContent.appendChild(githubRepoContainer);
+                    }
                 }
                 
-                // Add change event listener
+                // Initial check and setup
+                updateUIBasedOnMode(modeSelect.value);
+                
+                // Make sure the step controls are properly initialized on mobile
+                if (modeSelectMobile) {
+                    const isStepMode = modeSelect.value === 'step';
+                    if (stepControlsMobile) {
+                        stepControlsMobile.style.display = isStepMode ? 'block' : 'none';
+                    }
+                }
+                
+                // Add change event listener to desktop mode selector
                 modeSelect.addEventListener('change', function() {
-                    stepControlsContainer.style.display = 
-                        this.value === 'step' ? 'block' : 'none';
+                    updateUIBasedOnMode(this.value);
                 });
+                
+                // Add change event listener to mobile mode selector if it exists
+                if (modeSelectMobile) {
+                    // Sync the initial values
+                    modeSelectMobile.value = modeSelect.value;
+                    
+                    modeSelectMobile.addEventListener('change', function() {
+                        // Update desktop selector to keep them in sync
+                        modeSelect.value = this.value;
+                        
+                        // Update UI based on the new mode
+                        updateUIBasedOnMode(this.value);
+                    });
+                }
             }
             
             // Handle responsive display
