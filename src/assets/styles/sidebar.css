@@ -54,8 +54,8 @@
 .main-content-wrapper {
     flex: 1;
     padding: 0.75rem;
-    margin-left: 240px; /* Fixed margin for sidebar width */
-    width: calc(100% - 240px); /* Fixed width accounting for sidebar */
+    margin-left: 200px; /* Updated from 240px to 200px for better centering */
+    width: calc(100% - 200px); /* Updated width calculation */
     box-sizing: border-box;
     /* Remove transitions */
 }

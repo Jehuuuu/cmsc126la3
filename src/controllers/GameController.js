@@ -162,12 +162,39 @@ class GameController {
             }
         }
         
-        // Apply to all grids
+        // First, clear all existing start and end nodes from the DOM
+        this.grids.forEach((grid, index) => {
+            // Clear previous end node
+            if (grid.endNode) {
+                const oldEndElement = document.getElementById(`${this.gridViews[index].gridContainerId}-node-${grid.endNode.row}-${grid.endNode.col}`);
+                if (oldEndElement) {
+                    oldEndElement.classList.remove('end');
+                    // Remove any end image overlays
+                    const endOverlays = oldEndElement.querySelectorAll('.end-overlay');
+                    endOverlays.forEach(overlay => overlay.remove());
+                }
+                grid.endNode.isEnd = false;
+            }
+            
+            // Clear previous start node
+            if (grid.startNode) {
+                const oldStartElement = document.getElementById(`${this.gridViews[index].gridContainerId}-node-${grid.startNode.row}-${grid.startNode.col}`);
+                if (oldStartElement) {
+                    oldStartElement.classList.remove('start');
+                    // Remove any start image overlays
+                    const startOverlays = oldStartElement.querySelectorAll('.start-overlay');
+                    startOverlays.forEach(overlay => overlay.remove());
+                }
+                grid.startNode.isStart = false;
+            }
+        });
+        
+        // Now set the new start and end nodes
         this.grids.forEach((grid, index) => {
             grid.setStartNode(startRow, startCol);
             grid.setEndNode(endRow, endCol);
             
-            // Update grid view
+            // Update grid view completely
             if (this.gridViews[index]) {
                 this.gridViews[index].update();
             }

@@ -553,4 +553,51 @@
 #custom-grid-modal .modal-content {
     width: 320px;
     height: auto;
+}
+
+/* Make the Load Grid Modal more compact */
+#load-grid-modal .modal-content {
+    width: 320px; /* Consistent with other modals */
+    height: auto; /* Auto height based on content */
+    max-height: 350px; /* Slightly reduced maximum height */
+    display: flex;
+    flex-direction: column;
+}
+
+#load-grid-modal .modal-content h3 {
+    margin-bottom: 0; /* Remove margin below the header */
+    padding: 8px 15px; /* Reduce header padding */
+}
+
+#load-grid-modal .saved-grids-list {
+    max-height: 180px; /* Reduced height for the list */
+    min-height: 50px; /* Minimum height to ensure visibility */
+    margin: 10px 15px; /* Slightly less margin */
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Style for no saved grids message */
+#load-grid-modal .no-saved-grids {
+    padding: 10px;
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+}
+
+#load-grid-modal .modal-buttons {
+    padding: 5px 15px 15px; /* Keep buttons at the bottom */
+    margin-top: 0; /* No space above buttons */
+}
+
+/* Grid item styling */
+.grid-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #000;
+    cursor: pointer;
+    transition: background-color 0.2s;
 } 

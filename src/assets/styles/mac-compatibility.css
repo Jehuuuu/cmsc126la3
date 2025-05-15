@@ -154,7 +154,8 @@
 }
 
 .macbook-air .floating-actions-container {
-  margin-bottom: 8px !important;
+  margin-bottom: 0 !important; /* Changed from 8px to 0 for better centering */
+  padding: 0 20px !important;
 }
 
 .macbook-air .sidebar {
@@ -163,8 +164,8 @@
 }
 
 .macbook-air .main-content-wrapper {
-  margin-left: 220px !important;
-  width: calc(100% - 220px) !important;
+  margin-left: 200px !important;
+  width: calc(100% - 200px) !important;
 }
 
 /* Responsive behavior for Mac devices - use mobile layout on narrow screens */
