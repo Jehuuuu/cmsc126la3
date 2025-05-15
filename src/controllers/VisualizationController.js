@@ -414,8 +414,17 @@ class VisualizationController {
             // Reset visualization regardless of completion state
             this.resetPathVisualization();
             
-            // Make sure Next Step button is re-enabled for future use
+            // For complete reset, ensure we force reset both controllers
             if (window.dijkstraController && window.astarController) {
+                // Make sure we also reset the other controller that might not be 'this'
+                if (this !== window.dijkstraController) {
+                    window.dijkstraController.resetPathVisualization();
+                }
+                if (this !== window.astarController) {
+                    window.astarController.resetPathVisualization();
+                }
+                
+                // Make sure Next Step button is re-enabled for future use
                 this.enableNextStepButton();
             }
             
@@ -463,13 +472,16 @@ class VisualizationController {
                         node.isPath = false;
                         node.isCurrent = false;
                         
-                        // Also clear DOM element classes directly for more thorough reset
-                        // This ensures that visual elements are cleared even if grid model is updated
-                        // Get algorithm type safely to determine element ID prefix
-                        const prefix = this.algorithm && this.algorithm instanceof DijkstraAlgorithm ? 'dijkstra' : 'astar';
-                        const nodeElement = document.getElementById(`${prefix}-grid-node-${row}-${col}`);
-                        if (nodeElement && !node.isStart && !node.isEnd && !node.isWall) {
-                            nodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                        // Clear DOM element classes for BOTH algorithm grids
+                        // This ensures that visual elements are cleared for both algorithms
+                        const dijkstraNodeElement = document.getElementById(`dijkstra-grid-node-${row}-${col}`);
+                        if (dijkstraNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                            dijkstraNodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                        }
+                        
+                        const astarNodeElement = document.getElementById(`astar-grid-node-${row}-${col}`);
+                        if (astarNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                            astarNodeElement.classList.remove('visited', 'path', 'current', 'animate');
                         }
                     }
                 }
