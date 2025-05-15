@@ -23,7 +23,15 @@ class UIView {
         // console.log("Grid size select found:", !!gridSizeSelect);
         if (gridSizeSelect) {
             gridSizeSelect.addEventListener('change', () => {
-                const size = parseInt(gridSizeSelect.value);
+                const value = gridSizeSelect.value;
+                
+                if (value === 'custom') {
+                    // Show custom grid size modal
+                    this.showCustomGridSizeModal();
+                    return;
+                }
+                
+                const size = parseInt(value);
                 this.controllers.game.resizeGrid(size, size);
                 
                 // Show toast notification for grid resize
@@ -34,7 +42,7 @@ class UIView {
                 // Sync mobile control
                 const mobileSizeSelect = document.getElementById('grid-size-mobile');
                 if (mobileSizeSelect) {
-                    mobileSizeSelect.value = size;
+                    mobileSizeSelect.value = value;
                 }
             });
         }
@@ -43,7 +51,15 @@ class UIView {
         const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
         if (gridSizeMobileSelect) {
             gridSizeMobileSelect.addEventListener('change', () => {
-                const size = parseInt(gridSizeMobileSelect.value);
+                const value = gridSizeMobileSelect.value;
+                
+                if (value === 'custom') {
+                    // Show custom grid size modal
+                    this.showCustomGridSizeModal();
+                    return;
+                }
+                
+                const size = parseInt(value);
                 this.controllers.game.resizeGrid(size, size);
                 
                 // Show toast notification for grid resize
@@ -53,7 +69,7 @@ class UIView {
                 
                 // Sync desktop control
                 if (gridSizeSelect) {
-                    gridSizeSelect.value = size;
+                    gridSizeSelect.value = value;
                 }
             });
         }
@@ -929,6 +945,156 @@ class UIView {
         
         // Return true only if both have finished
         return dijkstraFinished && astarFinished;
+    }
+
+    /**
+     * Show the custom grid size modal
+     */
+    showCustomGridSizeModal() {
+        const modal = document.getElementById('custom-grid-modal');
+        const input = document.getElementById('custom-grid-size');
+        const inputCopy = document.getElementById('custom-grid-size-copy');
+        const warning = document.getElementById('grid-size-warning');
+        const confirmBtn = document.getElementById('confirm-grid-size-btn');
+        const cancelBtn = document.getElementById('cancel-grid-size-btn');
+        const closeBtn = modal.querySelector('.close-btn');
+        
+        if (!modal || !input || !confirmBtn || !cancelBtn) {
+            console.error('Custom grid modal elements not found');
+            return;
+        }
+        
+        // Reset the input to default value
+        input.value = "30";
+        if (inputCopy) inputCopy.value = "30";
+        
+        // Show the modal
+        modal.style.display = 'block';
+        input.focus();
+        
+        // Sync the second input field with the first one
+        const syncInputs = () => {
+            const size = parseInt(input.value);
+            if (inputCopy) inputCopy.value = size;
+            
+            // Show warning for large sizes
+            if (size > 30) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        };
+        
+        // Add input event listener
+        input.addEventListener('input', syncInputs);
+        
+        // Function to confirm size
+        const confirmSize = () => {
+            const size = parseInt(input.value);
+            
+            // Validate size
+            if (isNaN(size) || size < 5 || size > 50) {
+                // Show error
+                if (window.Toast) {
+                    window.Toast.error('Please enter a valid grid size between 5 and 50');
+                }
+                return;
+            }
+            
+            // Close modal
+            modal.style.display = 'none';
+            
+            // Apply the new grid size
+            this.controllers.game.resizeGrid(size, size);
+            
+            // Update both dropdowns to show the custom size
+            const gridSizeSelect = document.getElementById('grid-size');
+            const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+            
+            // Create a new option for the current custom size if it doesn't exist
+            const addCustomOption = (select) => {
+                if (select) {
+                    // First check if there's a custom-size option already
+                    let customSizeOption = Array.from(select.options).find(opt => opt.value === 'custom-size');
+                    
+                    if (!customSizeOption) {
+                        // Create a new option for this specific size
+                        customSizeOption = document.createElement('option');
+                        customSizeOption.value = 'custom-size';
+                        select.add(customSizeOption);
+                    }
+                    
+                    // Update the option text
+                    customSizeOption.textContent = `${size}x${size}`;
+                    
+                    // Select this option
+                    select.value = 'custom-size';
+                }
+            };
+            
+            // Add or update custom size option in both dropdowns
+            addCustomOption(gridSizeSelect);
+            addCustomOption(gridSizeMobileSelect);
+            
+            // Show toast notification
+            if (window.Toast) {
+                window.Toast.info(`Grid size changed to ${size}x${size}`);
+            }
+            
+            // Clean up event listeners
+            cleanupListeners();
+        };
+        
+        // Function to cancel
+        const cancelAction = () => {
+            modal.style.display = 'none';
+            
+            // Reset dropdown selections to previous value
+            const gridSizeSelect = document.getElementById('grid-size');
+            const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
+            
+            // Find the first non-custom option and select it
+            if (gridSizeSelect) {
+                const defaultOption = Array.from(gridSizeSelect.options).find(opt => opt.value !== 'custom');
+                if (defaultOption) {
+                    gridSizeSelect.value = defaultOption.value;
+                }
+            }
+            
+            if (gridSizeMobileSelect) {
+                const defaultOption = Array.from(gridSizeMobileSelect.options).find(opt => opt.value !== 'custom');
+                if (defaultOption) {
+                    gridSizeMobileSelect.value = defaultOption.value;
+                }
+            }
+            
+            // Clean up event listeners
+            cleanupListeners();
+        };
+        
+        // Function to handle keyboard events
+        const handleKeydown = (e) => {
+            if (e.key === 'Enter') {
+                confirmSize();
+            } else if (e.key === 'Escape') {
+                cancelAction();
+            }
+        };
+        
+        // Function to clean up event listeners
+        const cleanupListeners = () => {
+            confirmBtn.removeEventListener('click', confirmSize);
+            cancelBtn.removeEventListener('click', cancelAction);
+            closeBtn.removeEventListener('click', cancelAction);
+            document.removeEventListener('keydown', handleKeydown);
+            input.removeEventListener('input', syncInputs);
+        };
+        
+        // Add event listeners
+        confirmBtn.addEventListener('click', confirmSize);
+        cancelBtn.addEventListener('click', cancelAction);
+        closeBtn.addEventListener('click', cancelAction);
+        document.addEventListener('keydown', handleKeydown);
     }
 }
 

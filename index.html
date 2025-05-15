@@ -65,6 +65,7 @@
                                     <option value="15">15x15</option>
                                     <option value="20">20x20</option>
                                     <option value="25">25x25</option>
+                                    <option value="custom">Custom</option>
                                 </select>
                             </div>
                             
@@ -152,6 +153,7 @@
                                         <option value="15">15x15</option>
                                         <option value="20">20x20</option>
                                         <option value="25">25x25</option>
+                                        <option value="custom">Custom</option>
                                     </select>
                                 </div>
                                 
@@ -450,6 +452,27 @@
     <!-- Main entry point -->
     <script src="src/index.js" defer></script>
     
+    <!-- Custom Grid Size Modal -->
+    <div id="custom-grid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Custom Grid Size</h3>
+            <p>Enter a grid size between 5 and 50:</p>
+            <div class="custom-input-container">
+                <input type="number" id="custom-grid-size" min="5" max="50" value="30">
+                <span class="grid-size-format">x</span>
+                <input type="number" id="custom-grid-size-copy" min="5" max="50" value="30" disabled>
+            </div>
+            <p class="warning-text" id="grid-size-warning" style="display: none; color: #e74c3c; font-size: 0.9rem; margin-top: -5px; text-align: center;">
+                <i class="fas fa-exclamation-triangle"></i> Large grid sizes may affect performance
+            </p>
+            <div class="modal-buttons">
+                <button id="confirm-grid-size-btn">Apply</button>
+                <button id="cancel-grid-size-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Script to handle header buttons -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -504,8 +527,8 @@
                             controlsSection.parentNode.insertBefore(
                                 stepControlsContainer, 
                                 controlsSection.nextSibling
-                            );
-                        }
+                                );
+                            }
                         
                         // For mobile layout, ensure the step controls appear after the controls section
                         if (stepControlsMobile) {
@@ -529,10 +552,10 @@
                     
                     // Always move GitHub repo to the end of the sidebar content
                     // This ensures it's always at the bottom regardless of mode
-                    const sidebarContent = document.querySelector('.sidebar-content');
+                            const sidebarContent = document.querySelector('.sidebar-content');
                     if (sidebarContent && githubRepoContainer) {
                         // Append GitHub repo to the end of sidebar content
-                        sidebarContent.appendChild(githubRepoContainer);
+                                sidebarContent.appendChild(githubRepoContainer);
                     }
                 }
                 
