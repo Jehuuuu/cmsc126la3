@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set global reference to game controller first, so grid views can access it
     window.gameController = gameController;
     
+    // Generate random start and end positions on page load
+    gameController.setRandomStartEnd();
+    
     // Set up swap functionality for algorithm containers
     setupSwapButtons();
     
