@@ -450,6 +450,13 @@ class UIView {
         // console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
+                // First ensure both controllers are completely reset
+                if (this.controllers.dijkstra.mode === 'auto') {
+                    // For auto mode, make sure we do a complete reset
+                    this.controllers.dijkstra.forceReset();
+                    this.controllers.astar.forceReset();
+                }
+                
                 // Run both algorithms in parallel using Promise.all
                 Promise.all([
                     this.controllers.dijkstra.startVisualization(),
@@ -462,6 +469,13 @@ class UIView {
         const startMobileButton = document.getElementById('start-btn-mobile');
         if (startMobileButton) {
             startMobileButton.addEventListener('click', () => {
+                // First ensure both controllers are completely reset
+                if (this.controllers.dijkstra.mode === 'auto') {
+                    // For auto mode, make sure we do a complete reset
+                    this.controllers.dijkstra.forceReset();
+                    this.controllers.astar.forceReset();
+                }
+                
                 // Run both algorithms in parallel using Promise.all
                 Promise.all([
                     this.controllers.dijkstra.startVisualization(),

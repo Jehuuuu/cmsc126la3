@@ -53,7 +53,16 @@ class VisualizationController {
      * Start the pathfinding visualization
      */
     async startVisualization() {
-        if (this.isVisualizing) return;
+        // If already visualizing, reset everything first to ensure a clean start
+        if (this.isVisualizing) {
+            this.stopVisualization();
+            this.resetPathVisualization();
+            
+            // Reset algorithm state
+            if (this.algorithm && typeof this.algorithm.reset === 'function') {
+                this.algorithm.reset();
+            }
+        }
         
         // Check if start and end nodes are set
         if (!this.grid.startNode || !this.grid.endNode) {
@@ -414,18 +423,39 @@ class VisualizationController {
             // Reset visualization regardless of completion state
             this.resetPathVisualization();
             
+            // Reset algorithm state to ensure it can be run again
+            if (this.algorithm && typeof this.algorithm.reset === 'function') {
+                this.algorithm.reset();
+            }
+            
             // For complete reset, ensure we force reset both controllers
             if (window.dijkstraController && window.astarController) {
                 // Make sure we also reset the other controller that might not be 'this'
                 if (this !== window.dijkstraController) {
                     window.dijkstraController.resetPathVisualization();
+                    // Reset algorithm state for the other controller too
+                    if (window.dijkstraController.algorithm && 
+                        typeof window.dijkstraController.algorithm.reset === 'function') {
+                        window.dijkstraController.algorithm.reset();
+                    }
                 }
                 if (this !== window.astarController) {
                     window.astarController.resetPathVisualization();
+                    // Reset algorithm state for the other controller too
+                    if (window.astarController.algorithm && 
+                        typeof window.astarController.algorithm.reset === 'function') {
+                        window.astarController.algorithm.reset();
+                    }
                 }
                 
                 // Make sure Next Step button is re-enabled for future use
                 this.enableNextStepButton();
+                
+                // Reset internal tracking variables for both controllers
+                window.dijkstraController.currentStep = -1;
+                window.dijkstraController.maxStep = -1;
+                window.astarController.currentStep = -1;
+                window.astarController.maxStep = -1;
             }
             
             // Show toast notification if it was completed
@@ -471,6 +501,9 @@ class VisualizationController {
                         node.isVisited = false;
                         node.isPath = false;
                         node.isCurrent = false;
+                        node.distance = Infinity; // Reset node distance for algorithms
+                        node.totalDistance = Infinity; // Reset total distance for A* algorithm
+                        node.previousNode = null; // Clear previous node references
                         
                         // Clear DOM element classes for BOTH algorithm grids
                         // This ensures that visual elements are cleared for both algorithms
