@@ -18,8 +18,8 @@ class GameController {
             ? visualizationControllers 
             : [visualizationControllers];
         
-        // Set default start and end nodes for all grids
-        this.setDefaultStartEnd();
+        // We no longer set default start and end nodes by default
+        // Random positions will be set on page load instead
     }
 
     /**
@@ -289,8 +289,8 @@ class GameController {
             }
         });
         
-        // Set default start and end nodes
-        this.setDefaultStartEnd();
+        // Set random start and end nodes instead of default positions
+        this.setRandomStartEnd();
     }
 
     /**
