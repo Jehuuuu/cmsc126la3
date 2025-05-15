@@ -131,6 +131,11 @@ class UIView {
                     this.controllers.dijkstra.isVisualizing = false;
                     this.controllers.astar.isVisualizing = false;
                     
+                    // Ensure both controllers have fully reset their visualizations
+                    // This is a fallback in case the resetPathVisualization in setMode wasn't thorough enough
+                    this.controllers.dijkstra.resetPathVisualization();
+                    this.controllers.astar.resetPathVisualization();
+
                     // Make sure speed selector is re-enabled
                     const speedSelect = document.getElementById('visualization-speed');
                     const speedMobileSelect = document.getElementById('visualization-speed-mobile');
@@ -200,6 +205,11 @@ class UIView {
                     this.controllers.dijkstra.isVisualizing = false;
                     this.controllers.astar.isVisualizing = false;
                     
+                    // Ensure both controllers have fully reset their visualizations
+                    // This is a fallback in case the resetPathVisualization in setMode wasn't thorough enough
+                    this.controllers.dijkstra.resetPathVisualization();
+                    this.controllers.astar.resetPathVisualization();
+
                     // Make sure speed selector is re-enabled
                     const speedSelect = document.getElementById('visualization-speed');
                     const speedMobileSelect = document.getElementById('visualization-speed-mobile');
