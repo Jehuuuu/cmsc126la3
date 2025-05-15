@@ -53,16 +53,7 @@ class VisualizationController {
      * Start the pathfinding visualization
      */
     async startVisualization() {
-        // If already visualizing, reset everything first to ensure a clean start
-        if (this.isVisualizing) {
-            this.stopVisualization();
-            this.resetPathVisualization();
-            
-            // Reset algorithm state
-            if (this.algorithm && typeof this.algorithm.reset === 'function') {
-                this.algorithm.reset();
-            }
-        }
+        if (this.isVisualizing) return;
         
         // Check if start and end nodes are set
         if (!this.grid.startNode || !this.grid.endNode) {
@@ -104,8 +95,29 @@ class VisualizationController {
                 window.Toast.error('No possible path found to destination');
             }
             
+            // Mark this algorithm as done, but don't re-enable UI yet
+            // UI will be re-enabled by checkIfBothAlgorithmsFinished when both algorithms complete
             this.isVisualizing = false;
-            this.uiView.setGridInteractionsDisabled(false);
+            
+            // Check if both algorithms have finished
+            if (window.dijkstraController && window.astarController) {
+                const bothFinished = this.checkIfBothAlgorithmsFinished();
+                
+                // If we didn't re-enable UI via checkIfBothAlgorithmsFinished, make sure
+                // we explicitly handle the case where one algorithm finishes before the other
+                if (!bothFinished) {
+                    // Make sure we don't prematurely re-enable UI - both must be finished
+                    const otherController = this === window.dijkstraController 
+                        ? window.astarController 
+                        : window.dijkstraController;
+                    
+                    if (!otherController.isVisualizing) {
+                        // If the other controller isn't visualizing (already done), both are done
+                        // Re-enable all UI elements including drawing tools and randomizers
+                        this.enableAllUIElements();
+                    }
+                }
+            }
         } else {
             // Step mode: prepare for stepping
             this.currentStep = -1;
@@ -140,7 +152,7 @@ class VisualizationController {
                 
                 // In step mode, we still want some interactions to be enabled even though 
                 // the algorithm is "visualizing" - for example, the user should be able
-                // to click "Next Step"
+                // to click "Next Step", but drawing tools and randomizers should be disabled
                 this.uiView.setGridInteractionsDisabled(true);
             }
         }
@@ -403,6 +415,17 @@ class VisualizationController {
             const pathLength = this.pathNodesInOrder.filter(node => !node.isStart && !node.isEnd).length;
             pathLengthElement.textContent = pathLength;
         }
+        
+        // Check if both algorithms have completed their paths and re-enable UI if needed
+        if (window.dijkstraController && window.astarController) {
+            const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+            const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+            
+            if (dijkstraFinished && astarFinished) {
+                // Re-enable all UI elements
+                this.enableAllUIElements();
+            }
+        }
     }
 
     /**
@@ -415,53 +438,27 @@ class VisualizationController {
         const previousMode = this.mode;
         this.mode = mode;
         
-        // If switching from step mode to auto mode, always reset visualizations
-        if (previousMode === 'step' && mode === 'auto') {
-            // Check if the algorithm has completed (current step is at max)
-            const isAlgorithmCompleted = this.currentStep >= this.maxStep;
-            
-            // Reset visualization regardless of completion state
-            this.resetPathVisualization();
-            
-            // Reset algorithm state to ensure it can be run again
-            if (this.algorithm && typeof this.algorithm.reset === 'function') {
-                this.algorithm.reset();
+        // Reset visualizations regardless of which mode we're switching between
+        // This ensures clean state when toggling between auto and step modes
+        this.resetPathVisualization();
+        
+        // For complete reset, ensure we force reset both controllers
+        if (window.dijkstraController && window.astarController) {
+            // Make sure we also reset the other controller that might not be 'this'
+            if (this !== window.dijkstraController) {
+                window.dijkstraController.resetPathVisualization();
+            }
+            if (this !== window.astarController) {
+                window.astarController.resetPathVisualization();
             }
             
-            // For complete reset, ensure we force reset both controllers
-            if (window.dijkstraController && window.astarController) {
-                // Make sure we also reset the other controller that might not be 'this'
-                if (this !== window.dijkstraController) {
-                    window.dijkstraController.resetPathVisualization();
-                    // Reset algorithm state for the other controller too
-                    if (window.dijkstraController.algorithm && 
-                        typeof window.dijkstraController.algorithm.reset === 'function') {
-                        window.dijkstraController.algorithm.reset();
-                    }
-                }
-                if (this !== window.astarController) {
-                    window.astarController.resetPathVisualization();
-                    // Reset algorithm state for the other controller too
-                    if (window.astarController.algorithm && 
-                        typeof window.astarController.algorithm.reset === 'function') {
-                        window.astarController.algorithm.reset();
-                    }
-                }
-                
-                // Make sure Next Step button is re-enabled for future use
-                this.enableNextStepButton();
-                
-                // Reset internal tracking variables for both controllers
-                window.dijkstraController.currentStep = -1;
-                window.dijkstraController.maxStep = -1;
-                window.astarController.currentStep = -1;
-                window.astarController.maxStep = -1;
-            }
-            
-            // Show toast notification if it was completed
-            if (isAlgorithmCompleted && window.Toast) {
-                window.Toast.info('Visualization reset for auto mode');
-            }
+            // Make sure Next Step button is re-enabled for future use
+            this.enableNextStepButton();
+        }
+        
+        // Show toast notification when switching to auto mode from step mode
+        if (previousMode === 'step' && mode === 'auto' && window.Toast) {
+            window.Toast.info('Switched to auto mode');
         }
         
         this.uiView.updateModeUI(mode);
@@ -470,6 +467,9 @@ class VisualizationController {
         if (mode === 'step') {
             this.uiView.setStepControlsEnabled(false);
         }
+        
+        // Explicitly ensure mode selectors are enabled
+        this.enableModeSelectors();
     }
 
     /**
@@ -484,8 +484,15 @@ class VisualizationController {
         // Reset visualization state flag
         this.isVisualizing = false;
         
-        // Re-enable grid interactions
-        if (this.uiView) {
+        // Check if both algorithms have finished before re-enabling UI
+        if (window.dijkstraController && window.astarController) {
+            // Only re-enable UI if both algorithms are done or being reset
+            if (window.dijkstraController.isVisualizing === false && 
+                window.astarController.isVisualizing === false) {
+                this.uiView.setGridInteractionsDisabled(false);
+            }
+        } else {
+            // Fallback if window controllers aren't available
             this.uiView.setGridInteractionsDisabled(false);
         }
         
@@ -501,20 +508,25 @@ class VisualizationController {
                         node.isVisited = false;
                         node.isPath = false;
                         node.isCurrent = false;
-                        node.distance = Infinity; // Reset node distance for algorithms
-                        node.totalDistance = Infinity; // Reset total distance for A* algorithm
-                        node.previousNode = null; // Clear previous node references
                         
                         // Clear DOM element classes for BOTH algorithm grids
                         // This ensures that visual elements are cleared for both algorithms
                         const dijkstraNodeElement = document.getElementById(`dijkstra-grid-node-${row}-${col}`);
-                        if (dijkstraNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                        if (dijkstraNodeElement) {
+                            // We want to keep 'start', 'end', and 'wall' classes, but remove visualization classes
                             dijkstraNodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                            // Remove any transition delay that might be set
+                            dijkstraNodeElement.style.transitionDelay = '0ms';
+                            dijkstraNodeElement.style.animationDelay = '0ms';
                         }
                         
                         const astarNodeElement = document.getElementById(`astar-grid-node-${row}-${col}`);
-                        if (astarNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                        if (astarNodeElement) {
+                            // We want to keep 'start', 'end', and 'wall' classes, but remove visualization classes
                             astarNodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                            // Remove any transition delay that might be set
+                            astarNodeElement.style.transitionDelay = '0ms';
+                            astarNodeElement.style.animationDelay = '0ms';
                         }
                     }
                 }
@@ -599,7 +611,24 @@ class VisualizationController {
         
         this.algorithm.stop();
         this.isVisualizing = false;
-        this.uiView.setGridInteractionsDisabled(false);
+        
+        // Check if both algorithms have finished before re-enabling UI
+        if (window.dijkstraController && window.astarController) {
+            // If the other algorithm is still visualizing, don't re-enable all UI elements yet
+            const otherController = this === window.dijkstraController 
+                ? window.astarController 
+                : window.dijkstraController;
+                
+            if (!otherController.isVisualizing) {
+                // Both algorithms are stopped now, so re-enable all UI elements
+                this.enableAllUIElements();
+            }
+            
+            this.checkIfBothAlgorithmsFinished();
+        } else {
+            // Fallback if window controllers aren't available
+            this.enableAllUIElements();
+        }
     }
 
     /**
@@ -654,8 +683,8 @@ class VisualizationController {
     resetUI() {
         if (!this.uiView) return;
         
-        // Enable user interactions
-        this.uiView.setGridInteractionsDisabled(false);
+        // Enable all UI elements including drawing tools and randomizers
+        this.enableAllUIElements();
         
         // Reset step controls if in step mode
         if (this.mode === 'step') {
@@ -706,13 +735,17 @@ class VisualizationController {
                         
                         // Also clear DOM element classes directly
                         const nodeElement = document.getElementById(`dijkstra-grid-node-${row}-${col}`);
-                        if (nodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                        if (nodeElement) {
                             nodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                            nodeElement.style.transitionDelay = '0ms';
+                            nodeElement.style.animationDelay = '0ms';
                         }
                         
                         const astarNodeElement = document.getElementById(`astar-grid-node-${row}-${col}`);
-                        if (astarNodeElement && !node.isStart && !node.isEnd && !node.isWall) {
+                        if (astarNodeElement) {
                             astarNodeElement.classList.remove('visited', 'path', 'current', 'animate');
+                            astarNodeElement.style.transitionDelay = '0ms';
+                            astarNodeElement.style.animationDelay = '0ms';
                         }
                     }
                 }
@@ -724,7 +757,8 @@ class VisualizationController {
         }
         
         if (this.uiView) {
-            this.uiView.setGridInteractionsDisabled(false);
+            // Enable all UI elements including drawing tools and randomizers
+            this.enableAllUIElements();
             this.uiView.setStepControlsEnabled(false);
         }
         
@@ -785,6 +819,11 @@ class VisualizationController {
                 dijkstraController.isVisualizing = false;
                 astarController.isVisualizing = false;
                 
+                // Re-enable all UI elements including drawing tools and randomizers
+                if (this.uiView) {
+                    this.enableAllUIElements();
+                }
+                
                 return true;
             }
         }
@@ -824,5 +863,55 @@ class VisualizationController {
         if (nextStepButton) nextStepButton.disabled = false;
         if (mobileNextStepButton) mobileNextStepButton.disabled = false;
         if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = false;
+    }
+
+    /**
+     * Helper method to explicitly re-enable mode selectors
+     * This is needed because some browsers may not properly re-enable elements
+     * when just using setGridInteractionsDisabled(false)
+     */
+    enableModeSelectors() {
+        const modeSelect = document.getElementById('visualization-mode');
+        const modeMobileSelect = document.getElementById('visualization-mode-mobile');
+        if (modeSelect) modeSelect.disabled = false;
+        if (modeMobileSelect) modeMobileSelect.disabled = false;
+    }
+
+    /**
+     * Helper method to explicitly re-enable all UI elements
+     * This includes mode selectors, drawing tools, and randomizer buttons
+     */
+    enableAllUIElements() {
+        if (!this.uiView) return;
+        
+        // Re-enable general UI interactions
+        this.uiView.setGridInteractionsDisabled(false);
+        
+        // Explicitly re-enable the mode dropdowns
+        this.enableModeSelectors();
+        
+        // Explicitly re-enable tool buttons (drawing tools)
+        const toolButtons = document.querySelectorAll('.tool-btn');
+        toolButtons.forEach(button => {
+            button.disabled = false;
+        });
+        
+        // Explicitly re-enable randomizer buttons - desktop
+        const randomMazeBtn = document.getElementById('random-maze-btn');
+        const randomWeightsBtn = document.getElementById('random-weights-btn');
+        const randomStartEndBtn = document.getElementById('random-start-end-btn');
+        
+        if (randomMazeBtn) randomMazeBtn.disabled = false;
+        if (randomWeightsBtn) randomWeightsBtn.disabled = false;
+        if (randomStartEndBtn) randomStartEndBtn.disabled = false;
+        
+        // Explicitly re-enable mobile randomizer buttons
+        const randomMazeBtnMobile = document.getElementById('random-maze-btn-mobile');
+        const randomWeightsBtnMobile = document.getElementById('random-weights-btn-mobile');
+        const randomStartEndBtnMobile = document.getElementById('random-start-end-btn-mobile');
+        
+        if (randomMazeBtnMobile) randomMazeBtnMobile.disabled = false;
+        if (randomWeightsBtnMobile) randomWeightsBtnMobile.disabled = false;
+        if (randomStartEndBtnMobile) randomStartEndBtnMobile.disabled = false;
     }
 } 

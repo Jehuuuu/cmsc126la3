@@ -105,7 +105,15 @@
                 <div class="sidebar-section">
                     <h3 class="sidebar-section-title">Randomizers</h3>
                     <div class="sidebar-randomizers compact-tools">
-                        <button id="random-maze-btn" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Random Maze</button>
+                        <div class="maze-dropdown">
+                            <select id="maze-type-select" class="randomizer-select">
+                                <option value="random" selected>Basic Random Maze</option>
+                                <option value="recursive-division">Recursive Division</option>
+                                <option value="recursive-division-vertical">Recursive Division (vertical skew)</option>
+                                <option value="recursive-division-horizontal">Recursive Division (horizontal skew)</option>
+                            </select>
+                            <button id="random-maze-btn" class="randomizer-btn"><i class="fas fa-puzzle-piece"></i> Generate Maze</button>
+                        </div>
                         <button id="random-weights-btn" class="randomizer-btn"><i class="fas fa-dice-three"></i> Random Weights</button>
                         <button id="random-start-end-btn" class="randomizer-btn"><i class="fas fa-random"></i> Random Start/End</button>
                     </div>
@@ -286,9 +294,17 @@
         
     <!-- Random Features Menu (Mobile only) -->
         <div id="random-menu" class="random-menu">
-            <button class="random-menu-item maze" data-action="random-maze" aria-label="Random Maze">
-                <span class="icon"><i class="fas fa-puzzle-piece"></i></span> Random Maze
-            </button>
+            <div class="random-menu-maze-container">
+                <select id="maze-type-select-mobile" class="randomizer-select-mobile">
+                    <option value="random" selected>Basic Random Maze</option>
+                    <option value="recursive-division">Recursive Division</option>
+                    <option value="recursive-division-vertical">Recursive Division (vertical skew)</option>
+                    <option value="recursive-division-horizontal">Recursive Division (horizontal skew)</option>
+                </select>
+                <button class="random-menu-item maze" data-action="random-maze" aria-label="Generate Maze">
+                    <span class="icon"><i class="fas fa-puzzle-piece"></i></span> Generate Maze
+                </button>
+            </div>
             <button class="random-menu-item weights" data-action="random-weights" aria-label="Random Weights">
                 <span class="icon"><i class="fas fa-dice-three"></i></span> Random Weights
             </button>
@@ -340,7 +356,14 @@
                     
                     <h3>Randomizers</h3>
                     <ul>
-                        <li><strong>Random Maze</strong>: Generate a random maze of obstacles</li>
+                        <li><strong>Generate Maze</strong>: Create different types of mazes:
+                            <ul>
+                                <li><strong>Recursive Division</strong>: Creates a more structured maze with corridors</li>
+                                <li><strong>Recursive Division (vertical skew)</strong>: More vertical passages</li>
+                                <li><strong>Recursive Division (horizontal skew)</strong>: More horizontal passages</li>
+                                <li><strong>Basic Random Maze</strong>: Simple randomly scattered walls</li>
+                            </ul>
+                        </li>
                         <li><strong>Random Weights</strong>: Automatically add weighted nodes to the grid</li>
                         <li><strong>Random Start/End</strong>: Randomly place start and end points</li>
                     </ul>
@@ -413,6 +436,19 @@
                 <button id="cancel-load-btn">Cancel</button>
                         </div>
                     </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Confirm Deletion</h3>
+            <p id="delete-confirm-message">Are you sure you want to delete this grid?</p>
+            <div class="modal-buttons">
+                <button id="confirm-delete-btn">Delete</button>
+                <button id="cancel-delete-btn">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <!-- Hidden buttons for JavaScript to reference -->

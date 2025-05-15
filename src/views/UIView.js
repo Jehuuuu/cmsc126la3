@@ -121,44 +121,18 @@ class UIView {
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
-                // Special case: when switching from step to auto mode and both algorithms 
-                // were active, ensure all visualization elements are cleared and controls re-enabled
-                if (previousMode === 'step' && selectedMode === 'auto') {
-                    // The resetPathVisualization calls in the setMode methods will handle
-                    // clearing the visualization and setting isVisualizing to false
-                    
-                    // Force reset visualization state
-                    this.controllers.dijkstra.isVisualizing = false;
-                    this.controllers.astar.isVisualizing = false;
-                    
-                    // Ensure both controllers have fully reset their visualizations
-                    // This is a fallback in case the resetPathVisualization in setMode wasn't thorough enough
+                // Ensure visualizations are properly reset for both algorithms regardless
+                // of which mode we're switching to
+                if (previousMode !== selectedMode) {
+                    // Reset visualizations in both controllers
                     this.controllers.dijkstra.resetPathVisualization();
                     this.controllers.astar.resetPathVisualization();
-
-                    // Make sure speed selector is re-enabled
-                    const speedSelect = document.getElementById('visualization-speed');
-                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
-                    if (speedSelect) speedSelect.disabled = false;
-                    if (speedMobileSelect) speedMobileSelect.disabled = false;
                     
-                    // Make sure grid size selector is re-enabled
-                    const gridSizeSelect = document.getElementById('grid-size');
-                    const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
-                    if (gridSizeSelect) gridSizeSelect.disabled = false;
-                    if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+                    // Enable all controls
+                    this.setGridInteractionsDisabled(false);
                     
-                    // Re-enable all tool buttons
-                    const toolButtons = document.querySelectorAll('.tool-btn');
-                    toolButtons.forEach(button => {
-                        button.disabled = false;
-                    });
-                } else if (previousMode === 'auto' && selectedMode === 'step') {
-                    // When switching to step mode, make sure to disable speed controls
-                    const speedSelect = document.getElementById('visualization-speed');
-                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
-                    if (speedSelect) speedSelect.disabled = true;
-                    if (speedMobileSelect) speedMobileSelect.disabled = true;
+                    // Explicitly ensure mode selectors are enabled
+                    this.controllers.dijkstra.enableModeSelectors();
                 }
                 
                 // Show toast notification for mode change
@@ -195,44 +169,18 @@ class UIView {
                 this.controllers.dijkstra.setMode(selectedMode);
                 this.controllers.astar.setMode(selectedMode);
                 
-                // Special case: when switching from step to auto mode and both algorithms 
-                // were active, ensure all visualization elements are cleared and controls re-enabled
-                if (previousMode === 'step' && selectedMode === 'auto') {
-                    // The resetPathVisualization calls in the setMode methods will handle
-                    // clearing the visualization and setting isVisualizing to false
-                    
-                    // Force reset visualization state
-                    this.controllers.dijkstra.isVisualizing = false;
-                    this.controllers.astar.isVisualizing = false;
-                    
-                    // Ensure both controllers have fully reset their visualizations
-                    // This is a fallback in case the resetPathVisualization in setMode wasn't thorough enough
+                // Ensure visualizations are properly reset for both algorithms regardless
+                // of which mode we're switching to
+                if (previousMode !== selectedMode) {
+                    // Reset visualizations in both controllers
                     this.controllers.dijkstra.resetPathVisualization();
                     this.controllers.astar.resetPathVisualization();
-
-                    // Make sure speed selector is re-enabled
-                    const speedSelect = document.getElementById('visualization-speed');
-                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
-                    if (speedSelect) speedSelect.disabled = false;
-                    if (speedMobileSelect) speedMobileSelect.disabled = false;
                     
-                    // Make sure grid size selector is re-enabled
-                    const gridSizeSelect = document.getElementById('grid-size');
-                    const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
-                    if (gridSizeSelect) gridSizeSelect.disabled = false;
-                    if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+                    // Enable all controls
+                    this.setGridInteractionsDisabled(false);
                     
-                    // Re-enable all tool buttons
-                    const toolButtons = document.querySelectorAll('.tool-btn');
-                    toolButtons.forEach(button => {
-                        button.disabled = false;
-                    });
-                } else if (previousMode === 'auto' && selectedMode === 'step') {
-                    // When switching to step mode, make sure to disable speed controls
-                    const speedSelect = document.getElementById('visualization-speed');
-                    const speedMobileSelect = document.getElementById('visualization-speed-mobile');
-                    if (speedSelect) speedSelect.disabled = true;
-                    if (speedMobileSelect) speedMobileSelect.disabled = true;
+                    // Explicitly ensure mode selectors are enabled
+                    this.controllers.dijkstra.enableModeSelectors();
                 }
                 
                 // Show toast notification for mode change
@@ -270,18 +218,93 @@ class UIView {
         
         // Random maze button - desktop
         const randomMazeButton = document.getElementById('random-maze-btn');
-        // console.log("Random maze button found:", !!randomMazeButton);
         if (randomMazeButton) {
             randomMazeButton.addEventListener('click', () => {
-                this.controllers.game.generateRandomMaze();
+                const mazeTypeSelect = document.getElementById('maze-type-select');
+                if (mazeTypeSelect && mazeTypeSelect.value) {
+                    // Generate maze of the selected type
+                    this.controllers.game.generateMaze(mazeTypeSelect.value);
+                    
+                    // Show toast notification
+                    if (window.Toast) {
+                        let mazeType = "maze";
+                        switch (mazeTypeSelect.value) {
+                            case 'recursive-division':
+                                mazeType = "recursive division maze";
+                                break;
+                            case 'recursive-division-vertical':
+                                mazeType = "vertical recursive division maze";
+                                break;
+                            case 'recursive-division-horizontal':
+                                mazeType = "horizontal recursive division maze";
+                                break;
+                            case 'random':
+                                mazeType = "random maze";
+                                break;
+                        }
+                        window.Toast.show(`Generated ${mazeType}!`, 'success');
+                    }
+                } else {
+                    if (window.Toast) {
+                        window.Toast.show("Please select a maze type first!", 'warning');
+                    }
+                }
             });
         }
         
         // Random maze button - mobile
-        const randomMazeMobileButton = document.getElementById('random-maze-btn-mobile');
+        const randomMazeMobileButton = document.querySelector('.random-menu-item.maze');
         if (randomMazeMobileButton) {
             randomMazeMobileButton.addEventListener('click', () => {
-                this.controllers.game.generateRandomMaze();
+                const mazeTypeSelect = document.getElementById('maze-type-select-mobile');
+                if (mazeTypeSelect && mazeTypeSelect.value) {
+                    // Generate maze of the selected type
+                    this.controllers.game.generateMaze(mazeTypeSelect.value);
+                    
+                    // Show toast notification
+                    if (window.Toast) {
+                        let mazeType = "maze";
+                        switch (mazeTypeSelect.value) {
+                            case 'recursive-division':
+                                mazeType = "recursive division maze";
+                                break;
+                            case 'recursive-division-vertical':
+                                mazeType = "vertical recursive division maze";
+                                break;
+                            case 'recursive-division-horizontal':
+                                mazeType = "horizontal recursive division maze";
+                                break;
+                            case 'random':
+                                mazeType = "random maze";
+                                break;
+                        }
+                        window.Toast.show(`Generated ${mazeType}!`, 'success');
+                    }
+                    
+                    // Close the menu
+                    const randomMenu = document.getElementById('random-menu');
+                    if (randomMenu) {
+                        randomMenu.classList.remove('open');
+                    }
+                } else {
+                    if (window.Toast) {
+                        window.Toast.show("Please select a maze type first!", 'warning');
+                    }
+                }
+            });
+        }
+        
+        // Sync maze type selection between desktop and mobile
+        const mazeTypeSelect = document.getElementById('maze-type-select');
+        const mazeTypeSelectMobile = document.getElementById('maze-type-select-mobile');
+        
+        if (mazeTypeSelect && mazeTypeSelectMobile) {
+            mazeTypeSelect.addEventListener('change', () => {
+                mazeTypeSelectMobile.value = mazeTypeSelect.value;
+            });
+            
+            mazeTypeSelectMobile.addEventListener('change', () => {
+                mazeTypeSelect.value = mazeTypeSelectMobile.value;
             });
         }
         
@@ -450,13 +473,6 @@ class UIView {
         // console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
-                // First ensure both controllers are completely reset
-                if (this.controllers.dijkstra.mode === 'auto') {
-                    // For auto mode, make sure we do a complete reset
-                    this.controllers.dijkstra.forceReset();
-                    this.controllers.astar.forceReset();
-                }
-                
                 // Run both algorithms in parallel using Promise.all
                 Promise.all([
                     this.controllers.dijkstra.startVisualization(),
@@ -469,13 +485,6 @@ class UIView {
         const startMobileButton = document.getElementById('start-btn-mobile');
         if (startMobileButton) {
             startMobileButton.addEventListener('click', () => {
-                // First ensure both controllers are completely reset
-                if (this.controllers.dijkstra.mode === 'auto') {
-                    // For auto mode, make sure we do a complete reset
-                    this.controllers.dijkstra.forceReset();
-                    this.controllers.astar.forceReset();
-                }
-                
                 // Run both algorithms in parallel using Promise.all
                 Promise.all([
                     this.controllers.dijkstra.startVisualization(),
@@ -728,6 +737,22 @@ class UIView {
         const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
         const speedSelect = document.getElementById('visualization-speed');
         const speedMobileSelect = document.getElementById('visualization-speed-mobile');
+        const modeSelect = document.getElementById('visualization-mode');
+        const modeMobileSelect = document.getElementById('visualization-mode-mobile');
+        
+        // Randomizer buttons - desktop
+        const randomMazeBtn = document.getElementById('random-maze-btn');
+        const randomWeightsBtn = document.getElementById('random-weights-btn');
+        const randomStartEndBtn = document.getElementById('random-start-end-btn');
+        
+        // Randomizer buttons - mobile
+        const randomMazeBtnMobile = document.querySelector('.random-menu-item.maze');
+        const randomWeightsBtnMobile = document.querySelector('.random-menu-item.weights');
+        const randomStartEndBtnMobile = document.querySelector('.random-menu-item.positions');
+        
+        // Maze type selectors
+        const mazeTypeSelect = document.getElementById('maze-type-select');
+        const mazeTypeSelectMobile = document.getElementById('maze-type-select-mobile');
         
         // Disable all tool buttons
         toolButtons.forEach(button => {
@@ -737,6 +762,24 @@ class UIView {
         // Disable grid size controls
         if (gridSizeSelect) gridSizeSelect.disabled = disabled;
         if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = disabled;
+        
+        // Disable mode selectors during algorithm execution
+        if (modeSelect) modeSelect.disabled = disabled;
+        if (modeMobileSelect) modeMobileSelect.disabled = disabled;
+        
+        // Disable randomizer buttons
+        if (randomMazeBtn) randomMazeBtn.disabled = disabled;
+        if (randomWeightsBtn) randomWeightsBtn.disabled = disabled;
+        if (randomStartEndBtn) randomStartEndBtn.disabled = disabled;
+        
+        // Disable mobile randomizer buttons
+        if (randomMazeBtnMobile) randomMazeBtnMobile.disabled = disabled;
+        if (randomWeightsBtnMobile) randomWeightsBtnMobile.disabled = disabled;
+        if (randomStartEndBtnMobile) randomStartEndBtnMobile.disabled = disabled;
+        
+        // Disable maze type selectors
+        if (mazeTypeSelect) mazeTypeSelect.disabled = disabled;
+        if (mazeTypeSelectMobile) mazeTypeSelectMobile.disabled = disabled;
         
         // Make sure Clear Grid button remains enabled at all times
         const clearGridBtn = document.getElementById('clear-grid-btn');
@@ -803,6 +846,11 @@ class UIView {
                 gridName.className = 'grid-name';
                 gridName.textContent = name;
                 
+                // Add click handler to the grid name element only
+                gridName.addEventListener('click', () => {
+                    this.loadGrid(name);
+                });
+                
                 const gridActions = document.createElement('div');
                 gridActions.className = 'grid-actions';
                 
@@ -810,20 +858,13 @@ class UIView {
                 deleteButton.className = 'delete-grid';
                 deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
                 deleteButton.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent triggering the parent's click
-                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                        this.deleteGrid(name);
-                    }
+                    e.stopPropagation(); // Prevent triggering the parent's click (not needed anymore but keeping for safety)
+                    this.showDeleteConfirmModal(name);
                 });
                 
                 gridActions.appendChild(deleteButton);
                 gridItem.appendChild(gridName);
                 gridItem.appendChild(gridActions);
-                
-                // Add click handler to load the grid
-                gridItem.addEventListener('click', () => {
-                    this.loadGrid(name);
-                });
                 
                 savedGridsList.appendChild(gridItem);
             });
@@ -1118,6 +1159,69 @@ class UIView {
         confirmBtn.addEventListener('click', confirmSize);
         cancelBtn.addEventListener('click', cancelAction);
         closeBtn.addEventListener('click', cancelAction);
+        document.addEventListener('keydown', handleKeydown);
+    }
+
+    /**
+     * Show the delete confirmation modal
+     * @param {string} name - The name of the grid to delete
+     */
+    showDeleteConfirmModal(name) {
+        const modal = document.getElementById('delete-confirm-modal');
+        const messageElement = document.getElementById('delete-confirm-message');
+        const confirmBtn = document.getElementById('confirm-delete-btn');
+        const cancelBtn = document.getElementById('cancel-delete-btn');
+        const closeBtn = modal.querySelector('.close-btn');
+        
+        if (!modal || !confirmBtn || !cancelBtn || !messageElement) {
+            console.error('Delete confirmation modal elements not found');
+            return;
+        }
+        
+        // Update the message with the grid name
+        messageElement.textContent = `Are you sure you want to delete "${name}"?`;
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+        // Function to confirm deletion
+        const confirmDelete = () => {
+            if (this.deleteGrid(name)) {
+                // Hide the modal
+                modal.style.display = 'none';
+            }
+            // Clean up event listeners
+            cleanupListeners();
+        };
+        
+        // Function to cancel
+        const cancelDelete = () => {
+            modal.style.display = 'none';
+            // Clean up event listeners
+            cleanupListeners();
+        };
+        
+        // Function to handle keyboard events
+        const handleKeydown = (e) => {
+            if (e.key === 'Enter') {
+                confirmDelete();
+            } else if (e.key === 'Escape') {
+                cancelDelete();
+            }
+        };
+        
+        // Function to clean up event listeners
+        const cleanupListeners = () => {
+            confirmBtn.removeEventListener('click', confirmDelete);
+            cancelBtn.removeEventListener('click', cancelDelete);
+            closeBtn.removeEventListener('click', cancelDelete);
+            document.removeEventListener('keydown', handleKeydown);
+        };
+        
+        // Add event listeners
+        confirmBtn.addEventListener('click', confirmDelete);
+        cancelBtn.addEventListener('click', cancelDelete);
+        closeBtn.addEventListener('click', cancelDelete);
         document.addEventListener('keydown', handleKeydown);
     }
 }
