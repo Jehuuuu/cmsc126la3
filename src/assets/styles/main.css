@@ -350,6 +350,33 @@ select {
     opacity: 0.7;
 }
 
+/* Consistent styling for all disabled buttons */
+button:disabled, 
+.tool-btn:disabled, 
+.randomizer-btn:disabled, 
+.action-btn:disabled,
+select:disabled {
+    background-color: #555 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    opacity: 0.7 !important;
+    border-color: #333 !important;
+    box-shadow: none !important;
+    color: #aaa !important;
+    text-shadow: 1px 1px 0 #444 !important;
+    transition: none !important;
+}
+
+/* Prevent hover effects on disabled buttons */
+button:disabled:hover, 
+.tool-btn:disabled:hover, 
+.randomizer-btn:disabled:hover, 
+.action-btn:disabled:hover,
+select:disabled:hover {
+    transform: none !important;
+    background-color: #555 !important;
+}
+
 /* Algorithm comparison layout - adjust for sidebar layout */
 .algorithm-comparison {
     display: flex;
@@ -1963,4 +1990,77 @@ button.touch-active {
     .mobile-hidden {
         display: none !important;
     }
+}
+
+/* Maze dropdown styling */
+.maze-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.randomizer-select {
+    appearance: none;
+    background-color: #422f25;
+    color: white;
+    border: 3px solid #000;
+    padding: 8px 10px;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.randomizer-select:hover {
+    background-color: #533d2e;
+}
+
+.randomizer-select:focus {
+    outline: none;
+    border-color: #6f552a;
+}
+
+/* Mobile maze dropdown */
+.random-menu-maze-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.randomizer-select-mobile {
+    appearance: none;
+    background-color: #422f25;
+    color: white;
+    border: 3px solid #000;
+    padding: 8px 10px;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.randomizer-select-mobile:hover {
+    background-color: #533d2e;
+}
+
+.randomizer-select-mobile:focus {
+    outline: none;
+    border-color: #6f552a;
 } 

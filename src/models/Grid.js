@@ -173,15 +173,155 @@ class Grid {
      * Create a random maze on the grid
      * @param {number} density - Wall density (0-1)
      */
-    generateRandomMaze(density = 0.3) {
+    generateRandomMaze(density = 0.35) {
         this.resetGrid();
+        
+        // First set random start and end points
+        this.setRandomStartEnd();
+        
+        // Keep track of start and end positions
+        const startRow = this.startNode.row;
+        const startCol = this.startNode.col;
+        const endRow = this.endNode.row;
+        const endCol = this.endNode.col;
+        
+        // Create walls with the given density
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
+                // Skip start and end positions
+                if ((row === startRow && col === startCol) || 
+                    (row === endRow && col === endCol)) {
+                    continue;
+                }
+                
                 // Random wall generation based on density
                 if (Math.random() < density) {
                     this.nodes[row][col].isWall = true;
                 }
             }
+        }
+    }
+
+    /**
+     * Generate a maze using recursive division algorithm
+     * @param {string} skew - Optional skew direction ('vertical', 'horizontal', or undefined for balanced)
+     */
+    generateRecursiveDivisionMaze(skew) {
+        this.resetGrid();
+        
+        // First set random start and end points
+        this.setRandomStartEnd();
+        
+        // Keep track of start and end positions
+        const startRow = this.startNode.row;
+        const startCol = this.startNode.col;
+        const endRow = this.endNode.row;
+        const endCol = this.endNode.col;
+        
+        // Add walls around the perimeter
+        this.addOuterWalls();
+        
+        // Ensure start and end nodes are not walls (in case they were on the perimeter)
+        if (this.startNode) this.startNode.isWall = false;
+        if (this.endNode) this.endNode.isWall = false;
+        
+        // Start the recursive division
+        this.recursiveDivision(1, 1, this.rows - 2, this.cols - 2, skew, startRow, startCol, endRow, endCol);
+    }
+    
+    /**
+     * Add outer walls around the perimeter of the grid
+     */
+    addOuterWalls() {
+        // Top and bottom walls
+        for (let col = 0; col < this.cols; col++) {
+            this.nodes[0][col].isWall = true;
+            this.nodes[this.rows - 1][col].isWall = true;
+        }
+        
+        // Left and right walls
+        for (let row = 0; row < this.rows; row++) {
+            this.nodes[row][0].isWall = true;
+            this.nodes[row][this.cols - 1].isWall = true;
+        }
+    }
+    
+    /**
+     * Recursive division algorithm for maze generation
+     * @param {number} startRow - Start row for division
+     * @param {number} startCol - Start column for division
+     * @param {number} endRow - End row for division
+     * @param {number} endCol - End column for division
+     * @param {string} skew - Optional skew direction ('vertical', 'horizontal')
+     * @param {number} keepStartRow - Row of start node to keep clear
+     * @param {number} keepStartCol - Column of start node to keep clear
+     * @param {number} keepEndRow - Row of end node to keep clear
+     * @param {number} keepEndCol - Column of end node to keep clear
+     */
+    recursiveDivision(startRow, startCol, endRow, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol) {
+        // Calculate width and height of the current chamber
+        const width = endCol - startCol + 1;
+        const height = endRow - startRow + 1;
+        
+        // Base case: If the chamber is too small, stop recursion
+        if (width < 3 || height < 3) return;
+        
+        // Choose orientation: vertical or horizontal wall
+        let isVertical;
+        
+        if (skew === 'vertical') {
+            // Bias towards vertical walls
+            isVertical = width > height ? true : (width < height ? false : Math.random() < 0.7);
+        } else if (skew === 'horizontal') {
+            // Bias towards horizontal walls
+            isVertical = width > height ? true : (width < height ? false : Math.random() < 0.3);
+        } else {
+            // Balanced: Choose based on chamber dimensions
+            isVertical = width > height ? true : (width < height ? false : Math.random() < 0.5);
+        }
+        
+        if (isVertical) {
+            // Choose a column where the vertical wall will be placed
+            const col = startCol + Math.floor(Math.random() * (width - 2)) + 1;
+            
+            // Choose a row where the passage will be created
+            const passageRow = startRow + Math.floor(Math.random() * height);
+            
+            // Build the vertical wall with a passage
+            for (let row = startRow; row <= endRow; row++) {
+                // Skip the passage row and the start/end positions
+                if (row === passageRow || 
+                    (row === keepStartRow && col === keepStartCol) || 
+                    (row === keepEndRow && col === keepEndCol)) {
+                    continue;
+                }
+                this.nodes[row][col].isWall = true;
+            }
+            
+            // Recursively divide the left and right chambers
+            this.recursiveDivision(startRow, startCol, endRow, col - 1, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
+            this.recursiveDivision(startRow, col + 1, endRow, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
+        } else {
+            // Choose a row where the horizontal wall will be placed
+            const row = startRow + Math.floor(Math.random() * (height - 2)) + 1;
+            
+            // Choose a column where the passage will be created
+            const passageCol = startCol + Math.floor(Math.random() * width);
+            
+            // Build the horizontal wall with a passage
+            for (let col = startCol; col <= endCol; col++) {
+                // Skip the passage column and the start/end positions
+                if (col === passageCol || 
+                    (row === keepStartRow && col === keepStartCol) || 
+                    (row === keepEndRow && col === keepEndCol)) {
+                    continue;
+                }
+                this.nodes[row][col].isWall = true;
+            }
+            
+            // Recursively divide the top and bottom chambers
+            this.recursiveDivision(startRow, startCol, row - 1, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
+            this.recursiveDivision(row + 1, startCol, endRow, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
         }
     }
 

@@ -131,7 +131,7 @@
     color: #d9a334; /* Gold color */
     position: absolute;
     right: 15px;
-    top: 5px;
+    top: -1px;
     font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
@@ -207,19 +207,41 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Delete confirmation button */
+#confirm-delete-btn {
+    background-color: #e74c3c; /* Red */
+}
+
+#confirm-delete-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 /* Cancel button */
 #cancel-save-btn, 
 #cancel-weight-btn, 
-#cancel-load-btn,
-#cancel-grid-size-btn {
-    background-color: #e74c3c; /* Red */
+#cancel-grid-size-btn,
+#cancel-delete-btn {
+    background-color: #986c44; /* Dirt brown */
 }
 
 #cancel-save-btn:hover, 
 #cancel-weight-btn:hover, 
-#cancel-load-btn:hover,
-#cancel-grid-size-btn:hover {
-    background-color: #c0392b;
+#cancel-grid-size-btn:hover,
+#cancel-delete-btn:hover {
+    background-color: #825432;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Load grid cancel button - red styling */
+#cancel-load-btn {
+    background-color: #e74c3c; /* Red */
+}
+
+#cancel-load-btn:hover {
+    background-color: #c0392b; /* Darker red on hover */
     transform: translateY(-2px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -233,13 +255,13 @@
     border: 2px solid #000;
 }
 
+/* Grid item styling */
 .grid-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #000;
-    cursor: pointer;
     transition: background-color 0.2s;
 }
 
@@ -247,14 +269,20 @@
     border-bottom: none;
 }
 
-.grid-item:hover {
-    background-color: #4a3527; /* Slightly lighter brown */
-}
-
+/* Make only the grid name look clickable and highlight on hover */
 .grid-item .grid-name {
     font-weight: bold;
     color: #fff;
     text-shadow: 1px 1px 0 #000;
+    cursor: pointer;
+    padding: 5px;
+    flex-grow: 1;
+    transition: background-color 0.2s;
+    border-radius: 3px;
+}
+
+.grid-item .grid-name:hover {
+    background-color: #4a3527; /* Slightly lighter brown when hovering just the name */
 }
 
 .grid-item .delete-grid {
@@ -264,10 +292,14 @@
     border: none;
     cursor: pointer;
     transition: color 0.2s;
+    padding: 5px 8px;
+    margin-left: 8px;
+    border-radius: 3px;
 }
 
 .grid-item .delete-grid:hover {
     color: #c0392b;
+    background-color: rgba(231, 76, 60, 0.2); /* Light red background on hover */
 }
 
 .no-saved-grids {
@@ -349,7 +381,7 @@
 
 #save-grid-modal .close-btn {
     right: 12px;
-    top: 3px;
+    top: -1px;
     font-size: 1.6rem; /* Slightly smaller close button */
 }
 
@@ -589,15 +621,4 @@
 #load-grid-modal .modal-buttons {
     padding: 5px 15px 15px; /* Keep buttons at the bottom */
     margin-top: 0; /* No space above buttons */
-}
-
-/* Grid item styling */
-.grid-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #000;
-    cursor: pointer;
-    transition: background-color 0.2s;
 } 
