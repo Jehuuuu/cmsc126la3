@@ -4,6 +4,7 @@
   "description": "Interactive web-based pathfinding visualizer",
   "main": "index.html",
   "scripts": {
+    "build": "echo 'Static site - no build required'",
     "deploy": "vercel --prod",
     "test": "npx serve ."
   },

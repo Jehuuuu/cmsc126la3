@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "pathfinding-adventure",
+  "buildCommand": "npm run build || echo 'No build step'",
+  "outputDirectory": ".",
+  "cleanUrls": true,
   "builds": [
     { "src": "**/*", "use": "@vercel/static" }
   ],
@@ -9,9 +12,13 @@
     { 
       "src": "/(.*)",
       "headers": { 
-        "cache-control": "public, max-age=0, must-revalidate" 
+        "cache-control": "s-maxage=1, stale-while-revalidate=59" 
       },
       "dest": "/index.html"
     }
-  ]
+  ],
+  "github": {
+    "silent": false,
+    "autoAlias": true
+  }
 } 
