@@ -1,0 +1,393 @@
+/* 
+ * Tutorial System Styles
+ * Styles for the interactive guided tutorial
+ */
+
+/* Overlay that covers the entire page */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all; /* Ensure we capture clicks on overlay */
+}
+
+/* Tutorial modal */
+.tutorial-modal {
+    background-color: #422f25;
+    border: 4px solid #000;
+    border-radius: 5px;
+    padding: 15px;
+    width: 85%;
+    max-width: 450px;
+    max-height: 65vh;
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    color: white;
+    font-family: 'Pixelify Sans', sans-serif;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modal header */
+.tutorial-header {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.tutorial-header h2 {
+    font-size: 1.8rem;
+    color: var(--minecraft-gold);
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 5px;
+}
+
+/* Tutorial content */
+.tutorial-content {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    max-height: 40vh; /* Ensure content doesn't exceed viewport */
+    overflow-y: auto; /* Add scrolling if needed */
+}
+
+.tutorial-content p {
+    margin-bottom: 10px;
+}
+
+/* Tutorial progress indicator */
+.tutorial-progress {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.progress-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #555;
+    border-radius: 50%;
+    margin: 0 4px;
+    transition: background-color 0.3s;
+}
+
+.progress-dot.current {
+    background-color: var(--minecraft-gold);
+    transform: scale(1.2);
+}
+
+.progress-dot.completed {
+    background-color: #5bac38;
+}
+
+/* Button container */
+.tutorial-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.tutorial-btn {
+    background-color: #825432;
+    border: 3px solid #000;
+    color: white;
+    padding: 10px 20px;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 100px;
+    text-align: center;
+}
+
+.tutorial-btn:hover {
+    background-color: #986c44;
+    transform: scale(1.05);
+}
+
+.tutorial-btn.primary {
+    background-color: #5bac38;
+}
+
+.tutorial-btn.primary:hover {
+    background-color: #6bc349;
+}
+
+.tutorial-btn.danger {
+    background-color: #e74c3c;
+}
+
+.tutorial-btn.danger:hover {
+    background-color: #f85c4b;
+}
+
+/* Close button */
+.tutorial-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #e74c3c;
+    border: 2px solid #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.tutorial-close:hover {
+    background-color: #f85c4b;
+    transform: scale(1.1);
+}
+
+/* Special positioning for close button in sidebar tooltip */
+.tutorial-modal.sidebar-aligned .tutorial-close {
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    z-index: 10005; /* Ensure it's above other elements */
+}
+
+/* Highlight effect for UI elements */
+.tutorial-highlight {
+    position: relative !important; /* Important to override any other positioning */
+    z-index: 10002 !important; /* Important to override other z-index values */
+    pointer-events: auto !important;
+    animation: pulse 2s infinite !important; /* Increased animation time for more visibility */
+    box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8) !important; /* Brighter gold color, thicker border */
+    border-radius: 5px;
+    outline: 2px solid #FFD700 !important; /* Additional gold outline */
+}
+
+/* Pointers/arrows to guide attention */
+.tutorial-pointer {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="%23FFD700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 7h-4.5V20h-5V10H5l7-7z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10003;
+    pointer-events: none;
+    animation: float 1s infinite alternate;
+}
+
+/* Pointer styles */
+
+/* For mobile screens */
+@media (max-width: 768px) {
+    .tutorial-modal {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .tutorial-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .tutorial-content {
+        font-size: 1rem;
+    }
+    
+    .tutorial-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { 
+        box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.9); 
+        outline-color: #FFD700;
+    }
+    50% { 
+        box-shadow: 0 0 0 12px rgba(255, 215, 0, 0.4); 
+        outline-color: #FFA500;
+    }
+    100% { 
+        box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.9); 
+        outline-color: #FFD700;
+    }
+}
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+/* Special success animation */
+.tutorial-success {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10003;
+    font-size: 3rem;
+    color: #5bac38;
+    text-shadow: 2px 2px 0 #000;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tutorial-success.show {
+    animation: success-animation 1.5s ease-out;
+}
+
+@keyframes success-animation {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Task completion checklist */
+.tutorial-tasks {
+    margin: 15px 0;
+    padding-left: 15px;
+}
+
+.tutorial-task {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #000;
+    border-radius: 3px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.task-checkbox.completed {
+    background-color: #5bac38;
+}
+
+.task-checkbox.completed::after {
+    content: '✓';
+    color: white;
+    font-weight: bold;
+}
+
+.task-text {
+    flex: 1;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Feature spotlight - keeps specific UI element visible through overlay */
+.tutorial-spotlight {
+    position: absolute;
+    z-index: 10001;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+    pointer-events: auto;
+    border-radius: 5px;
+}
+
+/* Specific styling for algorithm comparison container */
+.algorithm-comparison.tutorial-highlight {
+    position: relative !important;
+    box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.8) !important;
+    outline: 3px solid #FFD700 !important;
+    border-radius: 8px;
+    z-index: 10002 !important;
+    animation: enhanced-pulse 1.5s infinite !important; /* Faster animation */
+    transition: all 0.3s ease !important;
+}
+
+/* Enhanced pulse animation for algorithm comparison highlight */
+@keyframes enhanced-pulse {
+    0% { 
+        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.9), 0 0 30px 5px rgba(255, 165, 0, 0.5); 
+        outline-color: #FFD700;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    25% {
+        box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8), 0 0 35px 10px rgba(255, 140, 0, 0.6);
+        outline-color: #FFA500;
+        transform: scale(1.005);
+        filter: brightness(1.05);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.7), 0 0 40px 15px rgba(255, 140, 0, 0.7); 
+        outline-color: #FF8C00;
+        transform: scale(1.01);
+        filter: brightness(1.1);
+    }
+    75% {
+        box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8), 0 0 35px 10px rgba(255, 140, 0, 0.6);
+        outline-color: #FFA500;
+        transform: scale(1.005);
+        filter: brightness(1.05);
+    }
+    100% { 
+        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.9), 0 0 30px 5px rgba(255, 165, 0, 0.5); 
+        outline-color: #FFD700;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+/* Specific styling for algorithm tooltip in sidebar */
+.tutorial-modal.sidebar-aligned {
+    max-width: 180px !important;
+    padding: 12px !important;
+    background-color: #362921 !important;
+    border-radius: 4px !important;
+    margin-left: 5px !important;
+    font-size: 0.9em !important;
+}
+
+.tutorial-modal.sidebar-aligned .tutorial-header {
+    padding-right: 25px; /* Make room for the close button */
+    text-align: left; /* Left-align the header for better space usage */
+    margin-bottom: 8px;
+}
+
+.tutorial-modal.sidebar-aligned .tutorial-header h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 3px !important;
+    text-align: center;
+    padding-right: 20px; /* Extra space to avoid close button */
+}
+
+.tutorial-modal.sidebar-aligned .tutorial-content {
+    margin-bottom: 10px !important;
+}
+
+.tutorial-modal.sidebar-aligned .tutorial-buttons {
+    justify-content: center !important;
+}
+
+.tutorial-modal.sidebar-aligned .tutorial-btn {
+    padding: 8px 15px !important;
+    min-width: 80px !important;
+} 

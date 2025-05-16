@@ -127,7 +127,7 @@ class UIView {
                     // Reset visualizations in both controllers
                     this.controllers.dijkstra.resetPathVisualization();
                     this.controllers.astar.resetPathVisualization();
-                    
+
                     // Enable all controls
                     this.setGridInteractionsDisabled(false);
                     
@@ -175,7 +175,7 @@ class UIView {
                     // Reset visualizations in both controllers
                     this.controllers.dijkstra.resetPathVisualization();
                     this.controllers.astar.resetPathVisualization();
-                    
+
                     // Enable all controls
                     this.setGridInteractionsDisabled(false);
                     

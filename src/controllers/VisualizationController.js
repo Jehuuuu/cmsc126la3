@@ -440,22 +440,22 @@ class VisualizationController {
         
         // Reset visualizations regardless of which mode we're switching between
         // This ensures clean state when toggling between auto and step modes
-        this.resetPathVisualization();
-        
-        // For complete reset, ensure we force reset both controllers
-        if (window.dijkstraController && window.astarController) {
-            // Make sure we also reset the other controller that might not be 'this'
-            if (this !== window.dijkstraController) {
-                window.dijkstraController.resetPathVisualization();
-            }
-            if (this !== window.astarController) {
-                window.astarController.resetPathVisualization();
+            this.resetPathVisualization();
+            
+            // For complete reset, ensure we force reset both controllers
+            if (window.dijkstraController && window.astarController) {
+                // Make sure we also reset the other controller that might not be 'this'
+                if (this !== window.dijkstraController) {
+                    window.dijkstraController.resetPathVisualization();
+                }
+                if (this !== window.astarController) {
+                    window.astarController.resetPathVisualization();
+                }
+                
+                // Make sure Next Step button is re-enabled for future use
+                this.enableNextStepButton();
             }
             
-            // Make sure Next Step button is re-enabled for future use
-            this.enableNextStepButton();
-        }
-        
         // Show toast notification when switching to auto mode from step mode
         if (previousMode === 'step' && mode === 'auto' && window.Toast) {
             window.Toast.info('Switched to auto mode');

@@ -107,6 +107,30 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
+/* Tutorial button style */
+.tutorial-btn-style {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #3498db; /* Blue */
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid #000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    margin-left: 5px;
+    color: white;
+}
+
+.tutorial-btn-style:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
 /* For mobile view */
 @media (max-width: 768px) {
     .floating-actions-container {
