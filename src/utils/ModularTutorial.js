@@ -1233,7 +1233,7 @@ class ResultsComparisonModal extends TutorialModal {
             'Great job! Notice the difference between the algorithms. Compare the number of nodes visited and path length between Dijkstra\'s and A*.',
             [
                 { id: 'results-skip', text: 'Skip', danger: true, icon: 'times' },
-                { id: 'results-next', text: 'Next', primary: true, icon: 'arrow-right' }
+                { id: 'results-show', text: 'Show Me', primary: true, icon: 'lightbulb' }
             ]
         );
         // Add event listeners
@@ -1243,10 +1243,32 @@ class ResultsComparisonModal extends TutorialModal {
                 this.tutorial.closeTutorial();
             });
         }
-        const nextBtn = modal.querySelector('#results-next');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                this.tutorial.nextStep();
+        const showBtn = modal.querySelector('#results-show');
+        if (showBtn) {
+            showBtn.addEventListener('click', () => {
+                // Close the modal
+                const container = document.getElementById('tutorial-container');
+                if (container && overlay) {
+                    container.removeChild(overlay);
+                }
+                
+                // Highlight the path footer info
+                const pathFooters = document.querySelectorAll('.algorithm-footer');
+                pathFooters.forEach(footer => {
+                    this.highlightElement(footer, true);
+                });
+                
+                // Wait 2 seconds then proceed to the completion step
+                setTimeout(() => {
+                    // Remove highlights
+                    pathFooters.forEach(footer => {
+                        footer.classList.remove('tutorial-highlight');
+                        footer.classList.remove('flash-animation');
+                    });
+                    
+                    // Show the completion step
+                    this.tutorial.nextStep();
+                }, 2000);
             });
         }
     }
