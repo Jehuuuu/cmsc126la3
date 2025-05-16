@@ -7,14 +7,15 @@
   "builds": [
     { "src": "**/*", "use": "@vercel/static" }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    { 
-      "src": "/(.*)",
-      "headers": { 
-        "cache-control": "s-maxage=1, stale-while-revalidate=59" 
-      },
-      "dest": "/index.html"
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=1, stale-while-revalidate=59"
+        }
+      ]
     }
   ],
   "github": {
