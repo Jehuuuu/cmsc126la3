@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "name": "pathfinding-adventure",
   "builds": [
     { "src": "**/*", "use": "@vercel/static" }

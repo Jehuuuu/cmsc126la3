@@ -11,10 +11,13 @@
     <link rel="stylesheet" href="src/assets/styles/sidebar.css">
     <link rel="stylesheet" href="src/assets/styles/floating-buttons.css">
     <link rel="stylesheet" href="src/assets/styles/modals.css">
+    <link rel="stylesheet" href="src/assets/styles/tutorial.css">
     <!-- Mac compatibility styles will be loaded by PlatformDetector.js if needed -->
     <link rel="icon" href="data:,">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add Pixelify Sans font for Minecraft style -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap">
     
     <!-- Meta tag for better mobile support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -149,6 +152,7 @@
                         <div class="title-container">
                             <img src="src/assets/images/app_logo.png" alt="Skull Cavern Path" class="app-logo-mobile">
                         </div>
+                        <button id="tutorial-btn-mobile" class="tutorial-btn-style" aria-label="Tutorial"><i class="fas fa-book"></i></button>
                         <button id="help-btn" class="help-btn" aria-label="Help">?</button>
                     </div>
                     
@@ -210,6 +214,7 @@
                 <div class="right-actions">
                     <button id="save-grid-btn-header" class="floating-btn"><i class="fas fa-save"></i> Save Grid</button>
                     <button id="load-grid-btn-header" class="floating-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
+                    <button id="tutorial-btn-desktop" class="tutorial-btn-style" aria-label="Tutorial"><i class="fas fa-book"></i></button>
                     <button id="help-btn-desktop" class="help-btn" aria-label="Help">?</button>
                 </div>
             </div>
@@ -303,7 +308,7 @@
                 </select>
                 <button class="random-menu-item maze" data-action="random-maze" aria-label="Generate Maze">
                     <span class="icon"><i class="fas fa-puzzle-piece"></i></span> Generate Maze
-                </button>
+            </button>
             </div>
             <button class="random-menu-item weights" data-action="random-weights" aria-label="Random Weights">
                 <span class="icon"><i class="fas fa-dice-three"></i></span> Random Weights
@@ -447,8 +452,8 @@
             <div class="modal-buttons">
                 <button id="confirm-delete-btn">Delete</button>
                 <button id="cancel-delete-btn">Cancel</button>
-            </div>
-        </div>
+                        </div>
+                    </div>
     </div>
 
     <!-- Hidden buttons for JavaScript to reference -->
@@ -468,6 +473,9 @@
     <script src="src/utils/PriorityQueue.js" defer></script>
     <script src="src/utils/PathUtils.js" defer></script>
     <script src="src/utils/ToastNotification.js" defer></script>
+    <!-- Tutorial system -->
+    <script src="src/utils/ModularTutorial.js" defer></script>
+    <script src="src/utils/initModularTutorial.js" defer></script>
     
     <!-- Models -->
     <script src="src/models/Node.js" defer></script>

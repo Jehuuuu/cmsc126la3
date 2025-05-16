@@ -214,6 +214,31 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Log that everything is set up
     // console.log("Pathfinding visualizer initialized successfully");
+    
+    // Initialize tutorial at the end of the document ready function
+    if (window.modularTutorial) {
+        window.modularTutorial.init();
+    }
+    
+    // Set up tutorial button functionality
+    const tutorialBtnDesktop = document.getElementById('tutorial-btn-desktop');
+    const tutorialBtnMobile = document.getElementById('tutorial-btn-mobile');
+    
+    if (tutorialBtnDesktop) {
+        tutorialBtnDesktop.addEventListener('click', () => {
+            if (window.modularTutorial) {
+                window.modularTutorial.startTutorial();
+            }
+        });
+    }
+    
+    if (tutorialBtnMobile) {
+        tutorialBtnMobile.addEventListener('click', () => {
+            if (window.modularTutorial) {
+                window.modularTutorial.startTutorial();
+            }
+        });
+    }
 });
 
 /**
