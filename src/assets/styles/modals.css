@@ -1,90 +1,139 @@
-/* 
- * Minecraft Themed Modal Styling
- * Provides styling for all modals in the application
+/*
+ * Modals & Notifications CSS
+ * Minecraft-themed styling for modal dialogs, forms, and toast notifications
+ * For the pathfinding algorithm visualization application
  */
 
-/* Color variables */
+/*
+ * Global Variables
+ * Centralized variables for consistent styling across all modals
+ */
 :root {
+    /* Main Colors */
     --modal-bg: #3c2a21;           /* Dark brown background */
     --modal-border: #986c44;       /* Minecraft dirt border color */
     --modal-header: #986c44;       /* Minecraft dirt color */
-    --modal-text: #fff;
-    --modal-input-bg: #2c1e16;     /* Darker brown */
-    --modal-input-border: #000;
-    --modal-shadow: rgba(0, 0, 0, 0.5);
+    --modal-text: #fff;            /* White text for contrast */
+    --modal-input-bg: #2c1e16;     /* Darker brown for form fields */
+    --modal-input-border: #000;    /* Black border for inputs */
+    --modal-shadow: rgba(0, 0, 0, 0.5); /* Base shadow color */
     
-    /* Button colors */
-    --btn-green: #5bac38;
-    --btn-green-hover: #4a9c27;
-    --btn-red: #e74c3c;
-    --btn-red-hover: #c0392b;
-    --btn-brown: #986c44;
-    --btn-brown-hover: #825432;
-    --btn-gold: #d9a334;
-    --btn-gold-hover: #ffcc00;
+    /* Button Colors */
+    --btn-green: #5bac38;          /* Success/confirm/save */
+    --btn-green-hover: #4a9c27;    /* Success hover */
+    --btn-red: #e74c3c;            /* Danger/delete/cancel */
+    --btn-red-hover: #c0392b;      /* Danger hover */
+    --btn-brown: #986c44;          /* Neutral/default */
+    --btn-brown-hover: #825432;    /* Neutral hover */
+    --btn-gold: #d9a334;           /* Highlight/important */
+    --btn-gold-hover: #ffcc00;     /* Highlight hover */
+    --btn-blue: #3498db;           /* Info/help */
+    
+    /* Layout & Spacing */
+    --modal-padding: 15px;         /* Standard inner padding */
+    --modal-gap: 10px;             /* Standard spacing between elements */
+    --border-width: 3px;           /* Standard border width */
+    --border-radius: 0px;          /* Square corners for pixelated look */
+    
+    /* Animations & Transitions */
+    --hover-transition: all 0.2s;  /* Standard hover effect speed */
+    --modal-transition: 0.3s;      /* Modal appear/disappear speed */
+    --toast-duration: 3s;          /* Time for toast notifications */
+    
+    /* Shadows & Effects */
+    --inner-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Inset shadow for depth */
+    --button-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Button depth */
+    --focus-glow: 0 0 5px var(--btn-gold); /* Focus ring for accessibility */
 }
 
 /*
  * Base Modal Structure
+ * Core components for all modal dialogs in the application
  */
+
+/* Modal Overlay */
 .modal {
-    display: none;
+    /* Positioning */
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    
+    /* Visual */
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(3px);
+    
+    /* Behavior */
+    display: none;
+    overflow: auto;
 }
 
-/* Modal content base */
+/* Modal Content Container */
 .modal-content {
-    background-color: var(--modal-bg);
-    color: var(--modal-text);
+    /* Layout */
+    position: relative;
     margin: 10% auto;
     width: 380px;
     max-width: 90%;
-    border: 4px solid var(--modal-border);
-    box-shadow: 0 0 20px var(--modal-shadow);
-    position: relative;
     padding: 0;
+    overflow: hidden;
+    
+    /* Visual */
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: var(--border-width) solid var(--modal-border);
+    border-width: 4px; /* Thicker border for modal container */
+    box-shadow: 0 0 20px var(--modal-shadow);
+    
+    /* Typography */
     font-family: 'Pixelify Sans', sans-serif;
     image-rendering: pixelated;
-    overflow: hidden;
 }
 
-/* Modal header */
+/* Modal Headers */
 .modal-content h3,
 #help-modal .modal-content h2 {
+    /* Layout */
+    margin: 0;
+    padding: 10px var(--modal-padding);
+    
+    /* Visual */
     background-color: var(--modal-header);
     color: var(--modal-text);
-    margin: 0;
-    padding: 10px 15px;
+    border-bottom: 4px solid #000;
+    
+    /* Typography */
     font-size: 1.2rem;
     text-shadow: 1px 1px 0 #000;
-    border-bottom: 4px solid #000;
 }
 
-/* Modal text content */
+/* Modal Text Content */
 .modal-content p {
-    padding: 15px 15px 5px;
+    padding: var(--modal-padding) var(--modal-padding) 5px;
     margin: 0;
     text-shadow: 1px 1px 0 #000;
 }
 
-/* Close button */
+/* Close Button */
 .modal-content .close-btn {
-    color: var(--btn-gold);
+    /* Positioning */
     position: absolute;
-    right: 15px;
+    right: var(--modal-padding);
     top: -1px;
+    
+    /* Visual */
+    color: var(--btn-gold);
+    cursor: pointer;
+    
+    /* Typography */
     font-size: 1.8rem;
     font-weight: bold;
-    cursor: pointer;
     text-shadow: 1px 1px 0 #000;
+    
+    /* Interaction */
+    transition: var(--hover-transition);
 }
 
 .modal-content .close-btn:hover {
@@ -92,36 +141,52 @@
 }
 
 /*
- * Input Styling
+ * Form Elements
+ * Styling for all modal form components
+ */
+
+/* 
+ * Base Input Styling 
+ * Common styles for all text-based inputs
  */
 .modal-content input[type="text"],
 .modal-content input[type="number"],
 .form-group input[type="number"] {
-    width: calc(100% - 30px);
-    margin: 0 15px 15px;
+    /* Layout */
+    width: calc(100% - 2 * var(--modal-padding));
+    margin: 0 var(--modal-padding) var(--modal-padding);
     padding: 8px 10px;
+    
+    /* Visual */
     background-color: var(--modal-input-bg);
-    border: 3px solid var(--modal-input-border);
+    border: var(--border-width) solid var(--modal-input-border);
     color: var(--modal-text);
+    box-shadow: var(--inner-shadow);
+    
+    /* Typography */
     font-family: 'Pixelify Sans', sans-serif;
     font-size: 1rem;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
     letter-spacing: 0.5px;
 }
 
+/* Input Focus State */
 .modal-content input[type="text"]:focus,
 .modal-content input[type="number"]:focus,
 .form-group input[type="number"]:focus {
     outline: none;
     border-color: var(--btn-gold);
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 5px var(--btn-gold);
+    box-shadow: var(--inner-shadow), var(--focus-glow);
 }
 
-/* Form groups */
+/* 
+ * Form Groups 
+ * Container for form label + input combinations
+ */
 .form-group {
-    margin: 15px 15px;
+    margin: var(--modal-padding) var(--modal-padding);
 }
 
+/* Form Labels */
 .form-group label {
     display: block;
     margin-bottom: 5px;
@@ -132,43 +197,59 @@
 
 /*
  * Custom Number Input
+ * Special container for numeric inputs with formatting
  */
 .custom-input-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 10px 15px;
+    margin: var(--modal-gap) var(--modal-padding);
 }
 
+/* Number Input in Custom Container */
 .custom-input-container input[type="number"] {
+    /* Override standard input styles */
     width: 70px;
     text-align: center;
     margin: 0;
     padding: 5px;
+    
+    /* Visual - reuse common variables */
     background-color: var(--modal-input-bg);
-    border: 3px solid var(--modal-input-border);
+    border: var(--border-width) solid var(--modal-input-border);
     color: var(--modal-text);
+    box-shadow: var(--inner-shadow);
+    
+    /* Typography */
     font-family: 'Pixelify Sans', sans-serif;
     font-size: 1rem;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
+/* Disabled Number Input State */
 .custom-input-container input[type="number"]:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* Remove spinner buttons from number input */
+/* 
+ * Number Input Browser Compatibility
+ * Remove default browser spinner buttons
+ */
 .custom-input-container input[type="number"]::-webkit-inner-spin-button,
 .custom-input-container input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
+/* Firefox number input compatibility */
 .custom-input-container input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* 
+ * Grid Size Format Text
+ * The "×" character between width and height inputs
+ */
 .grid-size-format {
     color: var(--btn-gold);
     text-shadow: 1px 1px 0 #000;
@@ -178,41 +259,64 @@
 }
 
 /*
- * Button Styling
+ * Button System
+ * Standard button styles and variations for all modals
  */
+
+/* Button Container */
 .modal-buttons {
     display: flex;
-    padding: 0 15px 15px;
-    gap: 10px;
+    padding: 0 var(--modal-padding) var(--modal-padding);
+    gap: var(--modal-gap);
 }
 
-/* Base button style */
+/* 
+ * Base Button Style
+ * Default styling applied to all modal buttons
+ */
 .modal-buttons button {
+    /* Layout */
     flex: 1;
     padding: 8px 0;
+    
+    /* Visual */
+    background-color: var(--btn-brown); /* Default neutral color */
+    color: white;
+    border: var(--border-width) solid #000;
+    box-shadow: var(--button-shadow);
+    
+    /* Typography */
     font-family: 'Pixelify Sans', sans-serif;
     font-size: 1rem;
-    background-color: var(--btn-brown);
-    color: white;
-    border: 3px solid #000;
-    cursor: pointer;
     text-shadow: 1px 1px 0 #000;
-    transition: all 0.2s;
-    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.5px;
+    
+    /* Behavior */
+    cursor: pointer;
+    transition: var(--hover-transition);
 }
 
+/* Button Hover State */
 .modal-buttons button:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Button Active (Pressed) State */
 .modal-buttons button:active {
     transform: translateY(1px);
     box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Confirm/Save buttons - Green */
+/*
+ * Button Variants
+ * Color variations for different button functions
+ */
+
+/* 
+ * Success Buttons (Green)
+ * Used for confirming, saving, or completing actions 
+ */
 #confirm-save-btn, 
 #confirm-weight-btn,
 #confirm-grid-size-btn {
@@ -225,7 +329,10 @@
     background-color: var(--btn-green-hover);
 }
 
-/* Delete confirmation button - Red */
+/* 
+ * Danger Buttons (Red)
+ * Used for delete operations or cancelling important actions
+ */
 #confirm-delete-btn,
 #cancel-load-btn {
     background-color: var(--btn-red);
@@ -236,7 +343,10 @@
     background-color: var(--btn-red-hover);
 }
 
-/* Cancel buttons - Brown */
+/* 
+ * Neutral Buttons (Brown)
+ * Used for non-destructive cancellation or secondary actions
+ */
 #cancel-save-btn, 
 #cancel-weight-btn, 
 #cancel-grid-size-btn,
@@ -252,9 +362,14 @@
 }
 
 /*
- * Specific Modal Styles
+ * Specific Modal Types
+ * Custom styling for individual modal types with unique layouts
  */
-/* Help modal */
+
+/*
+ * Help Modal
+ * Documentation and instructions modal with scrollable content
+ */
 #help-modal .modal-content {
     width: 80%;
     max-width: 900px;
@@ -263,71 +378,25 @@
     overflow-y: auto;
 }
 
-/* Save Grid modal */
-#save-grid-modal .modal-content {
-    width: 320px;
-    height: 250px;
-}
-
-#save-grid-modal .modal-content p {
-    padding: 10px 15px 0;
-    font-size: 0.95rem;
-}
-
-#save-grid-modal .modal-content input[type="text"] {
-    margin: 10px 15px;
-}
-
-#save-grid-modal .modal-buttons {
-    padding: 0 15px 10px;
-}
-
-#save-grid-modal .modal-content h3 {
-    padding-bottom: 8px;
-    padding-top: 8px;
-}
-
-#save-grid-modal .close-btn {
-    top: -3px;
-}
-
-/* Custom Grid modal */
-#custom-grid-modal .modal-content {
-    width: 340px;
-    max-width: 90%;
-}
-
-/* Load Grid modal */
-#load-grid-modal .modal-content {
-    width: 340px;
-    max-width: 90%;
-    min-height: 300px;
-    max-height: 80vh;
-}
-
-#load-grid-modal .modal-content h3 {
-    padding-bottom: 8px;
-    padding-top: 8px;
-}
-
-/* App description in help modal */
+/* App Description Banner */
 .app-description {
-    margin: 10px 15px 5px;
+    margin: var(--modal-gap) var(--modal-padding) 5px;
+    padding: 8px;
     text-align: center;
     font-size: 1.1rem;
-    padding: 8px;
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     color: var(--btn-gold);
     text-shadow: 1px 1px 0 #000;
 }
 
-/* Help content styling */
+/* Help Content Container */
 .help-content {
     margin: 20px;
     text-align: left;
 }
 
+/* Help Section Headers */
 .help-content h3 {
     color: var(--btn-gold);
     margin-top: 15px;
@@ -336,6 +405,7 @@
     padding-bottom: 5px;
 }
 
+/* Help Content Lists */
 .help-content ul {
     list-style-type: square;
     margin-left: 20px;
@@ -346,67 +416,158 @@
     margin-bottom: 8px;
 }
 
+/* Help Content Highlights */
 .help-content strong {
-    color: #3498db; /* Sky blue */
+    color: var(--btn-blue);
 }
 
 /*
- * Saved Grid List
+ * Save Grid Modal
+ * Save current grid configuration dialog
  */
+#save-grid-modal .modal-content {
+    width: 320px;
+    height: 250px;
+}
+
+/* Adjusted text padding */
+#save-grid-modal .modal-content p {
+    padding: 10px var(--modal-padding) 0;
+    font-size: 0.95rem;
+}
+
+/* Reduced margin for inputs */
+#save-grid-modal .modal-content input[type="text"] {
+    margin: var(--modal-gap) var(--modal-padding);
+}
+
+/* Reduced bottom padding */
+#save-grid-modal .modal-buttons {
+    padding: 0 var(--modal-padding) 10px;
+}
+
+/* Optimized header size */
+#save-grid-modal .modal-content h3 {
+    padding: 8px var(--modal-padding);
+}
+
+/* Adjusted close button position */
+#save-grid-modal .close-btn {
+    top: -3px;
+}
+
+/*
+ * Custom Grid Modal
+ * Adjust grid dimensions settings
+ */
+#custom-grid-modal .modal-content {
+    width: 340px;
+    max-width: 90%;
+}
+
+/*
+ * Load Grid Modal
+ * Load previously saved grid configuration
+ */
+#load-grid-modal .modal-content {
+    width: 340px;
+    max-width: 90%;
+    min-height: 300px;
+    max-height: 80vh;
+}
+
+/* Optimized header size */
+#load-grid-modal .modal-content h3 {
+    padding: 8px var(--modal-padding);
+}
+
+/*
+ * Saved Grid List Components
+ * Container and items for displaying saved grid configurations
+ */
+
+/* Grid List Container */
 .saved-grids-list {
     max-height: 200px;
     overflow-y: auto;
-    margin: 10px 15px;
+    margin: var(--modal-gap) var(--modal-padding);
     border: 2px solid var(--modal-border);
     background-color: var(--modal-input-bg);
 }
 
-/* Empty state message */
+/* Empty State Message */
 .no-saved-grids {
-    padding: 15px;
+    padding: var(--modal-padding);
     text-align: center;
     color: #aaa;
     font-style: italic;
     text-shadow: 1px 1px 0 #000;
 }
 
-/* Grid item */
+/* 
+ * Grid Item
+ * Individual saved grid entry with name and delete button
+ */
 .grid-item {
+    /* Layout */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
+    
+    /* Visual */
     border-bottom: 1px solid var(--modal-border);
 }
 
+/* Remove border from last item */
 .grid-item:last-child {
     border-bottom: none;
 }
 
+/* 
+ * Grid Name
+ * Clickable label that loads the saved grid
+ */
 .grid-item .grid-name {
-    cursor: pointer;
+    /* Layout */
     flex-grow: 1;
     padding: 4px 8px;
+    
+    /* Visual */
     border-radius: 3px;
-    transition: background-color 0.2s;
     text-shadow: 1px 1px 0 #000;
+    
+    /* Behavior */
+    cursor: pointer;
+    transition: var(--hover-transition);
 }
 
+/* Hover state for grid name */
 .grid-item .grid-name:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* 
+ * Delete Grid Button
+ * Button to remove a saved grid configuration
+ */
 .grid-item .delete-grid {
-    color: var(--btn-red);
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 1.1rem;
-    transition: all 0.2s;
+    /* Layout */
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 4px 8px;
+    
+    /* Visual */
+    color: var(--btn-red);
+    font-size: 1.1rem;
+    
+    /* Behavior */
+    cursor: pointer;
+    transition: var(--hover-transition);
 }
 
+/* Hover state for delete button */
 .grid-item .delete-grid:hover {
     color: var(--btn-red-hover);
     transform: scale(1.1);
@@ -414,107 +575,134 @@
 
 /*
  * Custom Scrollbars
+ * WebKit-specific scrollbar styling for scrollable containers
+ * Note: These styles only apply to WebKit browsers (Chrome, Safari, Edge)
  */
-/* For saved grids list */
-.saved-grids-list::-webkit-scrollbar {
-    width: 10px;
-}
 
-.saved-grids-list::-webkit-scrollbar-track {
-    background: var(--modal-input-bg);
-}
-
-.saved-grids-list::-webkit-scrollbar-thumb {
-    background: var(--modal-border);
-    border-radius: 5px;
-}
-
-.saved-grids-list::-webkit-scrollbar-thumb:hover {
-    background: var(--btn-brown-hover);
-}
-
-/* For help modal */
+/* 
+ * Common Scrollbar Styles
+ * Applied to all scrollable elements in modals
+ */
+.saved-grids-list::-webkit-scrollbar,
 #help-modal .modal-content::-webkit-scrollbar {
-    width: 10px;
+    width: 10px; /* Scrollbar width */
 }
 
+.saved-grids-list::-webkit-scrollbar-track,
 #help-modal .modal-content::-webkit-scrollbar-track {
-    background: var(--modal-input-bg);
+    background: var(--modal-input-bg); /* Track color */
 }
 
+.saved-grids-list::-webkit-scrollbar-thumb,
 #help-modal .modal-content::-webkit-scrollbar-thumb {
-    background: var(--modal-border);
-    border-radius: 5px;
+    background: var(--modal-border); /* Thumb color */
+    border-radius: 5px; /* Rounded corners */
 }
 
+.saved-grids-list::-webkit-scrollbar-thumb:hover,
 #help-modal .modal-content::-webkit-scrollbar-thumb:hover {
-    background: var(--btn-brown-hover);
+    background: var(--btn-brown-hover); /* Hover color */
 }
 
 /*
  * Toast Notifications
+ * Non-intrusive notification messages that appear briefly
+ * Used for operation feedback (success, error, info)
  */
+
+/* Container for Toast Notifications */
 .toast-container {
+    /* Positioning */
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 9999;
+    
+    /* Layout */
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 10px;
+    gap: var(--modal-gap);
 }
 
+/* 
+ * Base Toast Notification
+ * Common styles for all toast types
+ */
 .toast {
-    background-color: var(--modal-bg);
-    color: var(--modal-text);
-    border: 3px solid var(--modal-border);
-    padding: 12px 15px;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    /* Layout */
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--modal-gap);
     max-width: 300px;
     width: 100%;
-    transform: translateX(120%);
-    transition: transform 0.3s ease-in-out;
-    font-family: 'Pixelify Sans', sans-serif;
+    padding: 12px var(--modal-padding);
     position: relative;
+    
+    /* Visual */
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: var(--border-width) solid var(--modal-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     text-shadow: 1px 1px 0 #000;
+    
+    /* Animation */
+    transform: translateX(120%);
+    transition: transform var(--modal-transition) ease-in-out;
+    
+    /* Typography */
+    font-family: 'Pixelify Sans', sans-serif;
 }
 
+/* Toast Progress Bar */
 .toast::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     height: 3px;
-    background-color: rgba(255, 255, 255, 0.3);
-    animation: toast-progress 3s linear forwards;
     width: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    animation: toast-progress var(--toast-duration) linear forwards;
 }
 
+/* Toast Visible State */
 .toast.show {
     transform: translateX(0);
 }
 
+/*
+ * Toast Variants
+ * Different types of toast messages
+ */
+
+/* Success Toast */
 .toast.toast-success {
     border-left: 8px solid var(--btn-green);
 }
 
+/* Error Toast */
 .toast.toast-error {
     border-left: 8px solid var(--btn-red);
 }
 
+/* Info Toast */
 .toast.toast-info {
-    border-left: 8px solid #3498db;
+    border-left: 8px solid var(--btn-blue);
 }
 
+/*
+ * Toast Components
+ * Internal elements for toast notifications
+ */
+
+/* Toast Icon */
 .toast-icon {
     font-size: 1.5rem;
 }
 
+/* Icon color variations */
 .toast-success .toast-icon {
     color: var(--btn-green);
 }
@@ -524,14 +712,16 @@
 }
 
 .toast-info .toast-icon {
-    color: #3498db;
+    color: var(--btn-blue);
 }
 
+/* Toast Message Content */
 .toast-content {
     flex-grow: 1;
     font-size: 0.9rem;
 }
 
+/* Toast Progress Animation */
 @keyframes toast-progress {
     0% { width: 100%; }
     100% { width: 0%; }
@@ -539,37 +729,49 @@
 
 /*
  * Responsive Styles
+ * Breakpoint-specific adjustments for different screen sizes
+ */
+
+/*
+ * Mobile Breakpoint (Small Screens)
+ * Optimized for phones and small tablets (≤ 480px)
  */
 @media (max-width: 480px) {
+    /* Adjusted Modal Positioning */
     .modal-content {
-        margin: 15% auto;
+        margin: 15% auto; /* More space at top for mobile */
         width: 320px;
     }
     
+    /* Smaller Headers */
     .modal-content h3 {
         font-size: 1.1rem;
         padding: 8px 12px;
     }
     
+    /* Compact Form Elements */
     .modal-content input[type="text"],
     .modal-content input[type="number"] {
         padding: 6px 8px;
     }
     
+    /* Smaller Button Text */
     .modal-buttons button {
         font-size: 0.9rem;
     }
     
+    /* Help Modal Adjustments */
     #help-modal .modal-content {
         margin: 5% auto;
         width: 90%;
         max-height: 85vh;
     }
     
+    /* Full-Width Toast Notifications */
     .toast-container {
         bottom: 10px;
         right: 10px;
-        left: 10px;
+        left: 10px; /* Added to make toasts full width */
     }
     
     .toast {
@@ -577,7 +779,12 @@
     }
 }
 
+/*
+ * Desktop Breakpoint (Large Screens)
+ * Optimized for large monitors (≥ 1200px)
+ */
 @media (min-width: 1200px) {
+    /* Wider Help Modal */
     #help-modal .modal-content {
         width: 70%;
         max-width: 1000px;
