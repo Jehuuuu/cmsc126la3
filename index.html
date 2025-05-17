@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="src/assets/styles/floating-buttons.css">
     <link rel="stylesheet" href="src/assets/styles/modals.css">
     <link rel="stylesheet" href="src/assets/styles/tutorial.css">
-    <!-- Mac compatibility styles will be loaded by PlatformDetector.js if needed -->
+    <link rel="stylesheet" href="src/assets/styles/mac-compatibility.css">
+    <!-- Mac compatibility styles are applied through CSS custom properties -->
     <link rel="icon" href="data:,">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -469,7 +470,7 @@
 
     <!-- Scripts with proper loading order -->
     <!-- Utilities -->
-    <script src="src/utils/PlatformDetector.js" defer></script>
+    <script src="src/utils/MacDetector.js" defer></script>
     <script src="src/utils/PriorityQueue.js" defer></script>
     <script src="src/utils/PathUtils.js" defer></script>
     <script src="src/utils/ToastNotification.js" defer></script>
