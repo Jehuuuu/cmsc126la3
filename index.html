@@ -1,10 +1,9 @@
-<!-- Deployment test comment - timestamp: <%= new Date().toISOString() %> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Cavern Path - Algorithm Explorer [TEST UPDATE]</title>
+    <title>Skull Cavern Pathing - Algorithm Comparison</title>
     <link rel="stylesheet" href="src/assets/styles/main.css">
     <link rel="stylesheet" href="src/assets/styles/tileset-grid.css">
     <link rel="stylesheet" href="src/assets/styles/overlays.css">
@@ -24,11 +23,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
-    <!-- Simple platform detection for responsive behavior -->
+    <!-- Responsive display detection -->
     <script>
-        // Function to handle responsive display
         function handleResponsiveDisplay() {
-            // When user uses responsive display on any device
             if (window.innerWidth <= 768) {
                 document.documentElement.classList.add('responsive-mode');
             } else {
@@ -36,10 +33,7 @@
             }
         }
         
-        // Initial check
         handleResponsiveDisplay();
-        
-        // Update on resize
         window.addEventListener('resize', handleResponsiveDisplay);
     </script>
 </head>
@@ -209,14 +203,14 @@
             <!-- Floating action buttons for desktop -->
             <div class="floating-actions-container">
                 <div class="left-actions">
-                    <button id="start-btn-header" class="floating-btn action-btn"><i class="fas fa-play"></i> Find Path</button>
-                    <button id="clear-grid-btn-header" class="floating-btn danger-btn"><i class="fas fa-trash-alt"></i> Clear Grid</button>
+                    <button id="start-btn-header" class="floating-btn btn-green"><i class="fas fa-play"></i> Find Path</button>
+                    <button id="clear-grid-btn-header" class="floating-btn btn-red"><i class="fas fa-trash-alt"></i> Clear Grid</button>
                 </div>
                 <div class="right-actions">
-                    <button id="save-grid-btn-header" class="floating-btn"><i class="fas fa-save"></i> Save Grid</button>
-                    <button id="load-grid-btn-header" class="floating-btn"><i class="fas fa-folder-open"></i> Load Grid</button>
-                    <button id="tutorial-btn-desktop" class="tutorial-btn-style" aria-label="Tutorial"><i class="fas fa-book"></i></button>
-                    <button id="help-btn-desktop" class="help-btn" aria-label="Help">?</button>
+                    <button id="save-grid-btn-header" class="floating-btn btn-green"><i class="fas fa-save"></i> Save Grid</button>
+                    <button id="load-grid-btn-header" class="floating-btn btn-blue"><i class="fas fa-folder-open"></i> Load Grid</button>
+                    <button id="tutorial-btn-desktop" class="circular-btn tutorial-btn-style" aria-label="Tutorial"><i class="fas fa-book"></i></button>
+                    <button id="help-btn-desktop" class="circular-btn help-btn" aria-label="Help">?</button>
                 </div>
             </div>
             
@@ -331,198 +325,200 @@
         </a>
         </div>
         
-        <!-- Help modal -->
-        <div id="help-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>How to Use this App</h2>
-                <p class="app-description">A visual comparison between Dijkstra's algorithm and A* algorithm to find the shortest path through a grid with obstacles and weighted nodes.</p>
-                <div class="help-content">
-                    <h3>About the Algorithms</h3>
+<!-- Help modal -->
+<div id="help-modal" class="modal">
+    <div class="modal-content wide-modal">
+        <span class="close-btn">&times;</span>
+        <h2>How to Use this App</h2>
+        <p class="app-description">A visual comparison between Dijkstra's algorithm and A* algorithm to find the shortest path through a grid with obstacles and weighted nodes.</p>
+        <div class="help-content">
+            <h3>About the Algorithms</h3>
+            <ul>
+                <li><strong>Dijkstra's Algorithm</strong>: Guarantees the shortest path by exploring in all directions equally, considering the cost to reach each node.</li>
+                <li><strong>A* Algorithm</strong>: Uses heuristics to find paths more efficiently by prioritizing nodes that seem closer to the destination, reducing the search area.</li>
+            </ul>
+            
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>Grid Size</strong>: Change the size of the grid (10x10 to 25x25)</li>
+                <li><strong>Speed</strong>: Control how fast the visualization runs</li>
+                <li><strong>Mode</strong>: Choose automatic or step-by-step visualization</li>
+            </ul>
+            
+            <h3>Drawing Tools</h3>
+            <ul>
+                <li><strong>Set Start</strong>: Set the starting point for the algorithm (the stairwell)</li>
+                <li><strong>Set End</strong>: Set the destination point (the abyssal hole)</li>
+                <li><strong>Add Walls</strong>: Create obstacles the algorithm must navigate around (rocks)</li>
+                <li><strong>Add Weights</strong>: Add weighted nodes that are costly to traverse (value 2-10) (tree stumps)</li>
+                <li><strong>Erase</strong>: Remove walls or weighted nodes</li>
+            </ul>
+            
+            <h3>Randomizers</h3>
+            <ul>
+                <li><strong>Generate Maze</strong>: Create different types of mazes:
                     <ul>
-                        <li><strong>Dijkstra's Algorithm</strong>: Guarantees the shortest path by exploring in all directions equally, considering the cost to reach each node.</li>
-                        <li><strong>A* Algorithm</strong>: Uses heuristics to find paths more efficiently by prioritizing nodes that seem closer to the destination, reducing the search area.</li>
+                        <li><strong>Recursive Division</strong>: Creates a more structured maze with corridors</li>
+                        <li><strong>Recursive Division (vertical skew)</strong>: More vertical passages</li>
+                        <li><strong>Recursive Division (horizontal skew)</strong>: More horizontal passages</li>
+                        <li><strong>Basic Random Maze</strong>: Simple randomly scattered walls</li>
                     </ul>
-                    
-                    <h3>Controls</h3>
-                    <ul>
-                        <li><strong>Grid Size</strong>: Change the size of the grid (10x10 to 25x25)</li>
-                        <li><strong>Speed</strong>: Control how fast the visualization runs</li>
-                        <li><strong>Mode</strong>: Choose automatic or step-by-step visualization</li>
-                    </ul>
-                    
-                    <h3>Drawing Tools</h3>
-                    <ul>
-                        <li><strong>Set Start</strong>: Set the starting point for the algorithm (the stairwell)</li>
-                        <li><strong>Set End</strong>: Set the destination point (the abyssal hole)</li>
-                        <li><strong>Add Walls</strong>: Create obstacles the algorithm must navigate around (rocks)</li>
-                        <li><strong>Add Weights</strong>: Add weighted nodes that are costly to traverse (value 2-10) (tree stumps)</li>
-                        <li><strong>Erase</strong>: Remove walls or weighted nodes</li>
-                    </ul>
-                    
-                    <h3>Randomizers</h3>
-                    <ul>
-                        <li><strong>Generate Maze</strong>: Create different types of mazes:
-                            <ul>
-                                <li><strong>Recursive Division</strong>: Creates a more structured maze with corridors</li>
-                                <li><strong>Recursive Division (vertical skew)</strong>: More vertical passages</li>
-                                <li><strong>Recursive Division (horizontal skew)</strong>: More horizontal passages</li>
-                                <li><strong>Basic Random Maze</strong>: Simple randomly scattered walls</li>
-                            </ul>
-                        </li>
-                        <li><strong>Random Weights</strong>: Automatically add weighted nodes to the grid</li>
-                        <li><strong>Random Start/End</strong>: Randomly place start and end points</li>
-                    </ul>
-                    
-                    <h3>Actions</h3>
-                    <ul>
-                        <li><strong>Find Path</strong>: Run the pathfinding algorithms</li>
-                        <li><strong>Clear Grid</strong>: Reset the entire grid</li>
-                        <li><strong>Save Grid</strong>: Save the current grid layout for future use</li>
-                        <li><strong>Load Grid</strong>: Load a previously saved grid layout</li>
-                        <li><strong>Next Step/Previous Step</strong>: Navigate through the algorithm execution in step-by-step mode</li>
-                    </ul>
-                    
-                    <h3>Keyboard Shortcuts</h3>
-                    <ul>
-                        <li><strong>S</strong>: Select Set Start tool</li>
-                        <li><strong>E</strong>: Select Set End tool</li>
-                        <li><strong>W</strong>: Select Add Walls tool</li>
-                        <li><strong>D</strong>: Select Erase tool</li>
-                        <li><strong>C</strong>: Clear Grid</li>
-                        <li><strong>R</strong>: Generate Random Maze</li>
-                        <li><strong>Space</strong>: Find Path / Run visualization</li>
-                        <li><strong>Right Arrow</strong>: Next Step (in step mode)</li>
-                        <li><strong>Left Arrow</strong>: Previous Step (in step mode)</li>
-                        <li><strong>H</strong>: Show this Help</li>
-                        <li><strong>Escape</strong>: Close Help</li>
-                    </ul>
-                </div>
-            </div>
+                </li>
+                <li><strong>Random Weights</strong>: Automatically add weighted nodes to the grid</li>
+                <li><strong>Random Start/End</strong>: Randomly place start and end points</li>
+            </ul>
+            
+            <h3>Actions</h3>
+            <ul>
+                <li><strong>Find Path</strong>: Run the pathfinding algorithms</li>
+                <li><strong>Clear Grid</strong>: Reset the entire grid</li>
+                <li><strong>Save Grid</strong>: Save the current grid layout for future use</li>
+                <li><strong>Load Grid</strong>: Load a previously saved grid layout</li>
+                <li><strong>Next Step/Previous Step</strong>: Navigate through the algorithm execution in step-by-step mode</li>
+            </ul>
+            
+            <h3>Keyboard Shortcuts</h3>
+            <ul>
+                <li><strong>S</strong>: Select Set Start tool</li>
+                <li><strong>E</strong>: Select Set End tool</li>
+                <li><strong>W</strong>: Select Add Walls tool</li>
+                <li><strong>D</strong>: Select Erase tool</li>
+                <li><strong>C</strong>: Clear Grid</li>
+                <li><strong>R</strong>: Generate Random Maze</li>
+                <li><strong>Space</strong>: Find Path / Run visualization</li>
+                <li><strong>Right Arrow</strong>: Next Step (in step mode)</li>
+                <li><strong>Left Arrow</strong>: Previous Step (in step mode)</li>
+                <li><strong>H</strong>: Show this Help</li>
+                <li><strong>Escape</strong>: Close Help</li>
+            </ul>
         </div>
+    </div>
+</div>
         
-        <!-- Weight input modal -->
-        <div id="weight-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h3>Set Node Weight</h3>
-                <p>Enter a weight value (2-10):</p>
-                <input type="number" id="weight-input" min="2" max="10" value="2">
-                <div class="modal-buttons">
-                    <button id="confirm-weight-btn">Confirm</button>
-                    <button id="cancel-weight-btn">Cancel</button>
-                </div>
-            </div>
-        </div>
-        
-    <!-- Save Grid Modal -->
-    <div id="save-grid-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Save Grid</h3>
-            <p>Enter a name for this grid layout:</p>
-            <input type="text" id="grid-name-input" placeholder="My Grid Layout" autofocus>
-            <div class="modal-buttons">
-                <button id="confirm-save-btn">Save</button>
-                <button id="cancel-save-btn">Cancel</button>
-            </div>
-                    </div>
-                        </div>
-                        
-    <!-- Load Grid Modal -->
-    <div id="load-grid-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Load Saved Grid</h3>
-            <div id="saved-grids-list" class="saved-grids-list">
-                <p id="no-saved-grids" class="no-saved-grids">No saved grids found</p>
-                <!-- Saved grids will be listed here dynamically -->
-                    </div>
-            <div class="modal-buttons">
-                <button id="cancel-load-btn">Cancel</button>
-                        </div>
-                    </div>
-    </div>
-    
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-confirm-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Confirm Deletion</h3>
-            <p id="delete-confirm-message">Are you sure you want to delete this grid?</p>
-            <div class="modal-buttons">
-                <button id="confirm-delete-btn">Delete</button>
-                <button id="cancel-delete-btn">Cancel</button>
-                        </div>
-                    </div>
-    </div>
-
-    <!-- Hidden buttons for JavaScript to reference -->
-    <div style="display:none;">
-        <button id="save-grid-btn"></button>
-        <button id="load-grid-btn"></button>
-        <button id="start-btn"></button>
-        <button id="clear-grid-btn"></button>
-    </div>
-    
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="toast-container"></div>
-
-    <!-- Scripts with proper loading order -->
-    <!-- Utilities -->
-    <script src="src/utils/MacDetector.js" defer></script>
-    <script src="src/utils/PriorityQueue.js" defer></script>
-    <script src="src/utils/PathUtils.js" defer></script>
-    <script src="src/utils/ToastNotification.js" defer></script>
-    <!-- Tutorial system -->
-    <script src="src/utils/ModularTutorial.js" defer></script>
-    <script src="src/utils/initModularTutorial.js" defer></script>
-    
-    <!-- Models -->
-    <script src="src/models/Node.js" defer></script>
-    <script src="src/models/Grid.js" defer></script>
-    
-    <!-- Algorithms -->
-    <script src="src/algorithms/Algorithm.js" defer></script>
-    <script src="src/algorithms/DijkstraAlgorithm.js" defer></script>
-    <script src="src/algorithms/AStarAlgorithm.js" defer></script>
-    
-    <!-- Views -->
-    <script src="src/views/GridView.js" defer></script>
-    <script src="src/views/UIView.js" defer></script>
-    
-    <!-- Controllers -->
-    <script src="src/controllers/VisualizationController.js" defer></script>
-    <script src="src/controllers/GameController.js" defer></script>
-    
-    <!-- Main entry point -->
-    <script src="src/index.js" defer></script>
-    
-    <!-- Custom Grid Size Modal -->
-    <div id="custom-grid-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Custom Grid Size</h3>
-            <p>Enter a grid size between 5 and 50:</p>
-            <div class="custom-input-container">
-                <input type="number" id="custom-grid-size" min="5" max="50" value="30">
-                <span class="grid-size-format">x</span>
-                <input type="number" id="custom-grid-size-copy" min="5" max="50" value="30" disabled>
-            </div>
-            <p class="warning-text" id="grid-size-warning" style="display: none; color: #e74c3c; font-size: 0.9rem; margin-top: -5px; text-align: center;">
-                <i class="fas fa-exclamation-triangle"></i> Large grid sizes may affect performance
-            </p>
-            <div class="modal-buttons">
-                <button id="confirm-grid-size-btn">Apply</button>
-                <button id="cancel-grid-size-btn">Cancel</button>
-            </div>
+<!-- Weight input modal -->
+<div id="weight-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Set Node Weight</h3>
+        <p>Enter a weight value (2-10):</p>
+        <input type="number" id="weight-input" min="2" max="10" value="2">
+        <div class="modal-buttons">
+            <button id="confirm-weight-btn">Confirm</button>
+            <button id="cancel-weight-btn">Cancel</button>
         </div>
     </div>
+</div>
+
+<!-- Save Grid Modal -->
+<div id="save-grid-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Save Grid</h3>
+        <p>Enter a name for this grid layout:</p>
+        <input type="text" id="grid-name-input" placeholder="My Grid Layout" autofocus>
+        <div class="modal-buttons">
+            <button id="confirm-save-btn">Save</button>
+            <button id="cancel-save-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+                    
+<!-- Load Grid Modal -->
+<div id="load-grid-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Load Saved Grid</h3>
+        <div id="saved-grids-list" class="saved-grids-list">
+            <p id="no-saved-grids" class="no-saved-grids">No saved grids found</p>
+            <!-- Saved grids will be listed here dynamically -->
+        </div>
+        <div class="modal-buttons">
+            <button id="cancel-load-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-confirm-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Confirm Deletion</h3>
+        <p id="delete-confirm-message">Are you sure you want to delete this grid?</p>
+        <div class="modal-buttons">
+            <button id="confirm-delete-btn">Delete</button>
+            <button id="cancel-delete-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden buttons for JavaScript to reference -->
+<div style="display:none;">
+    <button id="save-grid-btn"></button>
+    <button id="load-grid-btn"></button>
+    <button id="start-btn"></button>
+    <button id="clear-grid-btn"></button>
+</div>
+
+<!-- Toast Notification Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Application Scripts -->
+<!-- Core utilities for platform detection and data structures -->
+<script src="src/utils/PlatformDetector.js" defer></script>
+<script src="src/utils/PriorityQueue.js" defer></script>
+<script src="src/utils/PathUtils.js" defer></script>
+<script src="src/utils/ToastNotification.js" defer></script>
+
+<!-- Tutorial system for interactive guidance -->
+<script src="src/utils/ModularTutorial.js" defer></script>
+<script src="src/utils/initModularTutorial.js" defer></script>
+
+<!-- Data models for grid and nodes -->
+<script src="src/models/Node.js" defer></script>
+<script src="src/models/Grid.js" defer></script>
+
+<!-- Pathfinding algorithms implementation -->
+<script src="src/algorithms/Algorithm.js" defer></script>
+<script src="src/algorithms/DijkstraAlgorithm.js" defer></script>
+<script src="src/algorithms/AStarAlgorithm.js" defer></script>
+
+<!-- UI component views -->
+<script src="src/views/GridView.js" defer></script>
+<script src="src/views/UIView.js" defer></script>
+
+<!-- Application controllers -->
+<script src="src/controllers/VisualizationController.js" defer></script>
+<script src="src/controllers/GameController.js" defer></script>
+
+<!-- Main application entry point -->
+<script src="src/index.js" defer></script>
     
-    <!-- Script to handle header buttons -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Map the header buttons to their sidebar counterparts
+<!-- Custom Grid Size Modal -->
+<div id="custom-grid-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Custom Grid Size</h3>
+        <p>Enter a grid size between 5 and 50:</p>
+        <div class="custom-input-container">
+            <input type="number" id="custom-grid-size" min="5" max="50" value="30">
+            <span class="grid-size-format">x</span>
+            <input type="number" id="custom-grid-size-copy" min="5" max="50" value="30" disabled>
+        </div>
+        <p class="warning-text" id="grid-size-warning" style="display: none; color: #e74c3c; font-size: 0.9rem; margin-top: -5px; text-align: center;">
+            <i class="fas fa-exclamation-triangle"></i> Large grid sizes may affect performance
+        </p>
+        <div class="modal-buttons">
+            <button id="confirm-grid-size-btn">Apply</button>
+            <button id="cancel-grid-size-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+    
+<!-- UI initialization and responsiveness -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Map floating action buttons to their hidden counterparts
+        function setupButtonMapping() {
             const buttonMap = {
                 'save-grid-btn-header': 'save-grid-btn',
                 'load-grid-btn-header': 'load-grid-btn',
@@ -530,14 +526,12 @@
                 'clear-grid-btn-header': 'clear-grid-btn'
             };
             
-            // Add event listeners to the header buttons
             Object.keys(buttonMap).forEach(headerId => {
                 const sidebarId = buttonMap[headerId];
                 const headerButton = document.getElementById(headerId);
                 
                 if (headerButton) {
                     headerButton.addEventListener('click', function() {
-                        // Find the corresponding sidebar button and click it
                         const sidebarButton = document.getElementById(sidebarId);
                         if (sidebarButton) {
                             sidebarButton.click();
@@ -545,107 +539,90 @@
                     });
                 }
             });
-            
-            // Show step controls in sidebar when mode is changed to step-by-step
+        }
+        
+        // Handle visualization mode changes and UI updates
+        function setupVisualizationModeControls() {
             const modeSelect = document.getElementById('visualization-mode');
             const modeSelectMobile = document.getElementById('visualization-mode-mobile');
             const stepControlsContainer = document.getElementById('step-controls-sidebar');
             const stepControlsMobile = document.querySelector('.actions-section');
             const githubRepoContainer = document.getElementById('github-repo-sidebar');
             
-            if (modeSelect && stepControlsContainer && githubRepoContainer) {
-                // Function to update UI based on selected mode
-                function updateUIBasedOnMode(mode) {
-                    // Update desktop layout
-                    if (mode === 'step') {
-                        stepControlsContainer.style.display = 'block';
-                        
-                        // Move the step controls directly after the Controls section
-                        let controlsSection = null;
-                        document.querySelectorAll('.sidebar-section').forEach(section => {
-                            const title = section.querySelector('.sidebar-section-title');
-                            if (title && title.textContent.trim() === 'Controls') {
-                                controlsSection = section;
-                            }
-                        });
-                        
-                        if (controlsSection) {
-                            controlsSection.parentNode.insertBefore(
-                                stepControlsContainer, 
-                                controlsSection.nextSibling
-                                );
-                            }
-                        
-                        // For mobile layout, ensure the step controls appear after the controls section
-                        if (stepControlsMobile) {
-                            stepControlsMobile.style.display = 'block';
-                            const mobileControls = document.querySelector('.collapsible-controls .controls');
-                            if (mobileControls) {
-                                mobileControls.parentNode.insertBefore(
-                                    stepControlsMobile,
-                                    mobileControls.nextSibling
-                                );
-                            }
+            if (!modeSelect || !stepControlsContainer || !githubRepoContainer) return;
+            
+            function updateUIBasedOnMode(mode) {
+                // Toggle step controls visibility
+                stepControlsContainer.style.display = mode === 'step' ? 'block' : 'none';
+                
+                if (mode === 'step') {
+                    // Position step controls after Controls section
+                    let controlsSection = null;
+                    document.querySelectorAll('.sidebar-section').forEach(section => {
+                        const title = section.querySelector('.sidebar-section-title');
+                        if (title && title.textContent.trim() === 'Controls') {
+                            controlsSection = section;
                         }
-                    } else {
-                        stepControlsContainer.style.display = 'none';
-                        
-                        // Hide mobile step controls when not in step mode
-                        if (stepControlsMobile) {
-                            stepControlsMobile.style.display = 'none';
-                        }
-                    }
-                    
-                    // Always move GitHub repo to the end of the sidebar content
-                    // This ensures it's always at the bottom regardless of mode
-                            const sidebarContent = document.querySelector('.sidebar-content');
-                    if (sidebarContent && githubRepoContainer) {
-                        // Append GitHub repo to the end of sidebar content
-                                sidebarContent.appendChild(githubRepoContainer);
-                    }
-                }
-                
-                // Initial check and setup
-                updateUIBasedOnMode(modeSelect.value);
-                
-                // Make sure the step controls are properly initialized on mobile
-                if (modeSelectMobile) {
-                    const isStepMode = modeSelect.value === 'step';
-                    if (stepControlsMobile) {
-                        stepControlsMobile.style.display = isStepMode ? 'block' : 'none';
-                    }
-                }
-                
-                // Add change event listener to desktop mode selector
-                modeSelect.addEventListener('change', function() {
-                    updateUIBasedOnMode(this.value);
-                });
-                
-                // Add change event listener to mobile mode selector if it exists
-                if (modeSelectMobile) {
-                    // Sync the initial values
-                    modeSelectMobile.value = modeSelect.value;
-                    
-                    modeSelectMobile.addEventListener('change', function() {
-                        // Update desktop selector to keep them in sync
-                        modeSelect.value = this.value;
-                        
-                        // Update UI based on the new mode
-                        updateUIBasedOnMode(this.value);
                     });
+                    
+                    if (controlsSection) {
+                        controlsSection.parentNode.insertBefore(
+                            stepControlsContainer, 
+                            controlsSection.nextSibling
+                        );
+                    }
+                    
+                    // Update mobile layout
+                    if (stepControlsMobile) {
+                        stepControlsMobile.style.display = 'block';
+                        const mobileControls = document.querySelector('.collapsible-controls .controls');
+                        if (mobileControls) {
+                            mobileControls.parentNode.insertBefore(
+                                stepControlsMobile,
+                                mobileControls.nextSibling
+                            );
+                        }
+                    }
+                } else if (stepControlsMobile) {
+                    stepControlsMobile.style.display = 'none';
+                }
+                
+                // Position GitHub repo at the bottom of the sidebar
+                const sidebarContent = document.querySelector('.sidebar-content');
+                if (sidebarContent) {
+                    sidebarContent.appendChild(githubRepoContainer);
                 }
             }
             
-            // Handle responsive display
-            function checkResponsiveMode() {
-                // Check if we need to switch to responsive mode
+            // Initialize UI based on current mode
+            updateUIBasedOnMode(modeSelect.value);
+            
+            // Sync mobile controls
+            if (modeSelectMobile && stepControlsMobile) {
+                modeSelectMobile.value = modeSelect.value;
+                stepControlsMobile.style.display = modeSelect.value === 'step' ? 'block' : 'none';
+                
+                // Set up sync between desktop and mobile mode selectors
+                modeSelect.addEventListener('change', function() {
+                    updateUIBasedOnMode(this.value);
+                    if (modeSelectMobile) modeSelectMobile.value = this.value;
+                });
+                
+                modeSelectMobile.addEventListener('change', function() {
+                    modeSelect.value = this.value;
+                    updateUIBasedOnMode(this.value);
+                });
+            }
+        }
+        
+        // Set up responsive layout
+        function setupResponsiveLayout() {
+            function adjustForMobile() {
                 if (window.innerWidth <= 768) {
-                    // Use mobile layout
                     document.documentElement.classList.add('responsive-mode');
                     
-                    // Additional mobile-specific adjustments
-                    const gridContainers = document.querySelectorAll('.grid-container');
-                    gridContainers.forEach(container => {
+                    // Optimize grid containers for mobile
+                    document.querySelectorAll('.grid-container').forEach(container => {
                         container.style.height = 'auto';
                     });
                 } else {
@@ -653,10 +630,25 @@
                 }
             }
             
-            // Run on load and resize
-            checkResponsiveMode();
-            window.addEventListener('resize', checkResponsiveMode);
-        });
-    </script>
+            // Initialize and set up event listener
+            adjustForMobile();
+            window.addEventListener('resize', adjustForMobile);
+            
+            // Try to remove any duplicate handler from the head section
+            try {
+                if (typeof handleResponsiveDisplay === 'function') {
+                    window.removeEventListener('resize', handleResponsiveDisplay);
+                }
+            } catch(e) {
+                // Function may not be accessible in this scope, no action needed
+            }
+        }
+        
+        // Initialize all UI components
+        setupButtonMapping();
+        setupVisualizationModeControls();
+        setupResponsiveLayout();
+    });
+</script>
 </body>
 </html> 

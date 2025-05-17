@@ -1,6 +1,32 @@
-/* Minecraft themed modal styling */
+/* 
+ * Minecraft Themed Modal Styling
+ * Provides styling for all modals in the application
+ */
 
-/* Modal container */
+/* Color variables */
+:root {
+    --modal-bg: #3c2a21;           /* Dark brown background */
+    --modal-border: #986c44;       /* Minecraft dirt border color */
+    --modal-header: #986c44;       /* Minecraft dirt color */
+    --modal-text: #fff;
+    --modal-input-bg: #2c1e16;     /* Darker brown */
+    --modal-input-border: #000;
+    --modal-shadow: rgba(0, 0, 0, 0.5);
+    
+    /* Button colors */
+    --btn-green: #5bac38;
+    --btn-green-hover: #4a9c27;
+    --btn-red: #e74c3c;
+    --btn-red-hover: #c0392b;
+    --btn-brown: #986c44;
+    --btn-brown-hover: #825432;
+    --btn-gold: #d9a334;
+    --btn-gold-hover: #ffcc00;
+}
+
+/*
+ * Base Modal Structure
+ */
 .modal {
     display: none;
     position: fixed;
@@ -14,15 +40,15 @@
     backdrop-filter: blur(3px);
 }
 
-/* Modal content */
+/* Modal content base */
 .modal-content {
-    background-color: #3c2a21; /* Dark brown background */
-    color: #fff;
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
     margin: 10% auto;
     width: 380px;
     max-width: 90%;
-    border: 4px solid #986c44; /* Minecraft dirt border color */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border: 4px solid var(--modal-border);
+    box-shadow: 0 0 20px var(--modal-shadow);
     position: relative;
     padding: 0;
     font-family: 'Pixelify Sans', sans-serif;
@@ -30,23 +56,270 @@
     overflow: hidden;
 }
 
-/* Help modal - wider content */
+/* Modal header */
+.modal-content h3,
+#help-modal .modal-content h2 {
+    background-color: var(--modal-header);
+    color: var(--modal-text);
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 0 #000;
+    border-bottom: 4px solid #000;
+}
+
+/* Modal text content */
+.modal-content p {
+    padding: 15px 15px 5px;
+    margin: 0;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Close button */
+.modal-content .close-btn {
+    color: var(--btn-gold);
+    position: absolute;
+    right: 15px;
+    top: -1px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.modal-content .close-btn:hover {
+    color: var(--btn-gold-hover);
+}
+
+/*
+ * Input Styling
+ */
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.form-group input[type="number"] {
+    width: calc(100% - 30px);
+    margin: 0 15px 15px;
+    padding: 8px 10px;
+    background-color: var(--modal-input-bg);
+    border: 3px solid var(--modal-input-border);
+    color: var(--modal-text);
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+    letter-spacing: 0.5px;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="number"]:focus,
+.form-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--btn-gold);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 5px var(--btn-gold);
+}
+
+/* Form groups */
+.form-group {
+    margin: 15px 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--btn-gold);
+    text-shadow: 1px 1px 0 #000;
+    font-weight: bold;
+}
+
+/*
+ * Custom Number Input
+ */
+.custom-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 15px;
+}
+
+.custom-input-container input[type="number"] {
+    width: 70px;
+    text-align: center;
+    margin: 0;
+    padding: 5px;
+    background-color: var(--modal-input-bg);
+    border: 3px solid var(--modal-input-border);
+    color: var(--modal-text);
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+}
+
+.custom-input-container input[type="number"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Remove spinner buttons from number input */
+.custom-input-container input[type="number"]::-webkit-inner-spin-button,
+.custom-input-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.custom-input-container input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.grid-size-format {
+    color: var(--btn-gold);
+    text-shadow: 1px 1px 0 #000;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 0 5px;
+}
+
+/*
+ * Button Styling
+ */
+.modal-buttons {
+    display: flex;
+    padding: 0 15px 15px;
+    gap: 10px;
+}
+
+/* Base button style */
+.modal-buttons button {
+    flex: 1;
+    padding: 8px 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    background-color: var(--btn-brown);
+    color: white;
+    border: 3px solid #000;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+    transition: all 0.2s;
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.modal-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.modal-buttons button:active {
+    transform: translateY(1px);
+    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Confirm/Save buttons - Green */
+#confirm-save-btn, 
+#confirm-weight-btn,
+#confirm-grid-size-btn {
+    background-color: var(--btn-green);
+}
+
+#confirm-save-btn:hover, 
+#confirm-weight-btn:hover,
+#confirm-grid-size-btn:hover {
+    background-color: var(--btn-green-hover);
+}
+
+/* Delete confirmation button - Red */
+#confirm-delete-btn,
+#cancel-load-btn {
+    background-color: var(--btn-red);
+}
+
+#confirm-delete-btn:hover,
+#cancel-load-btn:hover {
+    background-color: var(--btn-red-hover);
+}
+
+/* Cancel buttons - Brown */
+#cancel-save-btn, 
+#cancel-weight-btn, 
+#cancel-grid-size-btn,
+#cancel-delete-btn {
+    background-color: var(--btn-brown);
+}
+
+#cancel-save-btn:hover, 
+#cancel-weight-btn:hover, 
+#cancel-grid-size-btn:hover,
+#cancel-delete-btn:hover {
+    background-color: var(--btn-brown-hover);
+}
+
+/*
+ * Specific Modal Styles
+ */
+/* Help modal */
 #help-modal .modal-content {
-    width: 80%; /* Wider content */
-    max-width: 900px; /* Maximum width */
+    width: 80%;
+    max-width: 900px;
     max-height: 90vh;
-    margin: 5vh auto; /* Center vertically with some spacing */
+    margin: 5vh auto;
     overflow-y: auto;
 }
 
-#help-modal .modal-content h2 {
-    background-color: #986c44; /* Minecraft dirt color */
-    color: #fff;
-    margin: 0;
-    padding: 10px 15px;
-    font-size: 1.3rem;
+/* Save Grid modal */
+#save-grid-modal .modal-content {
+    width: 320px;
+    height: 250px;
+}
+
+#save-grid-modal .modal-content p {
+    padding: 10px 15px 0;
+    font-size: 0.95rem;
+}
+
+#save-grid-modal .modal-content input[type="text"] {
+    margin: 10px 15px;
+}
+
+#save-grid-modal .modal-buttons {
+    padding: 0 15px 10px;
+}
+
+#save-grid-modal .modal-content h3 {
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+#save-grid-modal .close-btn {
+    top: -3px;
+}
+
+/* Custom Grid modal */
+#custom-grid-modal .modal-content {
+    width: 340px;
+    max-width: 90%;
+}
+
+/* Load Grid modal */
+#load-grid-modal .modal-content {
+    width: 340px;
+    max-width: 90%;
+    min-height: 300px;
+    max-height: 80vh;
+}
+
+#load-grid-modal .modal-content h3 {
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+/* App description in help modal */
+.app-description {
+    margin: 10px 15px 5px;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    color: var(--btn-gold);
     text-shadow: 1px 1px 0 #000;
-    border-bottom: 4px solid #000;
 }
 
 /* Help content styling */
@@ -56,10 +329,10 @@
 }
 
 .help-content h3 {
-    color: var(--minecraft-gold);
+    color: var(--btn-gold);
     margin-top: 15px;
     margin-bottom: 10px;
-    border-bottom: 2px solid var(--minecraft-dirt);
+    border-bottom: 2px solid var(--modal-border);
     padding-bottom: 5px;
 }
 
@@ -74,282 +347,203 @@
 }
 
 .help-content strong {
-    color: var(--minecraft-sky);
+    color: #3498db; /* Sky blue */
 }
 
-/* App description in help modal */
-.app-description {
-    margin: 10px 15px 5px;
-    text-align: center;
-    font-size: 1.1rem;
-    padding: 8px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    color: var(--minecraft-gold);
-    text-shadow: 1px 1px 0 #000;
-}
-
-/* Make Save Grid modal more compact */
-#save-grid-modal .modal-content {
-    width: 320px; /* Smaller width */
-    height: 250px;
-}
-
-#save-grid-modal .modal-content p {
-    padding: 10px 15px 0; /* Reduced top/bottom padding */
-    font-size: 0.95rem;
-}
-
-#save-grid-modal .modal-content input[type="text"] {
-    margin: 10px 15px; /* Reduced margin */
-}
-
-#save-grid-modal .modal-buttons {
-    padding: 0 15px 10px; /* Reduced bottom padding */
-}
-
-/* Modal header */
-.modal-content h3 {
-    background-color: #986c44; /* Minecraft dirt color */
-    color: #fff;
-    margin: 0;
-    padding: 10px 15px;
-    font-size: 1.2rem;
-    text-shadow: 1px 1px 0 #000;
-    border-bottom: 4px solid #000;
-}
-
-/* Modal body */
-.modal-content p {
-    padding: 15px 15px 5px;
-    margin: 0;
-    text-shadow: 1px 1px 0 #000;
-}
-
-/* Close button */
-.modal-content .close-btn {
-    color: #d9a334; /* Gold color */
-    position: absolute;
-    right: 15px;
-    top: -1px;
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.modal-content .close-btn:hover {
-    color: #ffcc00;
-}
-
-/* Input styling */
-.modal-content input[type="text"],
-.modal-content input[type="number"] {
-    width: calc(100% - 30px);
-    margin: 0 15px 15px;
-    padding: 8px 10px;
-    background-color: #2c1e16; /* Darker brown */
-    border: 3px solid #000; /* Thicker border to match buttons */
-    color: #fff;
-    font-family: 'Pixelify Sans', sans-serif;
-    font-size: 1rem;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Deeper inset shadow */
-    letter-spacing: 0.5px; /* Match button text spacing */
-}
-
-.modal-content input[type="text"]:focus,
-.modal-content input[type="number"]:focus {
-    outline: none;
-    border-color: #d9a334; /* Gold color */
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 5px #d9a334;
-}
-
-/* Modal buttons container */
-.modal-buttons {
-    display: flex;
-    padding: 0 15px 15px;
-    gap: 10px;
-}
-
-/* Modal button styling */
-.modal-buttons button {
-    flex: 1;
-    padding: 8px 0;
-    font-family: 'Pixelify Sans', sans-serif;
-    font-size: 1rem;
-    background-color: #986c44; /* Minecraft dirt color */
-    color: white;
-    border: 3px solid #000; /* Thicker border */
-    cursor: pointer;
-    text-shadow: 1px 1px 0 #000;
-    transition: all 0.2s;
-    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Minecraft-style button shadows */
-    letter-spacing: 0.5px; /* Slightly spaced out text */
-}
-
-.modal-buttons button:active {
-    transform: translateY(1px);
-    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Save/confirm button */
-#confirm-save-btn, 
-#confirm-weight-btn,
-#confirm-grid-size-btn {
-    background-color: #5bac38; /* Green */
-}
-
-#confirm-save-btn:hover, 
-#confirm-weight-btn:hover,
-#confirm-grid-size-btn:hover {
-    background-color: #4a9c27;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Delete confirmation button */
-#confirm-delete-btn {
-    background-color: #e74c3c; /* Red */
-}
-
-#confirm-delete-btn:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Cancel button */
-#cancel-save-btn, 
-#cancel-weight-btn, 
-#cancel-grid-size-btn,
-#cancel-delete-btn {
-    background-color: #986c44; /* Dirt brown */
-}
-
-#cancel-save-btn:hover, 
-#cancel-weight-btn:hover, 
-#cancel-grid-size-btn:hover,
-#cancel-delete-btn:hover {
-    background-color: #825432;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Load grid cancel button - red styling */
-#cancel-load-btn {
-    background-color: #e74c3c; /* Red */
-}
-
-#cancel-load-btn:hover {
-    background-color: #c0392b; /* Darker red on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Saved grid list styling */
+/*
+ * Saved Grid List
+ */
 .saved-grids-list {
-    max-height: 250px;
+    max-height: 200px;
     overflow-y: auto;
-    margin: 15px;
-    background-color: #2c1e16; /* Darker brown */
-    border: 2px solid #000;
+    margin: 10px 15px;
+    border: 2px solid var(--modal-border);
+    background-color: var(--modal-input-bg);
 }
 
-/* Grid item styling */
+/* Empty state message */
+.no-saved-grids {
+    padding: 15px;
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Grid item */
 .grid-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #000;
-    transition: background-color 0.2s;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--modal-border);
 }
 
 .grid-item:last-child {
     border-bottom: none;
 }
 
-/* Make only the grid name look clickable and highlight on hover */
 .grid-item .grid-name {
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 0 #000;
     cursor: pointer;
-    padding: 5px;
     flex-grow: 1;
-    transition: background-color 0.2s;
+    padding: 4px 8px;
     border-radius: 3px;
+    transition: background-color 0.2s;
+    text-shadow: 1px 1px 0 #000;
 }
 
 .grid-item .grid-name:hover {
-    background-color: #4a3527; /* Slightly lighter brown when hovering just the name */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .grid-item .delete-grid {
-    color: #e74c3c; /* Red */
-    font-size: 1.2rem;
-    background: none;
-    border: none;
+    color: var(--btn-red);
     cursor: pointer;
-    transition: color 0.2s;
-    padding: 5px 8px;
-    margin-left: 8px;
-    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .grid-item .delete-grid:hover {
-    color: #c0392b;
-    background-color: rgba(231, 76, 60, 0.2); /* Light red background on hover */
+    color: var(--btn-red-hover);
+    transform: scale(1.1);
 }
 
-.no-saved-grids {
-    padding: 15px;
-    text-align: center;
-    color: #aaa;
-    font-style: italic;
-}
-
-/* Scrollbar styling */
+/*
+ * Custom Scrollbars
+ */
+/* For saved grids list */
 .saved-grids-list::-webkit-scrollbar {
     width: 10px;
 }
 
 .saved-grids-list::-webkit-scrollbar-track {
-    background: #2c1e16;
+    background: var(--modal-input-bg);
 }
 
 .saved-grids-list::-webkit-scrollbar-thumb {
-    background: #986c44;
-    border: 1px solid #000;
+    background: var(--modal-border);
+    border-radius: 5px;
 }
 
 .saved-grids-list::-webkit-scrollbar-thumb:hover {
-    background: #d9a334;
+    background: var(--btn-brown-hover);
 }
 
-/* Help modal scrollbar */
+/* For help modal */
 #help-modal .modal-content::-webkit-scrollbar {
     width: 10px;
 }
 
 #help-modal .modal-content::-webkit-scrollbar-track {
-    background: #2c1e16;
+    background: var(--modal-input-bg);
 }
 
 #help-modal .modal-content::-webkit-scrollbar-thumb {
-    background: #986c44;
-    border: 1px solid #000;
+    background: var(--modal-border);
+    border-radius: 5px;
 }
 
 #help-modal .modal-content::-webkit-scrollbar-thumb:hover {
-    background: #d9a334;
+    background: var(--btn-brown-hover);
 }
 
-/* Mobile adjustments */
+/*
+ * Toast Notifications
+ */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.toast {
+    background-color: var(--modal-bg);
+    color: var(--modal-text);
+    border: 3px solid var(--modal-border);
+    padding: 12px 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 300px;
+    width: 100%;
+    transform: translateX(120%);
+    transition: transform 0.3s ease-in-out;
+    font-family: 'Pixelify Sans', sans-serif;
+    position: relative;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.toast::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    animation: toast-progress 3s linear forwards;
+    width: 100%;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.toast-success {
+    border-left: 8px solid var(--btn-green);
+}
+
+.toast.toast-error {
+    border-left: 8px solid var(--btn-red);
+}
+
+.toast.toast-info {
+    border-left: 8px solid #3498db;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+}
+
+.toast-success .toast-icon {
+    color: var(--btn-green);
+}
+
+.toast-error .toast-icon {
+    color: var(--btn-red);
+}
+
+.toast-info .toast-icon {
+    color: #3498db;
+}
+
+.toast-content {
+    flex-grow: 1;
+    font-size: 0.9rem;
+}
+
+@keyframes toast-progress {
+    0% { width: 100%; }
+    100% { width: 0%; }
+}
+
+/*
+ * Responsive Styles
+ */
 @media (max-width: 480px) {
     .modal-content {
-        width: 90%;
         margin: 15% auto;
+        width: 320px;
     }
     
     .modal-content h3 {
@@ -360,265 +554,33 @@
     .modal-content input[type="text"],
     .modal-content input[type="number"] {
         padding: 6px 8px;
-        font-size: 0.95rem;
     }
     
     .modal-buttons button {
-        padding: 7px 0;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
     
     #help-modal .modal-content {
-        width: 95%;
+        margin: 5% auto;
+        width: 90%;
         max-height: 85vh;
     }
-}
-
-#save-grid-modal .modal-content h3 {
-    padding: 8px 15px; /* Smaller padding for header */
-    font-size: 1.1rem; /* Slightly smaller font */
-}
-
-#save-grid-modal .close-btn {
-    right: 12px;
-    top: -1px;
-    font-size: 1.6rem; /* Slightly smaller close button */
-}
-
-/* Toast Notification System */
-.toast-container {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-}
-
-.toast {
-    min-width: 250px;
-    max-width: 350px;
-    margin-bottom: 10px;
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: 4px solid #000;
-    background-color: #3c2a21;
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-    font-family: 'Pixelify Sans', sans-serif;
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 0;
-    transform: translateY(30px);
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.toast::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(to right, transparent, #d9a334, transparent);
-    animation: toast-progress 3s linear forwards;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.toast.toast-success {
-    border-color: #5bac38;
-    background-color: rgba(60, 42, 33, 0.95);
-}
-
-.toast.toast-error {
-    border-color: #e74c3c;
-    background-color: rgba(60, 42, 33, 0.95);
-}
-
-.toast.toast-info {
-    border-color: #89c4e1;
-    background-color: rgba(60, 42, 33, 0.95);
-}
-
-.toast-icon {
-    margin-right: 10px;
-    font-size: 1.2rem;
-}
-
-.toast-success .toast-icon {
-    color: #5bac38;
-}
-
-.toast-error .toast-icon {
-    color: #e74c3c;
-}
-
-.toast-info .toast-icon {
-    color: #89c4e1;
-}
-
-.toast-content {
-    flex: 1;
-    text-shadow: 1px 1px 0 #000;
-}
-
-@keyframes toast-progress {
-    0% { width: 100%; }
-    100% { width: 0%; }
-}
-
-@media (max-width: 480px) {
+    
     .toast-container {
-        bottom: 70px; /* Higher on mobile to avoid floating action buttons */
-        width: 90%;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
     }
     
     .toast {
-        min-width: 0;
-        width: 100%;
-        max-width: 100%;
-        padding: 10px 15px;
+        max-width: none;
     }
 }
 
-/* For larger screens, adjust help modal further */
 @media (min-width: 1200px) {
     #help-modal .modal-content {
         width: 70%;
         max-width: 1000px;
+        margin: 5vh auto;
     }
-}
-
-/* Add styles for form groups in modals */
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #e0c080;
-}
-
-.form-group input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    border: 2px solid #554f38;
-    background-color: #3d3b30;
-    color: #fff;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-.form-group input[type="number"]:focus {
-    outline: none;
-    border-color: #ffc107;
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-}
-
-/* Custom grid size container */
-.custom-input-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 15px 10px;
-    gap: 8px;
-}
-
-.custom-input-container input[type="number"] {
-    width: 70px;
-    padding: 8px 10px;
-    background-color: #2c1e16; /* Darker brown */
-    border: 3px solid #000; /* Thicker border to match buttons */
-    color: #fff;
-    font-family: 'Pixelify Sans', sans-serif;
-    font-size: 1rem;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Deeper inset shadow */
-    letter-spacing: 0.5px; /* Match button text spacing */
-    margin: 0;
-    text-align: center;
-}
-
-.custom-input-container input[type="number"]:disabled {
-    opacity: 0.8;
-    background-color: #3a291e;
-}
-
-.custom-input-container input[type="number"]:focus {
-    outline: none;
-    border-color: #d9a334; /* Gold color */
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7), 0 0 5px #d9a334;
-}
-
-.grid-size-format {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #d9a334; /* Gold color */
-    text-shadow: 1px 1px 0 #000;
-}
-
-/* Remove number input spinners */
-.custom-input-container input[type="number"]::-webkit-inner-spin-button,
-.custom-input-container input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.custom-input-container input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-/* Make the custom grid modal consistent with other modals */
-#custom-grid-modal .modal-content {
-    width: 320px;
-    height: auto;
-}
-
-/* Make the Load Grid Modal more compact */
-#load-grid-modal .modal-content {
-    width: 320px; /* Consistent with other modals */
-    height: auto; /* Auto height based on content */
-    max-height: 350px; /* Slightly reduced maximum height */
-    display: flex;
-    flex-direction: column;
-}
-
-#load-grid-modal .modal-content h3 {
-    margin-bottom: 0; /* Remove margin below the header */
-    padding: 8px 15px; /* Reduce header padding */
-}
-
-#load-grid-modal .saved-grids-list {
-    max-height: 180px; /* Reduced height for the list */
-    min-height: 50px; /* Minimum height to ensure visibility */
-    margin: 10px 15px; /* Slightly less margin */
-    flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Style for no saved grids message */
-#load-grid-modal .no-saved-grids {
-    padding: 10px;
-    text-align: center;
-    color: #aaa;
-    font-style: italic;
-}
-
-#load-grid-modal .modal-buttons {
-    padding: 5px 15px 15px; /* Keep buttons at the bottom */
-    margin-top: 0; /* No space above buttons */
 } 
