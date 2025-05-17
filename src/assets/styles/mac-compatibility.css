@@ -1,66 +1,52 @@
-/* Mac-specific compatibility styles */
+/* 
+ * Mac-specific Compatibility Styles
+ * Contains essential overrides for proper display on Mac devices
+ */
 
+/*
+ * Base Variables and Settings
+ */
+:root {
+  /* Base measurements for consistency */
+  --mac-grid-size: 85%;
+  --mac-min-grid-size: 500px;
+  --mac-container-height: 90vh;
+  --mac-gap: 20px;
+  --mac-border-radius: 5px;
+  
+  /* Colors */
+  --mac-path-bg: rgba(0, 0, 0, 0.7);
+  --mac-path-border: rgba(0, 0, 0, 0.5);
+  --mac-icon-color: #f1c40f; /* Yellow for icons */
+  --mac-dijkstra-color: #3498db; /* Dijkstra blue */
+  --mac-astar-color: #9b59b6; /* A* purple */
+}
+
+/* 
+ * Device Type Classes 
+ */
 /* General fixes for all Mac devices */
 .mac-device {
-  /* Add a base class for all Mac devices */
-  --mac-grid-ratio: 1/1;
+  --mac-grid-ratio: 1/1; /* Square ratio by default */
 }
 
+/* MacBook Air specific adjustments */
+.macbook-air {
+  --mac-grid-ratio: 1/1; /* Perfect square ratio */
+}
+
+/*
+ * Grid and Algorithm Container Layout
+ */
 /* Fix for grid display issues on Mac */
 .mac-device .grid {
-  overflow: hidden !important; /* Prevent grid overflow */
-  max-height: none !important; /* Remove height restriction */
-  max-width: none !important; /* Remove width restriction */
-  width: 85% !important; /* Make grid much larger */
-  height: 85% !important; /* Make grid much larger */
-  margin: 0 auto !important; /* Center the grid */
-  aspect-ratio: var(--mac-grid-ratio) !important; /* Maintain square aspect ratio */
-  box-sizing: border-box !important; /* Include padding in width calculation */
-}
-
-/* Center the grid containers better on Mac */
-.mac-device .grid-container {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 100% !important; /* Expand to full height */
-  width: 100% !important;
-  overflow: visible !important; /* Allow child elements to overflow if needed */
-}
-
-/* Improve algorithm container layout on Mac */
-.mac-device .algorithm-container {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important; /* Center content vertically */
-  max-width: 49% !important; /* Slightly reduced for better spacing */
-  position: relative !important;
-  box-sizing: border-box !important;
-  padding: 5px !important;
-  height: 90vh !important; /* Use most of the viewport height */
-}
-
-/* Ensure main content has proper sizing and overflow on Mac */
-.mac-device .main-content {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important; /* Center content vertically */
   overflow: hidden !important;
-  height: 90vh !important; /* Use most of viewport height */
-  min-height: 600px !important; /* Minimum height to ensure sufficient space */
-}
-
-/* Adjust comparison container for better grid alignment on Mac */
-.mac-device .algorithm-comparison {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important; /* Center content vertically */
-  width: 100% !important;
-  height: 90vh !important; /* Use most of viewport height */
-  padding: 0 !important;
-  gap: 20px !important; /* Increased gap between algorithm containers */
+  max-height: none !important;
+  max-width: none !important;
+  width: var(--mac-grid-size) !important;
+  height: var(--mac-grid-size) !important;
+  margin: 0 auto !important;
+  aspect-ratio: var(--mac-grid-ratio) !important;
   box-sizing: border-box !important;
 }
 
@@ -68,23 +54,83 @@
 .mac-device #dijkstra-grid,
 .mac-device #astar-grid {
   aspect-ratio: var(--mac-grid-ratio) !important;
-  width: 90% !important; /* Much larger grid */
-  height: 90% !important; /* Much larger grid */
-  min-width: 500px !important; /* Set minimum size */
-  min-height: 500px !important; /* Set minimum size */
+  width: 90% !important;
+  height: 90% !important;
+  min-width: var(--mac-min-grid-size) !important;
+  min-height: var(--mac-min-grid-size) !important;
 }
 
+/* Center the grid containers better on Mac */
+.mac-device .grid-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+/* Improve algorithm container layout on Mac */
+.mac-device .algorithm-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: 49% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  padding: 5px !important;
+  height: var(--mac-container-height) !important;
+}
+
+/* Adjust comparison container for better grid alignment on Mac */
+.mac-device .algorithm-comparison {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: var(--mac-container-height) !important;
+  padding: 0 !important;
+  gap: var(--mac-gap) !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure main content has proper sizing and overflow on Mac */
+.mac-device .main-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  height: var(--mac-container-height) !important;
+  min-height: 600px !important;
+}
+
+/* MacBook Air specific container adjustments */
+.macbook-air .algorithm-container {
+  max-width: 49% !important;
+}
+
+.macbook-air .grid {
+  max-height: none !important;
+  width: var(--mac-grid-size) !important;
+  height: var(--mac-grid-size) !important;
+}
+
+/*
+ * Path Information and Stats
+ */
 /* Fix path info section in footer to match desktop */
 .mac-device .path-info {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  background-color: rgba(0, 0, 0, 0.7) !important;
+  background-color: var(--mac-path-bg) !important;
   padding: 8px 15px !important;
-  border-radius: 5px !important;
+  border-radius: var(--mac-border-radius) !important;
   width: 90% !important;
   margin: 10px auto !important;
-  border: 2px solid rgba(0, 0, 0, 0.5) !important;
+  border: 2px solid var(--mac-path-border) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
@@ -105,24 +151,18 @@
 
 .mac-device .path-info span {
   font-weight: bold !important;
-  color: #3498db !important;
   margin-left: 5px !important;
 }
 
 .mac-device .dijkstra-container .path-info span {
-  color: #3498db !important; /* Dijkstra blue */
+  color: var(--mac-dijkstra-color) !important;
 }
 
 .mac-device .astar-container .path-info span {
-  color: #9b59b6 !important; /* A* purple */
+  color: var(--mac-astar-color) !important;
 }
 
-/* Style for the nodes visited and path length text at bottom */
-.mac-device .algorithm-container footer {
-  width: 100% !important;
-  margin-top: 10px !important;
-}
-
+/* Style for algorithm stats counters */
 .mac-device #dijkstra-visited-count,
 .mac-device #dijkstra-path-length,
 .mac-device #astar-visited-count,
@@ -134,27 +174,21 @@
 
 .mac-device .fa-search,
 .mac-device .fa-route {
-  color: #f1c40f !important; /* Yellow for icons */
+  color: var(--mac-icon-color) !important;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) !important;
 }
 
-/* MacBook Air specific adjustments */
-.macbook-air {
-  --mac-grid-ratio: 1/1; /* Perfect square ratio */
+/* Footer container for stats */
+.mac-device .algorithm-container footer {
+  width: 100% !important;
+  margin-top: 10px !important;
 }
 
-.macbook-air .algorithm-container {
-  max-width: 49% !important;
-}
-
-.macbook-air .grid {
-  max-height: none !important; /* Remove height restriction */
-  width: 85% !important; /* Make grid much larger */
-  height: 85% !important; /* Make grid much larger */
-}
-
+/*
+ * UI Layout Adjustments
+ */
 .macbook-air .floating-actions-container {
-  margin-bottom: 0 !important; /* Changed from 8px to 0 for better centering */
+  margin-bottom: 0 !important;
   padding: 0 20px !important;
 }
 
@@ -168,54 +202,9 @@
   width: calc(100% - 200px) !important;
 }
 
-/* Responsive behavior for Mac devices - use mobile layout on narrow screens */
-@media screen and (max-width: 768px) {
-  /* Reuse the mobile layout when screen gets too narrow */
-  .mac-device .algorithm-comparison {
-    flex-direction: column !important;
-    height: auto !important;
-    gap: 20px !important;
-    padding: 0 10px !important;
-  }
-  
-  .mac-device .algorithm-container {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin-bottom: 20px !important;
-    height: auto !important;
-  }
-  
-  .mac-device .grid-container {
-    height: auto !important;
-    max-height: none !important;
-  }
-  
-  .mac-device .grid {
-    max-height: none !important;
-    width: 90vw !important;
-    height: 90vw !important;
-    max-width: 90vw !important;
-  }
-  
-  /* Fix for mobile header on Mac */
-  .mac-device .header-top {
-    display: flex !important;
-    justify-content: center !important;
-    position: relative !important;
-  }
-  
-  .mac-device .title-container {
-    display: flex !important;
-    justify-content: center !important;
-  }
-
-  /* Fix for app logo sizing on Mac mobile */
-  .mac-device .app-logo-mobile {
-    max-width: 80% !important;
-    height: auto !important;
-  }
-}
-
+/*
+ * Safari-specific Fixes
+ */
 /* Specific fix for Safari browser on Mac */
 @media not all and (min-resolution:.001dpcm) {
   @supports (-webkit-appearance:none) {
@@ -230,7 +219,61 @@
   }
 }
 
-/* Class applied when using responsive view (narrow window) on any device */
+/*
+ * Responsive Layout Adjustments
+ */
+/* Responsive behavior for Mac devices */
+@media screen and (max-width: 768px) {
+  /* Layout adjustments */
+  .mac-device .algorithm-comparison {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: var(--mac-gap) !important;
+    padding: 0 10px !important;
+  }
+  
+  .mac-device .algorithm-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-bottom: 20px !important;
+    height: auto !important;
+  }
+  
+  /* Grid adjustments */
+  .mac-device .grid-container {
+    height: auto !important;
+    max-height: none !important;
+  }
+  
+  .mac-device .grid {
+    max-height: none !important;
+    width: 90vw !important;
+    height: 90vw !important;
+    max-width: 90vw !important;
+  }
+  
+  /* Header adjustments */
+  .mac-device .header-top {
+    display: flex !important;
+    justify-content: center !important;
+    position: relative !important;
+  }
+  
+  .mac-device .title-container {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Logo sizing */
+  .mac-device .app-logo-mobile {
+    max-width: 80% !important;
+    height: auto !important;
+  }
+}
+
+/* 
+ * Responsive Mode (for any device with narrow window)
+ */
 html.responsive-mode body .algorithm-comparison {
   flex-direction: column !important;
   height: auto !important;
@@ -242,7 +285,7 @@ html.responsive-mode body .algorithm-container {
   margin-bottom: 20px !important;
 }
 
-/* Reuse mobile layout when in responsive mode on any device */
+/* Use mobile layout in responsive mode regardless of device */
 html.responsive-mode body .mobile-only-header {
   display: block !important;
 }

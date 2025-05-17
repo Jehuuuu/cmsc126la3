@@ -1,5 +1,6 @@
 /**
  * Base Algorithm class for pathfinding algorithms
+ * Provides common functionality and interface for all pathfinding implementations
  */
 class Algorithm {
     /**
@@ -16,7 +17,8 @@ class Algorithm {
     }
 
     /**
-     * Initialize the algorithm
+     * Initialize the algorithm before running
+     * Resets all nodes and algorithm state
      * @returns {boolean} True if initialization was successful
      */
     initialize() {
@@ -30,7 +32,7 @@ class Algorithm {
         this.isRunning = false;
         this.shouldStop = false;
         
-        // Reset all nodes
+        // Reset all nodes in the grid
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
                 this.grid.nodes[row][col].reset();
@@ -44,7 +46,7 @@ class Algorithm {
     }
 
     /**
-     * Run the algorithm
+     * Run the algorithm - must be implemented by subclasses
      * @param {boolean} visualize - Whether to return visited nodes for visualization
      * @returns {Object} Object containing visited nodes, path nodes and whether path was found
      */
@@ -60,28 +62,14 @@ class Algorithm {
     }
 
     /**
-     * Check if the algorithm is running
+     * Check if the algorithm is currently running
      * @returns {boolean} True if the algorithm is running
      */
     isAlgorithmRunning() {
         return this.isRunning;
     }
 
-    /**
-     * Get the path from start to end
-     * @returns {Node[]} Array of nodes in the path
-     */
-    getPath() {
-        return PathUtils.getShortestPath(this.grid.endNode);
-    }
-
-    /**
-     * Get all visited nodes in the order they were visited
-     * @returns {Node[]} Array of visited nodes
-     */
-    getVisitedNodesInOrder() {
-        return this.visitedNodesInOrder;
-    }
+    // Node visiting and tracking methods
 
     /**
      * Check if a node has been visited
@@ -102,20 +90,32 @@ class Algorithm {
         this.visitedNodes.add(node.getPositionString());
     }
 
+    // Path and results methods
+
     /**
-     * Update progress for step-by-step visualization (bridge method for updateStep)
-     * @param {number} currentStep - Current step index
+     * Get the path from start to end
+     * @returns {Node[]} Array of nodes in the path
      */
-    updateProgress(currentStep) {
-        // This is a bridge method to support the naming used in VisualizationController
-        this.updateStep(currentStep);
+    getPath() {
+        return PathUtils.getShortestPath(this.grid.endNode);
     }
 
     /**
-     * Update progress for step-by-step visualization
+     * Get all visited nodes in the order they were visited
+     * @returns {Node[]} Array of visited nodes
+     */
+    getVisitedNodesInOrder() {
+        return this.visitedNodesInOrder;
+    }
+
+    // Visualization methods
+
+    /**
+     * Update visualization for step-by-step mode
+     * Shows visited nodes up to the current step
      * @param {number} currentStep - Current step index
      */
-    updateStep(currentStep) {
+    updateProgress(currentStep) {
         // Clear previous visualization
         if (this.grid) {
             this.grid.resetPath();
@@ -128,8 +128,13 @@ class Algorithm {
         
         // Mark current node
         if (currentStep < this.visitedNodesInOrder.length) {
-        const currentNode = this.visitedNodesInOrder[currentStep];
-        currentNode.isCurrent = true;
+            const currentNode = this.visitedNodesInOrder[currentStep];
+            currentNode.isCurrent = true;
         }
+    }
+
+    // Alias for backward compatibility with older code
+    updateStep(currentStep) {
+        this.updateProgress(currentStep);
     }
 } 
