@@ -1,0 +1,225 @@
+/**
+ * ModularTutorial.css
+ * Styles for the modular tutorial system
+ */
+
+/* Base styles for all modals - matching app style */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    z-index: 9998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tutorial-modal {
+    background-color: #3c2a21; /* Dark brown background */
+    color: #fff;
+    width: 380px;
+    max-width: 90%;
+    border: 4px solid #986c44; /* Minecraft dirt border color */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    image-rendering: pixelated;
+    overflow: hidden;
+    border-radius: 0;
+    z-index: 10000;
+}
+
+.tutorial-tooltip {
+    position: absolute;
+    background-color: #3c2a21; /* Dark brown background */
+    color: #fff;
+    border: 4px solid #986c44; /* Minecraft dirt border color */
+    padding: 0;
+    z-index: 10001;
+    max-width: 300px;
+    font-family: 'Pixelify Sans', sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.tutorial-header {
+    background-color: #986c44; /* Minecraft dirt color */
+    color: #fff;
+    margin: 0;
+    padding: 10px 15px;
+    text-shadow: 1px 1px 0 #000;
+    border-bottom: 4px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tutorial-header h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 0 #000;
+    flex: 1;
+    text-align: left;
+}
+
+.tutorial-content {
+    padding: 15px 15px 5px;
+    margin: 0;
+    text-shadow: 1px 1px 0 #000;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.tutorial-content p {
+    text-align: center;
+}
+
+.tutorial-close {
+    color: #d9a334; /* Gold color */
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+    background: none;
+    border: none;
+    border-radius: 0;
+    transition: color 0.2s;
+    line-height: 1;
+    padding: 0 0 0 16px;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.tutorial-close:hover {
+    color: #ffcc00;
+    background: none;
+}
+
+.tutorial-buttons {
+    display: flex;
+    padding: 0 15px 15px;
+    gap: 10px;
+}
+
+.tutorial-btn {
+    flex: 1;
+    padding: 8px 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 1rem;
+    background-color: #986c44; /* Minecraft dirt color */
+    color: white;
+    border: 3px solid #000; /* Thicker border */
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #000;
+    transition: all 0.2s;
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Minecraft-style button shadows */
+    letter-spacing: 0.5px; /* Slightly spaced out text */
+}
+
+.tutorial-btn:active {
+    transform: translateY(1px);
+    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-btn.primary {
+    background-color: #5bac38; /* Green */
+    color: white;
+}
+
+.tutorial-btn.primary:hover {
+    background-color: #4a9c27;
+    transform: translateY(-2px);
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-btn.danger {
+    background-color: #e74c3c; /* Red */
+    color: white;
+}
+
+.tutorial-btn.danger:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-btn:not(.primary):not(.danger) {
+    background-color: #986c44; /* Dirt brown */
+    color: white;
+}
+
+.tutorial-btn:not(.primary):not(.danger):hover {
+    background-color: #825432;
+    transform: translateY(-2px);
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Highlight effects */
+.tutorial-highlight {
+    position: relative;
+    z-index: 10001;
+    box-shadow: 0 0 0 4px #d9a334; /* Gold color */
+    border: 1px solid #000;
+}
+
+/* Flash animation for highlights */
+@keyframes flash-animation {
+    0% { box-shadow: 0 0 0 4px #d9a334; } /* Gold color */
+    50% { box-shadow: 0 0 0 8px rgba(217, 163, 52, 0.6); } /* Faded gold */
+    100% { box-shadow: 0 0 0 4px #d9a334; } /* Gold color */
+}
+
+.flash-animation {
+    animation: flash-animation 1.5s infinite;
+}
+
+/* Success animation */
+.tutorial-success {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    background-color: #5bac38; /* Match the green button color */
+    color: white;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10002;
+    border: 4px solid #000;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    font-family: 'Pixelify Sans', sans-serif;
+    text-shadow: 1px 1px 0 #000;
+    image-rendering: pixelated;
+}
+
+.tutorial-success.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes success-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+.tutorial-success.show {
+    animation: success-pulse 1.5s infinite;
+}

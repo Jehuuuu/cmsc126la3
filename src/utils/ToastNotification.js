@@ -1,130 +1,163 @@
 /**
- * Toast Notification System
- * Displays stylish toast messages for various app events
+ * ToastNotification.js
+ * Lightweight toast notification system for displaying temporary feedback messages
  */
+
+//=============================================================================
+// TOAST NOTIFICATION SYSTEM
+//=============================================================================
+
 class ToastNotification {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
+    /**
+     * Create a new ToastNotification system
+     */
     constructor() {
         this.container = document.getElementById('toast-container');
-        this.toasts = [];
-        this.toastTimeout = 3000; // Duration in ms that toasts remain visible
-        this.activeToast = null; // Track the currently active toast
+        this.toastTimeout = 3000; // Default duration (ms) that toasts remain visible
+        this.activeToast = null;  // Track the currently active toast
+        
+        // Icons for different toast types
+        this.icons = {
+            success: '<i class="fas fa-check-circle toast-icon"></i>',
+            error: '<i class="fas fa-exclamation-circle toast-icon"></i>',
+            warning: '<i class="fas fa-exclamation-triangle toast-icon"></i>',
+            info: '<i class="fas fa-info-circle toast-icon"></i>'
+        };
     }
 
+    //=============================================================================
+    // TOAST CREATION
+    //=============================================================================
+    
     /**
      * Show a toast notification
      * @param {string} message - The message to display
-     * @param {string} type - 'success', 'error', or 'info'
-     * @param {object} options - Additional options like duration
+     * @param {string} type - 'success', 'error', 'warning', or 'info'
+     * @param {object} options - Additional options
+     * @param {number} [options.duration] - Time in ms to display the toast
+     * @returns {HTMLElement} The toast element
      */
     show(message, type = 'info', options = {}) {
-        // Clear existing toasts before showing a new one
-        this.clear();
+        // Clear any existing toast
+        if (this.activeToast) {
+            this.removeToast(this.activeToast.element);
+        }
         
+        // Create new toast element
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         
-        // Set icon based on type
-        let icon = '';
-        switch(type) {
-            case 'success':
-                icon = '<i class="fas fa-check-circle toast-icon"></i>';
-                break;
-            case 'error':
-                icon = '<i class="fas fa-exclamation-circle toast-icon"></i>';
-                break;
-            case 'info':
-            default:
-                icon = '<i class="fas fa-info-circle toast-icon"></i>';
-                break;
-        }
+        // Get icon based on type
+        const icon = this.icons[type] || this.icons.info;
         
+        // Set toast content
         toast.innerHTML = `
             ${icon}
             <div class="toast-content">${message}</div>
         `;
         
+        // Add to container
         this.container.appendChild(toast);
         
-        // Show the toast (small delay for animation to work properly)
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
+        // Show with slight delay for animation
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+        });
         
-        // Set timeout to remove toast
+        // Set timeout to auto-remove toast
         const duration = options.duration || this.toastTimeout;
         const timeout = setTimeout(() => {
             this.removeToast(toast);
         }, duration);
         
-        // Store toast and its timeout
+        // Store toast reference
         this.activeToast = { element: toast, timeout };
-        this.toasts = [this.activeToast];
         
-        // Return the toast element in case we need to reference it later
         return toast;
     }
     
     /**
-     * Success toast - green border
+     * Show a success toast notification (green)
+     * @param {string} message - The message to display
+     * @param {object} options - Additional options
+     * @returns {HTMLElement} The toast element
      */
     success(message, options = {}) {
         return this.show(message, 'success', options);
     }
     
     /**
-     * Error toast - red border
+     * Show an error toast notification (red)
+     * @param {string} message - The message to display
+     * @param {object} options - Additional options
+     * @returns {HTMLElement} The toast element
      */
     error(message, options = {}) {
         return this.show(message, 'error', options);
     }
     
     /**
-     * Info toast - blue border
+     * Show a warning toast notification (orange/yellow)
+     * @param {string} message - The message to display
+     * @param {object} options - Additional options
+     * @returns {HTMLElement} The toast element
+     */
+    warning(message, options = {}) {
+        return this.show(message, 'warning', options);
+    }
+    
+    /**
+     * Show an info toast notification (blue)
+     * @param {string} message - The message to display
+     * @param {object} options - Additional options
+     * @returns {HTMLElement} The toast element
      */
     info(message, options = {}) {
         return this.show(message, 'info', options);
     }
     
+    //=============================================================================
+    // TOAST MANAGEMENT
+    //=============================================================================
+    
     /**
      * Remove a specific toast
+     * @param {HTMLElement} toast - The toast element to remove
      */
     removeToast(toast) {
-        // Find the index of the toast
-        const index = this.toasts.findIndex(t => t.element === toast);
-        if (index !== -1) {
-            // Clear its timeout
-            clearTimeout(this.toasts[index].timeout);
-            // Remove from array
-            this.toasts.splice(index, 1);
-        }
-        
-        // If this was the active toast, clear it
+        // Clear timeout if associated with active toast
         if (this.activeToast && this.activeToast.element === toast) {
+            clearTimeout(this.activeToast.timeout);
             this.activeToast = null;
         }
         
-        // Remove the 'show' class to trigger the hiding animation
+        // Start hiding animation
         toast.classList.remove('show');
         
-        // Remove the element after animation completes
+        // Remove after animation completes
+        const ANIMATION_DURATION = 400; // Match CSS transition time
         setTimeout(() => {
             if (toast.parentNode === this.container) {
                 this.container.removeChild(toast);
             }
-        }, 400); // Match the CSS transition time
+        }, ANIMATION_DURATION);
     }
     
     /**
-     * Clear all toasts
+     * Clear any active toast notification
      */
     clear() {
-        // Clear all timeouts
-        this.toasts.forEach(toast => {
-            clearTimeout(toast.timeout);
-            this.removeToast(toast.element);
-        });
-        this.toasts = [];
-        this.activeToast = null;
+        if (this.activeToast) {
+            clearTimeout(this.activeToast.timeout);
+            this.removeToast(this.activeToast.element);
+            this.activeToast = null;
+        }
     }
 }
 

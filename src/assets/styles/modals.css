@@ -393,10 +393,10 @@
  * Load previously saved grid configuration
  */
 #load-grid-modal .modal-content {
-    width: 340px;
+    width: 320px;
+    height: 250px;
     max-width: 90%;
-    min-height: 300px;
-    max-height: 80vh;
+    overflow-y: auto;
 }
 
 /* Optimized header size */
@@ -408,7 +408,7 @@
 
 /* Grid List Container */
 .saved-grids-list {
-    max-height: 200px;
+    max-height: 150px;
     overflow-y: auto;
     margin: var(--modal-gap) var(--modal-padding);
     border: 2px solid var(--modal-border);

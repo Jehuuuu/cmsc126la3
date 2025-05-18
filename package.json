@@ -1,19 +1,36 @@
 {
-  "name": "pathfinding-adventure",
+  "name": "skull-cavern-pathing",
   "version": "1.0.0",
-  "description": "Interactive web-based pathfinding visualizer",
+  "description": "Interactive web-based pathfinding visualizer comparing Dijkstra's and A* algorithms",
   "main": "index.html",
   "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve .",
     "build": "echo 'Static site - no build required'",
     "deploy": "vercel --prod",
-    "test": "npx serve ."
+    "test": "echo 'No tests specified'"
   },
   "keywords": [
     "pathfinding",
     "algorithms",
     "visualization",
-    "dijkstra"
+    "dijkstra",
+    "a-star",
+    "graph-theory",
+    "education"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": "Kenz Barina",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jehuuuu/cmsc126le3"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "vercel": "^32.5.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
 } 

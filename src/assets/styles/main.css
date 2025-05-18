@@ -800,10 +800,22 @@ select:disabled:hover {
     align-items: center;
     justify-content: space-between;
     margin-top: 0;
-    background-color: #000000;
+    background-color: rgba(26, 14, 14, 0.9);
     color: #ffffff;
-    text-shadow: none;
-    border: none;
+    text-shadow: 1px 1px 0 #000;
+    border-top: 2px solid #000;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AkEBhwY1uQEBAAAAVlJREFUaN7tmMENwjAMReUmjMAIHYER2IAj3JiADRiBEToCG8AGZQRGyJGTUSulJI4TN/ZfchWK0vcbJ66doVLKqvHi/NKyDm+dXkaRvO/7LgXkDEhe8GSQtGATDJIYsgkCSQW2ZJCsA8CNGRx1R6aUpEhJLHVQI7K3mqT3hqQxUkNSSE1JJzUmldSQdFJh0kglSSMVJoVUkhRSaeJJDYkl9SSG1JRQUlcCSX0JIg0liLRE8prQcUhqK0AUSaM8YaY2kgbzHBLzXMX8boL53Unzkw/NrdqUbFLcHjB3QUzeojE3lMxtcLNOGZjbQmsdczAaQzgaizhSizBikzBymzBCpwgjeIsworcII3yLMOK7CGMILcKYSoswxtYijLm2CGOQLcKYbYswhtwFjJHTB1BHBCzFbdurVlQoIkuMMWAeVyCo4DGqQRDB41SDIIJrqQJBBNdXEgQRPFc5QGzBsxYT4gsgjOBe+wHddtk+c8R3eQAAAABJRU5ErkJggg==');
+    image-rendering: pixelated;
+}
+
+/* Algorithm-specific styling for path info container */
+.dijkstra-container .path-info {
+    border-top: 2px solid var(--dijkstra-color);
+}
+
+.astar-container .path-info {
+    border-top: 2px solid var(--astar-color);
 }
 
 /* Path Info Text Elements */
@@ -813,6 +825,8 @@ select:disabled:hover {
     align-items: center;
     font-weight: bold;
     color: #ffffff;
+    position: relative;
+    z-index: 1;
 }
 
 .path-info p i {
@@ -1276,7 +1290,7 @@ button.touch-active {
     flex-direction: row !important;
     justify-content: space-between;
     flex-wrap: nowrap;
-    width: 100%;
+        width: 100%;
     gap: 4px;
 }
 
@@ -1534,7 +1548,7 @@ button.touch-active {
 /* Desktop Randomizer Select */
 .randomizer-select {
     appearance: none;
-    background-color: #422f25;
+    background-color: var(--minecraft-dirt);
     color: white;
     border: 3px solid #000;
     padding: 8px 10px;
@@ -1551,12 +1565,12 @@ button.touch-active {
 }
 
 .randomizer-select:hover {
-    background-color: #533d2e;
+    background-color: #a97e51; /* Slightly lighter dirt color on hover */
 }
 
 .randomizer-select:focus {
     outline: none;
-    border-color: #6f552a;
+    border-color: #000;
 }
 
 /* Mobile Maze Container */
@@ -1571,7 +1585,7 @@ button.touch-active {
 /* Mobile Randomizer Select */
 .randomizer-select-mobile {
     appearance: none;
-    background-color: #422f25;
+    background-color: var(--minecraft-dirt);
     color: white;
     border: 3px solid #000;
     padding: 8px 10px;
@@ -1589,12 +1603,12 @@ button.touch-active {
 }
 
 .randomizer-select-mobile:hover {
-    background-color: #533d2e;
+    background-color: #a97e51; /* Slightly lighter dirt color on hover */
 }
 
 .randomizer-select-mobile:focus {
     outline: none;
-    border-color: #6f552a;
+    border-color: #000;
 }
 
 /*
@@ -1779,4 +1793,53 @@ button.touch-active {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
+}
+
+/* Randomizer Button Styling */
+.randomizer-btn {
+    background-color: var(--minecraft-sky);
+    border: 3px solid #000;
+    color: white;
+    font-weight: bold;
+    transition: var(--hover-transition);
+}
+
+.randomizer-btn:hover {
+    background-color: #67a4c1; /* Slightly darker blue on hover */
+    transform: scale(1.05);
+}
+
+/* GitHub Button Styling */
+.github-btn {
+    background-color: #333333 !important; /* Medium-dark charcoal */
+    color: white !important;
+    border: 3px solid #000 !important;
+    transition: var(--hover-transition);
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.github-btn:hover {
+    background-color: #444444 !important; /* Slightly lighter on hover */
+    transform: scale(1.05);
+}
+
+.github-btn i {
+    font-size: 1.2rem;
+}
+
+/* Mobile GitHub Button */
+.random-menu-item.github {
+    background-color: #333333 !important; /* Medium-dark charcoal */
+    color: white !important;
+    border: 3px solid #000 !important;
+    text-decoration: none !important;
+}
+
+.random-menu-item.github:hover {
+    background-color: #444444 !important; /* Slightly lighter on hover */
 }

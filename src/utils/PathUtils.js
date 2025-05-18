@@ -1,11 +1,21 @@
 /**
- * Utility class for path-related operations
+ * PathUtils.js
+ * Utility class for path-related operations in pathfinding algorithms
  */
+
+//=============================================================================
+// PATH UTILITIES
+//=============================================================================
+
 class PathUtils {
+    //=============================================================================
+    // PATH CALCULATION
+    //=============================================================================
+    
     /**
-     * Get the shortest path from the end node to the start node
+     * Get the shortest path from the end node to the start node by backtracking
      * @param {Node} endNode - The destination node
-     * @returns {Node[]} Array of nodes representing the path
+     * @returns {Node[]} Array of nodes representing the path from start to end
      */
     static getShortestPath(endNode) {
         if (!endNode || !endNode.previousNode) {
@@ -30,7 +40,7 @@ class PathUtils {
     }
 
     /**
-     * Calculate path distance
+     * Calculate path distance by summing the weights of all nodes in the path
      * @param {Node[]} path - Array of nodes in the path
      * @returns {number} Total path distance
      */
@@ -45,158 +55,17 @@ class PathUtils {
         return distance;
     }
 
-    /**
-     * Generate alternative paths by temporarily removing segments of the optimal path
-     * @param {Grid} grid - The grid to find paths in
-     * @param {Function} runAlgorithm - The pathfinding algorithm function
-     * @returns {Object[]} Array of alternative paths with their information
-     */
-    static generateAlternativePaths(grid, runAlgorithm) {
-        // First, find the optimal path
-        const gridClone = grid.clone();
-        const result = runAlgorithm(gridClone, false); // Run without visualization
-        
-        if (!result.path || result.path.length < 3) {
-            // No path or path too short for alternatives
-            return [{
-                path: result.path,
-                distance: this.calculatePathDistance(result.path),
-                name: 'Optimal'
-            }];
-        }
-        
-        // The optimal path
-        const optimalPath = result.path;
-        const paths = [{
-            path: optimalPath,
-            distance: this.calculatePathDistance(optimalPath),
-            name: 'Optimal'
-        }];
-        
-        // Generate alternatives by temporarily blocking parts of the optimal path
-        // We'll skip the start and end nodes
-        for (let i = 1; i < optimalPath.length - 1; i++) {
-            const pathNode = optimalPath[i];
-            const alternateGridClone = grid.clone();
-            
-            // Block this node to force an alternative path
-            const blockNode = alternateGridClone.getNode(pathNode.row, pathNode.col);
-            blockNode.isWall = true;
-            
-            // Run algorithm to find alternative
-            const alternateResult = runAlgorithm(alternateGridClone, false);
-            
-            if (alternateResult.path && alternateResult.path.length > 0) {
-                // Check if this path is significantly different from ones we've found
-                const altDistance = this.calculatePathDistance(alternateResult.path);
-                const altPath = alternateResult.path;
-                
-                // Check if this path is unique compared to existing ones
-                if (this.isPathUnique(altPath, paths.map(p => p.path))) {
-                    paths.push({
-                        path: altPath,
-                        distance: altDistance,
-                        name: `Alternative ${paths.length}`
-                    });
-                }
-                
-                // Stop if we have enough alternatives
-                if (paths.length >= 3) {
-                    break;
-                }
-            }
-        }
-        
-        // If we don't have enough alternatives yet, try blocking multiple nodes
-        if (paths.length < 3 && optimalPath.length >= 5) {
-            for (let i = 1; i < optimalPath.length - 2; i++) {
-                const node1 = optimalPath[i];
-                const node2 = optimalPath[i + 1];
-                
-                const alternateGridClone = grid.clone();
-                
-                // Block two consecutive nodes
-                alternateGridClone.getNode(node1.row, node1.col).isWall = true;
-                alternateGridClone.getNode(node2.row, node2.col).isWall = true;
-                
-                // Run algorithm to find alternative
-                const alternateResult = runAlgorithm(alternateGridClone, false);
-                
-                if (alternateResult.path && alternateResult.path.length > 0) {
-                    const altDistance = this.calculatePathDistance(alternateResult.path);
-                    const altPath = alternateResult.path;
-                    
-                    // Check if this path is unique compared to existing ones
-                    if (this.isPathUnique(altPath, paths.map(p => p.path))) {
-                        paths.push({
-                            path: altPath,
-                            distance: altDistance,
-                            name: `Alternative ${paths.length}`
-                        });
-                    }
-                    
-                    // Stop if we have enough alternatives
-                    if (paths.length >= 3) {
-                        break;
-                    }
-                }
-            }
-        }
-        
-        // Fill with duplicates if we still don't have 3 paths
-        while (paths.length < 3) {
-            const lastPath = {...paths[paths.length - 1]};
-            lastPath.name = `Alternative ${paths.length} (Not found)`;
-            paths.push(lastPath);
-        }
-        
-        return paths;
-    }
-
-    /**
-     * Check if a path is significantly different from other paths
-     * @param {Node[]} path - The path to check
-     * @param {Node[][]} existingPaths - Array of existing paths to compare against
-     * @returns {boolean} True if the path is unique
-     */
-    static isPathUnique(path, existingPaths) {
-        // If path is empty or very short, it's not unique
-        if (!path || path.length < 2) return false;
-        
-        for (const existingPath of existingPaths) {
-            // Skip comparison with empty paths
-            if (!existingPath || existingPath.length < 2) continue;
-            
-            // Calculate how many nodes are different
-            let differentNodes = 0;
-            const minLength = Math.min(path.length, existingPath.length);
-            const maxLength = Math.max(path.length, existingPath.length);
-            
-            // Count differing nodes in the overlapping part
-            for (let i = 1; i < minLength - 1; i++) { // Skip start and end
-                if (!path[i].equals(existingPath[i])) {
-                    differentNodes++;
-                }
-            }
-            
-            // Count extra nodes in the longer path
-            differentNodes += (maxLength - minLength);
-            
-            // If less than 20% different or fewer than 2 nodes different, consider not unique
-            const uniqueThreshold = Math.max(2, Math.floor(maxLength * 0.2));
-            if (differentNodes < uniqueThreshold) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
+    //=============================================================================
+    // VISUALIZATION UTILITIES
+    //=============================================================================
 
     /**
      * Create a simple arrow path visualization for mini-grids
+     * Scales the main grid path to fit in a smaller preview grid
+     * 
      * @param {Node[]} path - The path to visualize
-     * @param {number} gridSize - Size of the mini-grid
-     * @returns {Object} Arrow path information for the mini-grid
+     * @param {number} gridSize - Size of the mini-grid (e.g., 10 for a 10x10 grid)
+     * @returns {Object} Object containing start, end, and arrow points for the mini-grid
      */
     static createArrowPath(path, gridSize) {
         if (!path || path.length < 2) {

@@ -13,7 +13,21 @@
     <link rel="stylesheet" href="src/assets/styles/tutorial.css">
     <link rel="stylesheet" href="src/assets/styles/mac-compatibility.css">
     <!-- Mac compatibility styles are applied through CSS custom properties -->
-    <link rel="icon" href="data:,">
+    
+    <!-- Favicon settings -->
+    <link rel="icon" href="src/assets/images/app_logo.png">
+    <link rel="apple-touch-icon" href="src/assets/images/app_logo.png">
+    <meta name="theme-color" content="#1a0e0e">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Skull Cavern Pathing - Algorithm Comparison">
+    <meta property="og:description" content="Interactive visualization comparing Dijkstra's and A* pathfinding algorithms">
+    <meta property="og:image" content="src/assets/images/app_logo.png">
+    <meta property="og:url" content="https://skullcavern.vercel.app">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Add Pixelify Sans font for Minecraft style -->
@@ -432,9 +446,6 @@
             <p id="no-saved-grids" class="no-saved-grids">No saved grids found</p>
             <!-- Saved grids will be listed here dynamically -->
         </div>
-        <div class="modal-buttons">
-            <button id="cancel-load-btn">Cancel</button>
-        </div>
     </div>
 </div>
 
@@ -471,7 +482,6 @@
 
 <!-- Tutorial system for interactive guidance -->
 <script src="src/utils/ModularTutorial.js" defer></script>
-<script src="src/utils/initModularTutorial.js" defer></script>
 
 <!-- Data models for grid and nodes -->
 <script src="src/models/Node.js" defer></script>
@@ -517,6 +527,19 @@
 <!-- UI initialization and responsiveness -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Add a global event listener to close modals with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                // Find all visible modals
+                const visibleModals = document.querySelectorAll('.modal[style*="display: block"], .modal[style*="display: flex"]');
+                
+                // Close each visible modal
+                visibleModals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+        
         // Map floating action buttons to their hidden counterparts
         function setupButtonMapping() {
             const buttonMap = {

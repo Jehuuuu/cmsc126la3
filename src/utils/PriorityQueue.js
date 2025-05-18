@@ -1,11 +1,21 @@
 /**
- * PriorityQueue implementation using a binary heap
- * Optimized for pathfinding algorithms
+ * PriorityQueue.js
+ * Efficient priority queue implementation using a binary heap
+ * Optimized for pathfinding algorithms with O(log n) operations
  */
+
+//=============================================================================
+// PRIORITY QUEUE
+//=============================================================================
+
 class PriorityQueue {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
     /**
      * Create a new priority queue
-     * @param {Function} comparator - Custom comparator function
+     * @param {Function} comparator - Custom comparator function (defaults to min-heap by distance)
      */
     constructor(comparator = (a, b) => a.distance - b.distance) {
         this.heap = [];
@@ -13,9 +23,13 @@ class PriorityQueue {
         this.nodePositions = new Map(); // Maps node position strings to indices in the heap
     }
 
+    //=============================================================================
+    // QUEUE OPERATIONS
+    //=============================================================================
+
     /**
-     * Add an element to the queue
-     * @param {any} element - Element to add
+     * Add an element to the queue with O(log n) time complexity
+     * @param {any} element - Element to add (typically a Node object)
      */
     enqueue(element) {
         // Get position key for Node objects
@@ -35,13 +49,13 @@ class PriorityQueue {
             this.nodePositions.set(posKey, index);
         }
         
-        // Bubble up
+        // Bubble up to maintain heap property
         this.bubbleUp(index);
     }
 
     /**
-     * Remove and return the highest priority element
-     * @returns {any} The highest priority element
+     * Remove and return the highest priority element with O(log n) time complexity
+     * @returns {any} The highest priority element or null if queue is empty
      */
     dequeue() {
         if (this.isEmpty()) return null;
@@ -62,7 +76,7 @@ class PriorityQueue {
                 this.nodePositions.set(last.getPositionString(), 0);
             }
             
-            // Bubble down
+            // Bubble down to maintain heap property
             this.bubbleDown(0);
         }
         
@@ -70,9 +84,9 @@ class PriorityQueue {
     }
 
     /**
-     * Remove an element by its position key
+     * Remove an element by its position key with O(log n) time complexity
      * @param {string} posKey - Position key of the element to remove
-     * @returns {boolean} True if element was removed
+     * @returns {boolean} True if element was removed, false otherwise
      */
     remove(posKey) {
         if (!this.nodePositions.has(posKey)) return false;
@@ -95,7 +109,7 @@ class PriorityQueue {
             this.nodePositions.set(last.getPositionString(), index);
         }
         
-        // Determine whether to bubble up or down
+        // Determine whether to bubble up or down to maintain heap property
         const parent = this.getParentIndex(index);
         if (parent >= 0 && this.comparator(this.heap[index], this.heap[parent]) < 0) {
             this.bubbleUp(index);
@@ -107,18 +121,9 @@ class PriorityQueue {
     }
 
     /**
-     * Check if the queue contains a node with the given position
-     * @param {string} posKey - Position key to check
-     * @returns {boolean} True if the queue contains the node
-     */
-    contains(posKey) {
-        return this.nodePositions.has(posKey);
-    }
-
-    /**
-     * Update a node's priority in the queue
+     * Update a node's priority in the queue with O(log n) time complexity
      * @param {any} node - Node to update
-     * @returns {boolean} True if update was successful
+     * @returns {boolean} True if update was successful, false otherwise
      */
     update(node) {
         if (!node.getPositionString) return false;
@@ -131,7 +136,7 @@ class PriorityQueue {
         // Replace with new node
         this.heap[index] = node;
         
-        // Determine whether to bubble up or down
+        // Determine whether to bubble up or down to maintain heap property
         const parent = this.getParentIndex(index);
         if (parent >= 0 && this.comparator(this.heap[index], this.heap[parent]) < 0) {
             this.bubbleUp(index);
@@ -144,10 +149,19 @@ class PriorityQueue {
 
     /**
      * Get the highest priority element without removing it
-     * @returns {any} The highest priority element
+     * @returns {any} The highest priority element or null if queue is empty
      */
     peek() {
         return this.isEmpty() ? null : this.heap[0];
+    }
+
+    /**
+     * Check if the queue contains a node with the given position
+     * @param {string} posKey - Position key to check
+     * @returns {boolean} True if the queue contains the node
+     */
+    contains(posKey) {
+        return this.nodePositions.has(posKey);
     }
 
     /**
@@ -165,6 +179,10 @@ class PriorityQueue {
     size() {
         return this.heap.length;
     }
+
+    //=============================================================================
+    // HEAP OPERATIONS
+    //=============================================================================
 
     /**
      * Get the index of the parent of an element

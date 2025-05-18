@@ -1,10 +1,24 @@
 /**
- * GridView class for rendering and interacting with the grid
+ * GridView.js
+ * Responsible for rendering and managing the grid visualization and user interactions
  */
+
+//=============================================================================
+// GRID VIEW
+//=============================================================================
+
 class GridView {
-    // Static property to share across all GridView instances
+    //=============================================================================
+    // STATIC PROPERTIES
+    //=============================================================================
+    
+    // Shared tilesets across all grid instances for visual consistency
     static sharedTilesetMap = new Map();
     static sharedObstacleMap = new Map();
+    
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
     
     /**
      * Create a new GridView
@@ -15,27 +29,26 @@ class GridView {
         this.grid = grid;
         this.gridContainerId = gridContainerId;
         this.gridContainer = document.getElementById(gridContainerId);
-        // console.log(`GridView: Grid container '${gridContainerId}' found:`, !!this.gridContainer);
         
         if (!this.gridContainer) {
-            // console.error(`Grid container with ID "${gridContainerId}" not found!`);
             return;
         }
         
+        // Interaction state
         this.isMouseDown = false;
         this.isMovingStart = false;
         this.isMovingEnd = false;
         this.currentTool = 'wall'; // Default tool: wall, start, end, erase
-        this.gridIndex = gridContainerId.includes('dijkstra') ? 0 : 1; // Get grid index based on ID
+        this.gridIndex = gridContainerId.includes('dijkstra') ? 0 : 1;
         this.animationTimeouts = []; // Store animation timeouts for cancellation
         
         // Store a reference to the global gameController
         this.gameController = window.gameController;
         
         // Tileset configuration
-        this.tileVariations = 4; // Number of different tile variations (can adjust based on your tileset)
-        this.tilesetWidth = 32; // Width of a single tile in the tileset (adjust to match)
-        this.tilesetHeight = 32; // Height of a single tile in the tileset (adjust to match)
+        this.tileVariations = 4; // Number of different tile variations
+        this.tilesetWidth = 32;  // Width of a single tile in the tileset
+        this.tilesetHeight = 32; // Height of a single tile in the tileset
         
         // Available tilesets
         this.tilesets = [
@@ -50,9 +63,6 @@ class GridView {
             'src/assets/images/obstacle1.png'
         ];
         
-        // Use the shared tileset map instead of a local one
-        // This ensures both grids have the same tile randomization pattern
-        
         this.initialize();
     }
 
@@ -60,20 +70,20 @@ class GridView {
      * Initialize the grid view
      */
     initialize() {
-        // console.log(`GridView (${this.gridContainerId}): Initializing`);
         this.render();
         this.setupEventListeners();
     }
+
+    //=============================================================================
+    // GRID RENDERING
+    //=============================================================================
 
     /**
      * Re-render the grid
      */
     render() {
-        // console.log(`GridView (${this.gridContainerId}): Rendering grid`, this.grid.rows, "x", this.grid.cols);
-        
         // Clear the grid container
         if (!this.gridContainer) {
-            // console.error(`Grid container '${this.gridContainerId}' is null, cannot render grid`);
             return;
         }
         
@@ -104,8 +114,6 @@ class GridView {
                 this.gridContainer.appendChild(nodeElement);
             }
         }
-        
-        // console.log(`GridView (${this.gridContainerId}): Grid rendered with`, this.grid.rows * this.grid.cols, "nodes");
     }
 
     /**
@@ -154,6 +162,10 @@ class GridView {
         
         return nodeElement;
     }
+    
+    //=============================================================================
+    // TILESET MANAGEMENT
+    //=============================================================================
     
     /**
      * Generate a deterministic but visually random tile variation based on position
@@ -225,6 +237,10 @@ class GridView {
         nodeElement.dataset.tilesetIndex = tilesetIndex;
     }
 
+    //=============================================================================
+    // EVENT HANDLING
+    //=============================================================================
+
     /**
      * Set up event listeners for the grid
      */
@@ -243,6 +259,10 @@ class GridView {
         // Prevent default drag behavior
         this.gridContainer.addEventListener('dragstart', (e) => e.preventDefault());
     }
+
+    //=============================================================================
+    // EVENT HANDLING - MOUSE EVENTS
+    //=============================================================================
 
     /**
      * Handle mouse down event
@@ -319,6 +339,10 @@ class GridView {
             }
         }
     }
+
+    //=============================================================================
+    // EVENT HANDLING - TOUCH EVENTS
+    //=============================================================================
 
     /**
      * Handle touch start event
@@ -400,6 +424,10 @@ class GridView {
         activeNodes.forEach(node => node.classList.remove('touch-active'));
     }
 
+    //=============================================================================
+    // NODE INTERACTION
+    //=============================================================================
+
     /**
      * Handle node click
      * @param {number} row - Row of the clicked node
@@ -416,7 +444,6 @@ class GridView {
         const gameController = this.gameController || window.gameController;
         
         if (!gameController) {
-            // console.error("GridView: No gameController found, cannot handle node action");
             return;
         }
         
@@ -537,16 +564,14 @@ class GridView {
                 
                 // Add error handling
                 startImg.onerror = function() {
-                    // console.error(`ERROR: Failed to load start image at (${row}, ${col})`);
+                    // Failed to load start image - silent fail is acceptable here
                 };
                 
                 // Add the start image on top of the node
                 nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
                 nodeElement.appendChild(startImg);
-                
-                // console.log(`Added start image to node at (${row}, ${col})`);
             } catch (error) {
-                // console.error('Error adding start image:', error);
+                // Error handling for image attachment failures
             }
         }
     }
@@ -606,19 +631,21 @@ class GridView {
                 
                 // Add error handling
                 endImg.onerror = function() {
-                    // console.error(`ERROR: Failed to load end image at (${row}, ${col})`);
+                    // Failed to load end image - silent fail is acceptable here
                 };
                 
                 // Add the end image on top of the node
                 nodeElement.style.position = 'relative'; // Ensure the absolute positioning works
                 nodeElement.appendChild(endImg);
-                
-                // console.log(`Added end image to node at (${row}, ${col})`);
             } catch (error) {
-                // console.error('Error adding end image:', error);
+                // Error handling for image attachment failures
             }
         }
     }
+
+    //=============================================================================
+    // NODE STATE MANAGEMENT
+    //=============================================================================
 
     /**
      * Toggle a node's wall state
@@ -662,7 +689,7 @@ class GridView {
                 obstacleImg.className = 'obstacle-overlay';
                 // Add error handler
                 obstacleImg.onerror = function() {
-                    // console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                    // Try alternate path if the main path fails
                     obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
                 };
                 nodeElement.appendChild(obstacleImg);
@@ -721,7 +748,6 @@ class GridView {
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
         if (gameController) {
-            // console.log(`GridView (${this.gridContainerId}): Moving start node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'start');
             return;
         }
@@ -743,7 +769,6 @@ class GridView {
         // Update all grids via the game controller if it exists
         const gameController = this.gameController || window.gameController;
         if (gameController) {
-            // console.log(`GridView (${this.gridContainerId}): Moving end node to (${row}, ${col})`);
             gameController.handleNodeAction(this.gridIndex, row, col, 'end');
             return;
         }
@@ -759,12 +784,14 @@ class GridView {
         this.currentTool = tool;
     }
 
+    //=============================================================================
+    // GRID UPDATING AND VISUALIZATION
+    //=============================================================================
+
     /**
      * Update the grid view based on the model
      */
     update() {
-        // console.log(`GridView (${this.gridContainerId}): Updating view`);
-        
         // Use direct DOM access instead of nodeElements array that might not be initialized
         for (let row = 0; row < this.grid.rows; row++) {
             for (let col = 0; col < this.grid.cols; col++) {
@@ -775,7 +802,6 @@ class GridView {
                 
                 // Skip if nodeElement doesn't exist
                 if (!nodeElement) {
-                    // console.warn(`GridView (${this.gridContainerId}): NodeElement at [${row}][${col}] not found, skipping`);
                     continue;
                 }
                 
@@ -824,7 +850,7 @@ class GridView {
                     obstacleImg.className = 'obstacle-overlay';
                     // Add error handler
                     obstacleImg.onerror = function() {
-                        // console.error(`Failed to load obstacle${obstacleNum}.png, trying alternate path`);
+                        // Try alternate path if the main path fails
                         obstacleImg.src = `./src/assets/images/obstacle${obstacleNum}.png`;
                     };
                     nodeElement.appendChild(obstacleImg);
@@ -852,7 +878,7 @@ class GridView {
                     `;
                     // Add error handler
                     startImg.onerror = function() {
-                        // console.error('Failed to load start.png, trying alternate path');
+                        // Try alternate path if the main path fails
                         startImg.src = './src/assets/images/start.png';
                     };
                     nodeElement.style.position = 'relative';
@@ -878,7 +904,7 @@ class GridView {
                     `;
                     // Add error handler
                     endImg.onerror = function() {
-                        // console.error('Failed to load end.png, trying alternate path');
+                        // Try alternate path if the main path fails
                         endImg.src = './src/assets/images/end.png';
                     };
                     nodeElement.style.position = 'relative';
@@ -904,8 +930,8 @@ class GridView {
                     `;
                     // Handle error case
                     weightedImg.onerror = function() {
-                        // console.error('Failed to load monster.gif, trying absolute path');
-                        weightedImg.src = 'C:/Users/kenzj/Desktop/cmsc126le3/src/assets/gifs/monster.gif';
+                        // Try alternate path if the main path fails
+                        weightedImg.src = './src/assets/gifs/monster.gif';
                     };
                     nodeElement.style.position = 'relative';
                     nodeElement.appendChild(weightedImg);
@@ -977,6 +1003,10 @@ class GridView {
             }
         }
     }
+
+    //=============================================================================
+    // ALGORITHM VISUALIZATION
+    //=============================================================================
 
     /**
      * Visualize the algorithm execution
@@ -1120,67 +1150,14 @@ class GridView {
         }
     }
 
-    /**
-     * Create mini grid previews for alternative paths
-     * @param {Array} paths - Array of path objects
-     */
-    createPathPreviews(paths) {
-        for (let i = 0; i < paths.length; i++) {
-            const previewContainer = document.querySelector(`#path-preview-${i + 1} .preview-grid`);
-            const pathLengthElement = document.querySelector(`#path-preview-${i + 1} .path-length`);
-            
-            if (previewContainer && pathLengthElement) {
-                // Clear previous preview
-                previewContainer.innerHTML = '';
-                
-                // Set preview grid size
-                const previewSize = 10; // 10x10 mini grid
-                previewContainer.style.gridTemplateColumns = `repeat(${previewSize}, 1fr)`;
-                previewContainer.style.gridTemplateRows = `repeat(${previewSize}, 1fr)`;
-                
-                // Create mini grid cells
-                for (let row = 0; row < previewSize; row++) {
-                    for (let col = 0; col < previewSize; col++) {
-                        const cell = document.createElement('div');
-                        cell.className = 'preview-node';
-                        cell.id = `preview-${i + 1}-${row}-${col}`;
-                        previewContainer.appendChild(cell);
-                    }
-                }
-                
-                // Update path length
-                pathLengthElement.textContent = paths[i].distance || 0;
-                
-                // Draw path if it exists
-                if (paths[i].path && paths[i].path.length > 0) {
-                    const arrowPath = PathUtils.createArrowPath(paths[i].path, previewSize);
-                    
-                    // Mark start and end points
-                    if (arrowPath.start) {
-                        const startCell = document.getElementById(`preview-${i + 1}-${arrowPath.start.row}-${arrowPath.start.col}`);
-                        if (startCell) startCell.classList.add('start');
-                    }
-                    
-                    if (arrowPath.end) {
-                        const endCell = document.getElementById(`preview-${i + 1}-${arrowPath.end.row}-${arrowPath.end.col}`);
-                        if (endCell) endCell.classList.add('end');
-                    }
-                    
-                    // Mark path cells
-                    for (const arrow of arrowPath.arrows) {
-                        const cell = document.getElementById(`preview-${i + 1}-${arrow.to.row}-${arrow.to.col}`);
-                        if (cell) cell.classList.add('path');
-                    }
-                }
-            }
-        }
-    }
+    //=============================================================================
+    // UI HELPERS
+    //=============================================================================
 
     /**
      * Update node counts in the UI
      */
     updateNodeCounts() {
-        // Define this function if it doesn't exist to prevent errors
         // Find the visited count and path length elements
         const visitedCountElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-visited-count`);
         const pathLengthElement = document.getElementById(`${this.gridContainerId.replace('-grid', '')}-path-length`);

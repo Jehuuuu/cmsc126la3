@@ -1,7 +1,16 @@
 /**
  * UIView class for handling UI controls and interactions
  */
+
+//=============================================================================
+// UI VIEW
+//=============================================================================
+
 class UIView {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
     /**
      * Create a new UIView
      * @param {Object} controllers - The controller objects
@@ -12,195 +21,70 @@ class UIView {
         this.activeToolButton = null;
     }
 
+    //=============================================================================
+    // EVENT LISTENERS
+    //=============================================================================
+    
     /**
      * Set up event listeners for UI controls
      */
     setupEventListeners() {
-        // console.log("UIView: Setting up event listeners");
+        // Grid size control - pair desktop and mobile
+        this.setupPairedControls('grid-size', 'grid-size-mobile', (value) => {
+            if (value === 'custom') {
+                // Show custom grid size modal
+                this.showCustomGridSizeModal();
+                return;
+            }
+            
+            const size = parseInt(value);
+            this.controllers.game.resizeGrid(size, size);
+            
+            // Show toast notification for grid resize
+            this.showToast(`Grid size changed to ${size}x${size}`, 'info');
+        });
         
-        // Grid size control - desktop
-        const gridSizeSelect = document.getElementById('grid-size');
-        // console.log("Grid size select found:", !!gridSizeSelect);
-        if (gridSizeSelect) {
-            gridSizeSelect.addEventListener('change', () => {
-                const value = gridSizeSelect.value;
-                
-                if (value === 'custom') {
-                    // Show custom grid size modal
-                    this.showCustomGridSizeModal();
-                    return;
-                }
-                
-                const size = parseInt(value);
-                this.controllers.game.resizeGrid(size, size);
-                
-                // Show toast notification for grid resize
-                if (window.Toast) {
-                    window.Toast.info(`Grid size changed to ${size}x${size}`);
-                }
-                
-                // Sync mobile control
-                const mobileSizeSelect = document.getElementById('grid-size-mobile');
-                if (mobileSizeSelect) {
-                    mobileSizeSelect.value = value;
-                }
-            });
-        }
+        // Visualization speed control - pair desktop and mobile
+        this.setupPairedControls('visualization-speed', 'visualization-speed-mobile', (speed) => {
+            this.controllers.dijkstra.setSpeed(speed);
+            this.controllers.astar.setSpeed(speed);
+        });
         
-        // Grid size control - mobile
-        const gridSizeMobileSelect = document.getElementById('grid-size-mobile');
-        if (gridSizeMobileSelect) {
-            gridSizeMobileSelect.addEventListener('change', () => {
-                const value = gridSizeMobileSelect.value;
-                
-                if (value === 'custom') {
-                    // Show custom grid size modal
-                    this.showCustomGridSizeModal();
-                    return;
-                }
-                
-                const size = parseInt(value);
-                this.controllers.game.resizeGrid(size, size);
-                
-                // Show toast notification for grid resize
-                if (window.Toast) {
-                    window.Toast.info(`Grid size changed to ${size}x${size}`);
-                }
-                
-                // Sync desktop control
-                if (gridSizeSelect) {
-                    gridSizeSelect.value = value;
-                }
-            });
-        }
-        
-        // Visualization speed control - desktop
-        const speedSelect = document.getElementById('visualization-speed');
-        // console.log("Speed select found:", !!speedSelect);
-        if (speedSelect) {
-            speedSelect.addEventListener('change', () => {
-                const speed = speedSelect.value;
-                this.controllers.dijkstra.setSpeed(speed);
-                this.controllers.astar.setSpeed(speed);
-                
-                // Sync mobile control
-                const mobileSpeedSelect = document.getElementById('visualization-speed-mobile');
-                if (mobileSpeedSelect) {
-                    mobileSpeedSelect.value = speed;
-                }
-            });
-        }
-        
-        // Visualization speed control - mobile
-        const speedMobileSelect = document.getElementById('visualization-speed-mobile');
-        if (speedMobileSelect) {
-            speedMobileSelect.addEventListener('change', () => {
-                const speed = speedMobileSelect.value;
-                this.controllers.dijkstra.setSpeed(speed);
-                this.controllers.astar.setSpeed(speed);
-                
-                // Sync desktop control
-                if (speedSelect) {
-                    speedSelect.value = speed;
-                }
-            });
-        }
-        
-        // Visualization mode control - desktop
-        const modeSelect = document.getElementById('visualization-mode');
-        // console.log("Mode select found:", !!modeSelect);
-        if (modeSelect) {
-            modeSelect.addEventListener('change', (event) => {
-                const selectedMode = event.target.value;
-                const previousMode = this.controllers.dijkstra.mode;
-                
-                // First, check if both algorithms have completed visualizations
-                const bothAlgorithmsCompleted = this.checkIfBothAlgorithmsCompleted();
-                
-                // Apply mode changes to both controllers
-                this.controllers.dijkstra.setMode(selectedMode);
-                this.controllers.astar.setMode(selectedMode);
-                
-                // Ensure visualizations are properly reset for both algorithms regardless
-                // of which mode we're switching to
-                if (previousMode !== selectedMode) {
-                    // Reset visualizations in both controllers
-                    this.controllers.dijkstra.resetPathVisualization();
-                    this.controllers.astar.resetPathVisualization();
+        // Visualization mode control - pair desktop and mobile
+        this.setupPairedControls('visualization-mode', 'visualization-mode-mobile', (selectedMode) => {
+            const previousMode = this.controllers.dijkstra.mode;
+            
+            // First, check if both algorithms have completed visualizations
+            const bothAlgorithmsCompleted = this.checkIfBothAlgorithmsCompleted();
+            
+            // Apply mode changes to both controllers
+            this.controllers.dijkstra.setMode(selectedMode);
+            this.controllers.astar.setMode(selectedMode);
+            
+            // Ensure visualizations are properly reset for both algorithms regardless
+            // of which mode we're switching to
+            if (previousMode !== selectedMode) {
+                // Reset visualizations in both controllers
+                this.controllers.dijkstra.resetPathVisualization();
+                this.controllers.astar.resetPathVisualization();
 
-                    // Enable all controls
-                    this.setGridInteractionsDisabled(false);
-                    
-                    // Explicitly ensure mode selectors are enabled
-                    this.controllers.dijkstra.enableModeSelectors();
-                }
+                // Enable all controls
+                this.setGridInteractionsDisabled(false);
                 
-                // Show toast notification for mode change
-                if (window.Toast) {
-                    if (selectedMode === 'step') {
-                        window.Toast.info('Step-by-step mode activated');
-                    }
-                }
-                
-                // Sync mobile control
-                const mobileModeSelect = document.getElementById('visualization-mode-mobile');
-                if (mobileModeSelect) {
-                    mobileModeSelect.value = selectedMode;
-                }
-                
-                // Update the step-by-step button visibility
-                if (typeof toggleStepByStepButton === 'function') {
-                    toggleStepByStepButton(selectedMode === 'step');
-                }
-            });
-        }
-        
-        // Visualization mode control - mobile
-        const modeMobileSelect = document.getElementById('visualization-mode-mobile');
-        if (modeMobileSelect) {
-            modeMobileSelect.addEventListener('change', (event) => {
-                const selectedMode = event.target.value;
-                const previousMode = this.controllers.dijkstra.mode;
-                
-                // First, check if both algorithms have completed visualizations
-                const bothAlgorithmsCompleted = this.checkIfBothAlgorithmsCompleted();
-                
-                // Apply mode changes to both controllers
-                this.controllers.dijkstra.setMode(selectedMode);
-                this.controllers.astar.setMode(selectedMode);
-                
-                // Ensure visualizations are properly reset for both algorithms regardless
-                // of which mode we're switching to
-                if (previousMode !== selectedMode) {
-                    // Reset visualizations in both controllers
-                    this.controllers.dijkstra.resetPathVisualization();
-                    this.controllers.astar.resetPathVisualization();
-
-                    // Enable all controls
-                    this.setGridInteractionsDisabled(false);
-                    
-                    // Explicitly ensure mode selectors are enabled
-                    this.controllers.dijkstra.enableModeSelectors();
-                }
-                
-                // Show toast notification for mode change
-                if (window.Toast) {
-                    if (selectedMode === 'step') {
-                        window.Toast.info('Step-by-step mode activated');
-                    }
-                }
-                
-                // Sync desktop control
-                if (modeSelect) {
-                    modeSelect.value = selectedMode;
-                }
-                
-                // Update the step-by-step button visibility
-                if (typeof toggleStepByStepButton === 'function') {
-                    toggleStepByStepButton(selectedMode === 'step');
-                }
-            });
-        }
+                // Explicitly ensure mode selectors are enabled
+                this.controllers.dijkstra.enableModeSelectors();
+            }
+            
+            // Show toast notification for mode change
+            if (selectedMode === 'step') {
+                this.showToast('Step-by-step mode activated', 'info');
+            }
+            
+            // Update the step-by-step button visibility
+            if (typeof toggleStepByStepButton === 'function') {
+                toggleStepByStepButton(selectedMode === 'step');
+            }
+        });
         
         // Tool buttons - desktop
         this.setupToolButton('start-node-btn', 'start');
@@ -310,7 +194,6 @@ class UIView {
         
         // Random weights button - desktop
         const randomWeightsButton = document.getElementById('random-weights-btn');
-        // console.log("Random weights button found:", !!randomWeightsButton);
         if (randomWeightsButton) {
             randomWeightsButton.addEventListener('click', () => {
                 this.controllers.game.generateRandomWeights();
@@ -327,7 +210,6 @@ class UIView {
         
         // Random start/end button - desktop
         const randomStartEndButton = document.getElementById('random-start-end-btn');
-        // console.log("Random start/end button found:", !!randomStartEndButton);
         if (randomStartEndButton) {
             randomStartEndButton.addEventListener('click', () => {
                 this.controllers.game.setRandomStartEnd();
@@ -344,7 +226,6 @@ class UIView {
         
         // Save grid button - desktop
         const saveGridButton = document.getElementById('save-grid-btn');
-        // console.log("Save grid button found:", !!saveGridButton);
         if (saveGridButton) {
             saveGridButton.addEventListener('click', () => {
                 this.showSaveGridModal();
@@ -361,7 +242,6 @@ class UIView {
         
         // Load grid button - desktop
         const loadGridButton = document.getElementById('load-grid-btn');
-        // console.log("Load grid button found:", !!loadGridButton);
         if (loadGridButton) {
             loadGridButton.addEventListener('click', () => {
                 this.showLoadGridModal();
@@ -410,14 +290,6 @@ class UIView {
             });
         }
         
-        // Cancel load
-        const cancelLoadButton = document.getElementById('cancel-load-btn');
-        if (cancelLoadButton) {
-            cancelLoadButton.addEventListener('click', () => {
-                this.hideLoadGridModal();
-            });
-        }
-        
         // Help button - desktop
         const helpDesktopButton = document.getElementById('help-btn-desktop');
         if (helpDesktopButton) {
@@ -453,7 +325,6 @@ class UIView {
         
         // Clear grid button - desktop
         const clearGridButton = document.getElementById('clear-grid-btn');
-        // console.log("Clear grid button found:", !!clearGridButton);
         if (clearGridButton) {
             clearGridButton.addEventListener('click', () => {
                 this.handleClearGrid();
@@ -470,7 +341,6 @@ class UIView {
         
         // Start button (find path) - desktop
         const startButton = document.getElementById('start-btn');
-        // console.log("Start button found:", !!startButton);
         if (startButton) {
             startButton.addEventListener('click', () => {
                 // Run both algorithms in parallel using Promise.all
@@ -495,7 +365,6 @@ class UIView {
         
         // Step controls - desktop
         const nextStepButton = document.getElementById('next-step-btn');
-        // console.log("Next step button found:", !!nextStepButton);
         if (nextStepButton) {
             nextStepButton.addEventListener('click', () => {
                 this.controllers.dijkstra.nextStep();
@@ -504,7 +373,6 @@ class UIView {
         }
         
         const prevStepButton = document.getElementById('prev-step-btn');
-        // console.log("Previous step button found:", !!prevStepButton);
         if (prevStepButton) {
             prevStepButton.addEventListener('click', () => {
                 this.controllers.dijkstra.prevStep();
@@ -528,17 +396,6 @@ class UIView {
                 this.controllers.astar.prevStep();
             });
         }
-        
-        // Alternative path selection
-        for (let i = 1; i <= 3; i++) {
-            const pathPreview = document.getElementById(`path-preview-${i}`);
-            // console.log(`Path preview ${i} found:`, !!pathPreview);
-            if (pathPreview) {
-                pathPreview.addEventListener('click', () => {
-                    this.controllers.visualization.selectAlternativePath(i - 1);
-                });
-            }
-        }
     }
 
     /**
@@ -548,7 +405,6 @@ class UIView {
      */
     setupToolButton(buttonId, tool) {
         const button = document.getElementById(buttonId);
-        // console.log(`Tool button '${buttonId}' found:`, !!button);
         if (button) {
             button.addEventListener('click', () => {
                 this.setActiveTool(button, tool);
@@ -560,6 +416,10 @@ class UIView {
             }
         }
     }
+
+    //=============================================================================
+    // TOOL MANAGEMENT
+    //=============================================================================
 
     /**
      * Set the active tool
@@ -632,6 +492,10 @@ class UIView {
             mobileButton.classList.add('active');
         }
     }
+
+    //=============================================================================
+    // STEP CONTROLS
+    //=============================================================================
 
     /**
      * Enable/disable step controls
@@ -726,6 +590,10 @@ class UIView {
         }
     }
     
+    //=============================================================================
+    // GRID INTERACTION CONTROLS
+    //=============================================================================
+    
     /**
      * Disable grid interactions during visualization
      * @param {boolean} disabled - Whether interactions should be disabled
@@ -789,6 +657,10 @@ class UIView {
         if (clearGridMobileBtn) clearGridMobileBtn.disabled = false;
     }
 
+    //=============================================================================
+    // MODAL MANAGEMENT
+    //=============================================================================
+    
     /**
      * Show the save grid modal
      */
@@ -884,26 +756,20 @@ class UIView {
         }
     }
     
+    //=============================================================================
+    // GRID MANAGEMENT
+    //=============================================================================
+    
     /**
      * Load a grid by name
      * @param {string} name - The name of the grid to load
      */
     loadGrid(name) {
         if (this.controllers.game.loadGrid(name)) {
-            // Use toast notification instead of alert
-            if (window.Toast) {
-                window.Toast.success(`Grid "${name}" loaded successfully`);
-            } else {
-                alert(`Grid "${name}" loaded successfully`);
-            }
+            this.showToast(`Grid "${name}" loaded successfully`, 'success');
             this.hideLoadGridModal();
         } else {
-            // Use toast notification for error
-            if (window.Toast) {
-                window.Toast.error(`Failed to load grid "${name}"`);
-            } else {
-                alert(`Failed to load grid "${name}"`);
-            }
+            this.showToast(`Failed to load grid "${name}"`, 'error');
         }
     }
     
@@ -926,21 +792,13 @@ class UIView {
                 // Refresh the modal
                 this.showLoadGridModal();
                 
-                // Use toast notification instead of alert
-                if (window.Toast) {
-                    window.Toast.info(`Grid "${name}" deleted successfully`);
-                } else {
-                    alert(`Grid "${name}" deleted successfully`);
-                }
+                this.showToast(`Grid "${name}" deleted successfully`, 'info');
                 return true;
             }
             return false;
         } catch (error) {
             console.error('Error deleting grid:', error);
-            // Use toast notification for error
-            if (window.Toast) {
-                window.Toast.error('Error deleting grid');
-            }
+            this.showToast('Error deleting grid', 'error');
             return false;
         }
     }
@@ -974,10 +832,7 @@ class UIView {
         // Then clear the grid using the game controller
         this.controllers.game.clearGrid();
         
-        // Show toast notification for grid clear
-        if (window.Toast) {
-            window.Toast.info('Grid cleared');
-        }
+        this.showToast('Grid cleared', 'info');
         
         // Enable user interactions after clearing
         const toolButtons = document.querySelectorAll('.tool-btn');
@@ -990,6 +845,37 @@ class UIView {
         
         if (gridSizeSelect) gridSizeSelect.disabled = false;
         if (gridSizeMobileSelect) gridSizeMobileSelect.disabled = false;
+    }
+
+    //=============================================================================
+    // HELPER METHODS
+    //=============================================================================
+    
+    /**
+     * Show a toast notification or fallback to alert
+     * @param {string} message - The message to display
+     * @param {string} type - The type of toast (info, success, error, warning)
+     */
+    showToast(message, type = 'info') {
+        if (window.Toast) {
+            switch (type) {
+                case 'success':
+                    window.Toast.success(message);
+                    break;
+                case 'error':
+                    window.Toast.error(message);
+                    break;
+                case 'warning':
+                    window.Toast.warning(message);
+                    break;
+                case 'info':
+                default:
+                    window.Toast.info(message);
+                    break;
+            }
+        } else {
+            alert(message);
+        }
     }
 
     /**
@@ -1059,10 +945,7 @@ class UIView {
             
             // Validate size
             if (isNaN(size) || size < 5 || size > 50) {
-                // Show error
-                if (window.Toast) {
-                    window.Toast.error('Please enter a valid grid size between 5 and 50');
-                }
+                this.showToast('Please enter a valid grid size between 5 and 50', 'error');
                 return;
             }
             
@@ -1101,10 +984,7 @@ class UIView {
             addCustomOption(gridSizeSelect);
             addCustomOption(gridSizeMobileSelect);
             
-            // Show toast notification
-            if (window.Toast) {
-                window.Toast.info(`Grid size changed to ${size}x${size}`);
-            }
+            this.showToast(`Grid size changed to ${size}x${size}`, 'info');
             
             // Clean up event listeners
             cleanupListeners();
@@ -1224,13 +1104,39 @@ class UIView {
         closeBtn.addEventListener('click', cancelDelete);
         document.addEventListener('keydown', handleKeydown);
     }
-}
 
-/**
- * Map the random feature actions to button IDs
- */
-const randomButtonMap = {
-    'random-maze': 'random-maze-btn',
-    'random-weights': 'random-weights-btn', 
-    'random-start-end': 'random-start-end-btn'
-}; 
+    /**
+     * Helper method to set up paired desktop and mobile controls
+     * @param {string} desktopId - ID of the desktop control element
+     * @param {string} mobileId - ID of the mobile control element 
+     * @param {Function} changeHandler - Function to execute when control value changes
+     */
+    setupPairedControls(desktopId, mobileId, changeHandler) {
+        const desktopControl = document.getElementById(desktopId);
+        const mobileControl = document.getElementById(mobileId);
+        
+        if (desktopControl) {
+            desktopControl.addEventListener('change', (e) => {
+                const value = e.target.value;
+                changeHandler(value, desktopControl);
+                
+                // Sync to mobile control
+                if (mobileControl) {
+                    mobileControl.value = value;
+                }
+            });
+        }
+        
+        if (mobileControl) {
+            mobileControl.addEventListener('change', (e) => {
+                const value = e.target.value;
+                changeHandler(value, mobileControl);
+                
+                // Sync to desktop control
+                if (desktopControl) {
+                    desktopControl.value = value;
+                }
+            });
+        }
+    }
+} 

@@ -1,9 +1,13 @@
 /**
  * Main entry point for the pathfinding visualizer and algorithm comparison
  */
+
+//=============================================================================
+// INITIALIZATION
+//=============================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize the application when the DOM is loaded
-    // console.log("DOM loaded, initializing app");
     
     // Check if using mobile device and apply optimizations
     checkAndApplyMobileOptimizations();
@@ -84,6 +88,24 @@ document.addEventListener('DOMContentLoaded', () => {
     setupHelpModal();
     
     // Add keyboard shortcuts for common actions
+    setupKeyboardShortcuts(dijkstraController, astarController);
+    
+    // Support for saving and loading grids from local storage
+    setupGridSaveLoad(gameController);
+    
+    // Expose controllers to window for debugging only in development
+    setupDebugExposure(gameController, dijkstraController, astarController, dijkstraGrid, astarGrid);
+    
+    // Set up tutorial button functionality if tutorial module exists
+    setupTutorialButtons();
+});
+
+/**
+ * Setup keyboard shortcuts for common actions
+ * @param {Object} dijkstraController - The Dijkstra algorithm controller
+ * @param {Object} astarController - The A* algorithm controller
+ */
+function setupKeyboardShortcuts(dijkstraController, astarController) {
     document.addEventListener('keydown', (event) => {
         // Prevent shortcuts when inputs are focused
         if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT' || event.target.tagName === 'TEXTAREA') {
@@ -114,48 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault(); // Prevent page scrolling with space
                 break;
             case 'arrowright': // Next step
-                // Check if both algorithms have reached their max steps
-                if (window.dijkstraController && window.astarController) {
-                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
-                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
-                    
-                    if (dijkstraFinished && astarFinished) {
-                        // Both algorithms have completed, don't proceed
-                        // Make sure all next step buttons are disabled
-                        const nextStepButton = document.getElementById('next-step-btn');
-                        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
-                        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
-                        
-                        if (nextStepButton) nextStepButton.disabled = true;
-                        if (mobileNextStepButton) mobileNextStepButton.disabled = true;
-                        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
-                        
-                        event.preventDefault();
-                        break;
-                    }
-                }
-                
-                // Proceed with the next step if not completed
-                dijkstraController.nextStep();
-                astarController.nextStep();
-                
-                // Check again after taking the step if both algorithms are now complete
-                if (window.dijkstraController && window.astarController) {
-                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
-                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
-                    
-                    if (dijkstraFinished && astarFinished) {
-                        // Both algorithms have reached their end, disable all next step buttons
-                        const nextStepButton = document.getElementById('next-step-btn');
-                        const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
-                        const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
-                        
-                        if (nextStepButton) nextStepButton.disabled = true;
-                        if (mobileNextStepButton) mobileNextStepButton.disabled = true;
-                        if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
-                    }
-                }
-                
+                handleNextStepShortcut(dijkstraController, astarController);
                 event.preventDefault();
                 break;
             case 'arrowleft': // Previous step
@@ -172,9 +153,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
     });
+}
+
+/**
+ * Handle the next step keyboard shortcut
+ * @param {Object} dijkstraController - The Dijkstra algorithm controller
+ * @param {Object} astarController - The A* algorithm controller 
+ */
+function handleNextStepShortcut(dijkstraController, astarController) {
+    // Check if both algorithms have reached their max steps
+    if (dijkstraController && astarController) {
+        const dijkstraFinished = dijkstraController.currentStep >= dijkstraController.maxStep;
+        const astarFinished = astarController.currentStep >= astarController.maxStep;
+        
+        if (dijkstraFinished && astarFinished) {
+            // Both algorithms have completed, don't proceed
+            // Make sure all next step buttons are disabled
+            const nextStepButton = document.getElementById('next-step-btn');
+            const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+            const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+            
+            if (nextStepButton) nextStepButton.disabled = true;
+            if (mobileNextStepButton) mobileNextStepButton.disabled = true;
+            if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+            
+            return;
+        }
+    }
     
-    // Support for saving and loading grids from local storage
-    // Add buttons for these features if desired
+    // Proceed with the next step if not completed
+    dijkstraController.nextStep();
+    astarController.nextStep();
+    
+    // Check again after taking the step if both algorithms are now complete
+    if (dijkstraController && astarController) {
+        const dijkstraFinished = dijkstraController.currentStep >= dijkstraController.maxStep;
+        const astarFinished = astarController.currentStep >= astarController.maxStep;
+        
+        if (dijkstraFinished && astarFinished) {
+            // Both algorithms have reached their end, disable all next step buttons
+            const nextStepButton = document.getElementById('next-step-btn');
+            const mobileNextStepButton = document.getElementById('next-step-btn-mobile');
+            const mobileStepMenuNextButton = document.getElementById('mobile-next-step');
+            
+            if (nextStepButton) nextStepButton.disabled = true;
+            if (mobileNextStepButton) mobileNextStepButton.disabled = true;
+            if (mobileStepMenuNextButton) mobileStepMenuNextButton.disabled = true;
+        }
+    }
+}
+
+/**
+ * Setup save and load grid functionality
+ * @param {Object} gameController - The game controller
+ */
+function setupGridSaveLoad(gameController) {
+    // Add grid save functionality to window
     window.saveCurrentGrid = (name) => {
         const saveName = prompt('Enter a name for this grid:', name || 'My Grid');
         if (saveName) {
@@ -187,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+    // Add grid load functionality to window
     window.loadSavedGrid = () => {
         const savedGrids = gameController.getSavedGrids();
         if (savedGrids.length === 0) {
@@ -202,28 +237,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    
-    // Expose controllers to window for debugging
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        window.gameController = gameController;
-        window.dijkstraController = dijkstraController;
-        window.astarController = astarController;
-        window.dijkstraGrid = dijkstraGrid;
-        window.astarGrid = astarGrid;
-    }
-    
-    // Log that everything is set up
-    // console.log("Pathfinding visualizer initialized successfully");
-    
-    // Initialize tutorial at the end of the document ready function
-    if (window.modularTutorial) {
-        window.modularTutorial.init();
-    }
-    
-    // Set up tutorial button functionality
+}
+
+/**
+ * Set up tutorial buttons if the tutorial module exists
+ */
+function setupTutorialButtons() {
     const tutorialBtnDesktop = document.getElementById('tutorial-btn-desktop');
     const tutorialBtnMobile = document.getElementById('tutorial-btn-mobile');
     
+    // Setup desktop tutorial button
     if (tutorialBtnDesktop) {
         tutorialBtnDesktop.addEventListener('click', () => {
             if (window.modularTutorial) {
@@ -232,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Setup mobile tutorial button
     if (tutorialBtnMobile) {
         tutorialBtnMobile.addEventListener('click', () => {
             if (window.modularTutorial) {
@@ -239,7 +263,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+    
+    // Initialize tutorial if it exists
+    if (window.modularTutorial) {
+        window.modularTutorial.init();
+    }
+}
+
+/**
+ * Expose controllers to window for debugging purposes (development only)
+ */
+function setupDebugExposure(gameController, dijkstraController, astarController, dijkstraGrid, astarGrid) {
+    // Only expose in development environment
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        window.gameController = gameController;
+        window.dijkstraController = dijkstraController;
+        window.astarController = astarController;
+        window.dijkstraGrid = dijkstraGrid;
+        window.astarGrid = astarGrid;
+    }
+}
+
+//=============================================================================
+// MOBILE & RESPONSIVE CONTROLS
+//=============================================================================
 
 /**
  * Set up the toggle button for mobile controls
@@ -288,8 +335,6 @@ function checkAndApplyMobileOptimizations() {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     
     if (isMobile) {
-        // console.log("Mobile device detected, applying optimizations");
-        
         // Improve touch target sizes
         document.querySelectorAll('button, select').forEach(el => {
             el.style.minHeight = '38px';
@@ -395,6 +440,10 @@ function setupMobileAccessButtons() {
     }
 }
 
+//=============================================================================
+// STEP-BY-STEP MENU CONTROLS
+//=============================================================================
+
 /**
  * Set up the step-by-step button and menu for step-by-step mode
  */
@@ -404,7 +453,6 @@ function setupStepByStepMenu() {
     const modeSelect = document.getElementById('visualization-mode');
     
     if (!stepByStepMenu) {
-        // console.error("Step-by-step menu element not found");
         return;
     }
     
@@ -422,13 +470,11 @@ function setupStepByStepMenu() {
         // Add a direct change event listener to respond immediately
         modeSelect.addEventListener('change', (event) => {
             const isStepMode = event.target.value === 'step';
-            // console.log('Mode changed to:', event.target.value);
             toggleStepByStepButton(isStepMode);
         });
         
         // Set initial state based on current mode
         const isStepMode = modeSelect.value === 'step';
-        // console.log('Initial mode is step mode:', isStepMode);
         toggleStepByStepButton(isStepMode);
     }
     
@@ -470,6 +516,13 @@ function setupStepByStepMenu() {
     });
     
     // Set up step control buttons
+    setupStepControlButtons();
+}
+
+/**
+ * Set up the step control buttons in the step-by-step menu
+ */
+function setupStepControlButtons() {
     const mobilePrevStepBtn = document.getElementById('mobile-prev-step');
     const mobileNextStepBtn = document.getElementById('mobile-next-step');
     const mobileStepRunBtn = document.getElementById('mobile-step-run-btn');
@@ -560,9 +613,13 @@ function setupStepByStepMenu() {
             
             // Close the menu after clicking run
             setTimeout(() => {
-                stepByStepMenu.classList.remove('visible');
-                stepByStepBtn.classList.remove('active');
-                stepByStepBtn.setAttribute('aria-expanded', 'false');
+                const stepByStepMenu = document.getElementById('step-by-step-menu');
+                const stepByStepBtn = document.getElementById('step-by-step-btn');
+                if (stepByStepMenu) stepByStepMenu.classList.remove('visible');
+                if (stepByStepBtn) {
+                    stepByStepBtn.classList.remove('active');
+                    stepByStepBtn.setAttribute('aria-expanded', 'false');
+                }
             }, 300);
         });
     }
@@ -581,7 +638,6 @@ function toggleStepByStepButton(show) {
         if (show) {
             // Show step button and adjust other buttons
             stepByStepBtn.classList.add('enabled');
-            // console.log('Showing step-by-step button');
             
             // Adjust positions of other buttons when step button is shown
             if (drawingToolsBtn) {
@@ -593,7 +649,6 @@ function toggleStepByStepButton(show) {
         } else {
             // Hide step button and adjust other buttons
             stepByStepBtn.classList.remove('enabled');
-            // console.log('Hiding step-by-step button');
             
             // Adjust positions of other buttons when step button is hidden
             if (drawingToolsBtn) {
@@ -614,6 +669,10 @@ function toggleStepByStepButton(show) {
     }
 }
 
+//=============================================================================
+// ASSISTIVE TOUCH & MOBILE MENUS
+//=============================================================================
+
 /**
  * Set up the assistive touch button and menu
  * @param {Object} gameController - The game controller to interact with
@@ -624,7 +683,6 @@ function setupAssistiveTouch(gameController) {
     const toolMenuItems = document.querySelectorAll('.tool-menu-item:not(.step-btn)');
     
     if (!assistiveMenu) {
-        // console.error("Assistive menu element not found");
         return;
     }
     
@@ -706,7 +764,6 @@ function setupRandomFeaturesMenu(gameController) {
     const randomMenuItems = document.querySelectorAll('.random-menu-item');
     
     if (!randomMenu) {
-        // console.error("Random menu element not found");
         return;
     }
     
@@ -786,8 +843,6 @@ function setupRandomFeaturesMenu(gameController) {
 function handleAssistiveMenuAction(tool, gameController) {
     // Special handling for clear grid to make it work anytime
     if (tool === 'clear') {
-        // console.log('Assistive touch: forcing grid clear');
-        
         // Force stop any ongoing visualizations
         if (window.dijkstraController) {
             window.dijkstraController.reset();
@@ -837,7 +892,6 @@ function handleAssistiveMenuAction(tool, gameController) {
         if (buttonMap[tool]) {
             const button = document.getElementById(buttonMap[tool]);
             if (button) {
-                // console.log(`Assistive touch: activating ${tool} tool`);
                 button.click();
             }
         }
@@ -852,8 +906,6 @@ function handleAssistiveMenuAction(tool, gameController) {
 function handleRandomMenuAction(action, gameController) {
     // Special handling for clear grid to make it work anytime
     if (action === 'clear-grid') {
-        // console.log('Random menu: forcing grid clear');
-        
         // Force stop any ongoing visualizations
         if (window.dijkstraController) {
             window.dijkstraController.reset();
@@ -892,13 +944,11 @@ function handleRandomMenuAction(action, gameController) {
     } else if (action === 'random-weights') {
         // Handle random weights action
         if (gameController && typeof gameController.generateRandomWeights === 'function') {
-            // console.log('Random menu: generating random weights');
             gameController.generateRandomWeights();
             return;
         }
     } else if (action === 'save-grid') {
         // Handle save grid action
-        // console.log('Random menu: showing save grid modal');
         const saveButton = document.getElementById('save-grid-btn');
         if (saveButton) {
             saveButton.click();
@@ -906,7 +956,6 @@ function handleRandomMenuAction(action, gameController) {
         return;
     } else if (action === 'load-grid') {
         // Handle load grid action
-        // console.log('Random menu: showing load grid modal');
         const loadButton = document.getElementById('load-grid-btn');
         if (loadButton) {
             loadButton.click();
@@ -923,12 +972,15 @@ function handleRandomMenuAction(action, gameController) {
         if (buttonMap[action]) {
             const button = document.getElementById(buttonMap[action]);
             if (button) {
-                // console.log(`Random menu: activating ${action}`);
                 button.click();
             }
         }
     }
 }
+
+//=============================================================================
+// UI CONTROLS & MODALS
+//=============================================================================
 
 /**
  * Set up help modal functionality
@@ -957,8 +1009,6 @@ function setupHelpModal() {
                 toggleHelpModal(false);
             }
         });
-    } else {
-        // console.error('Help modal elements not found');
     }
 }
 

@@ -1,0 +1,16 @@
+{
+  "name": "Skull Cavern Pathing",
+  "short_name": "Skull Cavern",
+  "description": "Interactive visualization comparing Dijkstra's and A* pathfinding algorithms",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a0e0e",
+  "theme_color": "#1a0e0e",
+  "icons": [
+    {
+      "src": "src/assets/images/app_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+} 

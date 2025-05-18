@@ -3,7 +3,21 @@
  * A modular tutorial system with separate components for each step
  */
 
+//=============================================================================
+// TUTORIAL SYSTEM
+//=============================================================================
+
+/**
+ * Main tutorial class that manages the step-by-step tutorial experience
+ */
 class ModularTutorial {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
+    /**
+     * Create a new ModularTutorial instance
+     */
     constructor() {
         this.currentStep = 0;
         this.isActive = false;
@@ -60,8 +74,6 @@ class ModularTutorial {
      * Initialize the tutorial system
      */
     init() {
-        console.log('ModularTutorial: initializing...');
-        
         // Create container if it doesn't exist
         if (!document.getElementById('tutorial-container')) {
             const container = document.createElement('div');
@@ -91,6 +103,10 @@ class ModularTutorial {
         }
     }
     
+    //=============================================================================
+    // TUTORIAL STATE MANAGEMENT
+    //=============================================================================
+    
     /**
      * Reset tutorial state (can be called from console)
      */
@@ -101,7 +117,6 @@ class ModularTutorial {
         this.tutorialCompleted = false;
         this.currentStep = 0;
         this.isActive = false;
-        console.log('Tutorial state reset. Refresh the page to see the tutorial.');
         return 'Tutorial state reset. Refresh the page to see the tutorial.';
     }
     
@@ -111,230 +126,12 @@ class ModularTutorial {
     addStyling() {
         // Check if styles already exist
         if (!document.getElementById('modular-tutorial-styles')) {
-            const style = document.createElement('style');
-            style.id = 'modular-tutorial-styles';
-            style.textContent = `
-                /* Base styles for all modals - matching app style */
-                .tutorial-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: auto;
-                    background-color: rgba(0, 0, 0, 0.7);
-                    backdrop-filter: blur(3px);
-                    z-index: 9998;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-                
-                .tutorial-modal {
-                    background-color: #3c2a21; /* Dark brown background */
-                    color: #fff;
-                    width: 380px;
-                    max-width: 90%;
-                    border: 4px solid #986c44; /* Minecraft dirt border color */
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    padding: 0;
-                    font-family: 'Pixelify Sans', sans-serif;
-                    image-rendering: pixelated;
-                    overflow: hidden;
-                    border-radius: 0;
-                    z-index: 10000;
-                }
-                
-                .tutorial-tooltip {
-                    position: absolute;
-                    background-color: #3c2a21; /* Dark brown background */
-                    color: #fff;
-                    border: 4px solid #986c44; /* Minecraft dirt border color */
-                    padding: 0;
-                    z-index: 10001;
-                    max-width: 300px;
-                    font-family: 'Pixelify Sans', sans-serif;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-                    overflow: hidden;
-                    border-radius: 0;
-                }
-                
-                .tutorial-header {
-                    background-color: #986c44; /* Minecraft dirt color */
-                    color: #fff;
-                    margin: 0;
-                    padding: 10px 15px;
-                    text-shadow: 1px 1px 0 #000;
-                    border-bottom: 4px solid #000;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-                
-                .tutorial-header h2 {
-                    margin: 0;
-                    color: #fff;
-                    font-size: 1.2rem;
-                    text-shadow: 1px 1px 0 #000;
-                    flex: 1;
-                    text-align: left;
-                }
-                
-                .tutorial-content {
-                    padding: 15px 15px 5px;
-                    margin: 0;
-                    text-shadow: 1px 1px 0 #000;
-                    line-height: 1.4;
-                    text-align: center;
-                }
-                .tutorial-content p {
-                    text-align: center;
-                }
-                
-                .tutorial-close {
-                    color: #d9a334; /* Gold color */
-                    font-size: 1.8rem;
-                    font-weight: bold;
-                    cursor: pointer;
-                    text-shadow: 1px 1px 0 #000;
-                    background: none;
-                    border: none;
-                    border-radius: 0;
-                    transition: color 0.2s;
-                    line-height: 1;
-                    padding: 0 0 0 16px;
-                    margin-left: 12px;
-                    display: flex;
-                    align-items: center;
-                }
-                
-                .tutorial-close:hover {
-                    color: #ffcc00;
-                    background: none;
-                }
-                
-                .tutorial-buttons {
-                    display: flex;
-                    padding: 0 15px 15px;
-                    gap: 10px;
-                }
-                
-                .tutorial-btn {
-                    flex: 1;
-                    padding: 8px 0;
-                    font-family: 'Pixelify Sans', sans-serif;
-                    font-size: 1rem;
-                    background-color: #986c44; /* Minecraft dirt color */
-                    color: white;
-                    border: 3px solid #000; /* Thicker border */
-                    cursor: pointer;
-                    text-shadow: 1px 1px 0 #000;
-                    transition: all 0.2s;
-                    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Minecraft-style button shadows */
-                    letter-spacing: 0.5px; /* Slightly spaced out text */
-                }
-                
-                .tutorial-btn:active {
-                    transform: translateY(1px);
-                    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
-                }
-                
-                .tutorial-btn.primary {
-                    background-color: #5bac38; /* Green */
-                    color: white;
-                }
-                
-                .tutorial-btn.primary:hover {
-                    background-color: #4a9c27;
-                    transform: translateY(-2px);
-                    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
-                }
-                
-                .tutorial-btn.danger {
-                    background-color: #e74c3c; /* Red */
-                    color: white;
-                }
-                
-                .tutorial-btn.danger:hover {
-                    background-color: #c0392b;
-                    transform: translateY(-2px);
-                    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
-                }
-                
-                .tutorial-btn:not(.primary):not(.danger) {
-                    background-color: #986c44; /* Dirt brown */
-                    color: white;
-                }
-                
-                .tutorial-btn:not(.primary):not(.danger):hover {
-                    background-color: #825432;
-                    transform: translateY(-2px);
-                    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
-                }
-                
-                /* Highlight effects */
-                .tutorial-highlight {
-                    position: relative;
-                    z-index: 10001;
-                    box-shadow: 0 0 0 4px #d9a334; /* Gold color */
-                    border: 1px solid #000;
-                }
-                
-                /* Flash animation for highlights */
-                @keyframes flash-animation {
-                    0% { box-shadow: 0 0 0 4px #d9a334; } /* Gold color */
-                    50% { box-shadow: 0 0 0 8px rgba(217, 163, 52, 0.6); } /* Faded gold */
-                    100% { box-shadow: 0 0 0 4px #d9a334; } /* Gold color */
-                }
-                
-                .flash-animation {
-                    animation: flash-animation 1.5s infinite;
-                }
-                
-                /* Success animation */
-                .tutorial-success {
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%) scale(0.5);
-                    background-color: #5bac38; /* Match the green button color */
-                    color: white;
-                    width: 100px;
-                    height: 100px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    font-size: 50px;
-                    opacity: 0;
-                    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    z-index: 10002;
-                    border: 4px solid #000;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-                    font-family: 'Pixelify Sans', sans-serif;
-                    text-shadow: 1px 1px 0 #000;
-                    image-rendering: pixelated;
-                }
-                
-                .tutorial-success.show {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                
-                @keyframes success-pulse {
-                    0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
-                    70% { box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
-                    100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
-                }
-                
-                .tutorial-success.show {
-                    animation: success-pulse 1.5s infinite;
-                }
-            `;
-            document.head.appendChild(style);
+            // Create link to external stylesheet
+            const styleLink = document.createElement('link');
+            styleLink.id = 'modular-tutorial-styles';
+            styleLink.rel = 'stylesheet';
+            styleLink.href = 'src/assets/styles/modular-tutorial.css';
+            document.head.appendChild(styleLink);
         }
     }
     
@@ -342,26 +139,25 @@ class ModularTutorial {
      * Handle actions once document is ready
      */
     onDocumentReady() {
-        console.log('ModularTutorial: document ready');
         // Always re-check the flag from localStorage
         this.tutorialCompleted = localStorage.getItem('tutorialCompleted') === 'true';
-        console.log('tutorialCompleted:', this.tutorialCompleted, 'localStorage:', localStorage.getItem('tutorialCompleted'));
+        
         // Show tutorial prompt if not completed
         setTimeout(() => {
             if (!this.tutorialCompleted) {
-                console.log('Tutorial not completed, starting tutorial...');
                 this.startTutorial();
-            } else {
-                console.log('Tutorial already completed, not starting.');
             }
         }, 1500);
     }
+    
+    //=============================================================================
+    // TUTORIAL FLOW CONTROL
+    //=============================================================================
     
     /**
      * Start the tutorial
      */
     startTutorial() {
-        console.log('startTutorial() called');
         this.currentStep = 0;
         this.isActive = true;
         
@@ -432,6 +228,13 @@ class ModularTutorial {
         // Clear all modals
         this.clearAllModals();
         
+        // Clean up all modals
+        Object.values(this.modals).forEach(modal => {
+            if (modal && typeof modal.cleanup === 'function') {
+                modal.cleanup();
+            }
+        });
+        
         // Mark tutorial as completed
         localStorage.setItem('tutorialCompleted', 'true');
         this.tutorialCompleted = true;
@@ -441,14 +244,25 @@ class ModularTutorial {
      * Start feature tour
      */
     startFeatureTour() {
+        // Reset to the first step
         this.currentStep = 0;
         this.isActive = true;
         
-        // Clear any existing modals
+        // Clean up any existing modals or highlights
         this.clearAllModals();
         
-        // Show first feature
-        this.showCurrentFeature();
+        // Cleanup all modals 
+        Object.values(this.modals).forEach(modal => {
+            if (modal && typeof modal.cleanup === 'function') {
+                modal.cleanup();
+            }
+        });
+        
+        // Small delay to ensure UI is ready
+        setTimeout(() => {
+            // Show first feature
+            this.showCurrentFeature();
+        }, 100);
     }
     
     /**
@@ -485,6 +299,10 @@ class ModularTutorial {
         // Show next feature
         this.showCurrentFeature();
     }
+    
+    //=============================================================================
+    // COMPLETION HANDLING
+    //=============================================================================
     
     /**
      * Reset grid and finish tutorial
@@ -572,16 +390,32 @@ class ModularTutorial {
     }
 }
 
+//=============================================================================
+// MODAL BASE CLASS
+//=============================================================================
+
 /**
  * Base modal class for tutorial steps
+ * Provides common functionality for all tutorial modals
  */
 class TutorialModal {
+    /**
+     * Create a new tutorial modal
+     * @param {ModularTutorial} tutorial - The parent tutorial instance
+     */
     constructor(tutorial) {
         this.tutorial = tutorial;
+        this.activeTimers = []; // Track active timers for cleanup
+        this.eventListeners = []; // Track added event listeners for cleanup
     }
+    
+    //=============================================================================
+    // MODAL DISPLAY
+    //=============================================================================
     
     /**
      * Show the modal
+     * Abstract method to be implemented by subclasses
      */
     show() {
         // To be implemented by subclasses
@@ -589,6 +423,10 @@ class TutorialModal {
     
     /**
      * Create base modal structure
+     * @param {string} title - Modal title
+     * @param {string} content - Modal content HTML
+     * @param {Array} buttons - Array of button configuration objects
+     * @returns {Object} References to created overlay and modal elements
      */
     createModal(title, content, buttons = []) {
         const container = document.getElementById('tutorial-container');
@@ -632,7 +470,8 @@ class TutorialModal {
         // Add close button handler
         const closeBtn = modal.querySelector('#tutorial-close');
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
+            this.addEventListenerWithCleanup(closeBtn, 'click', () => {
+                this.cleanup();
                 this.tutorial.closeTutorial();
             });
         }
@@ -641,7 +480,119 @@ class TutorialModal {
     }
     
     /**
+     * Add a button click handler with automatic setup
+     * @param {Element} parent - Parent element containing the button
+     * @param {string} buttonId - ID of the button to attach handler to
+     * @param {Function} handler - Click handler function
+     */
+    addButtonHandler(parent, buttonId, handler) {
+        const button = parent.querySelector(`#${buttonId}`);
+        if (button) {
+            this.addEventListenerWithCleanup(button, 'click', handler);
+        }
+        return button;
+    }
+    
+    /**
+     * Add a skip button handler
+     * @param {Element} parent - Parent element containing the button
+     * @param {string} buttonId - ID of the skip button
+     */
+    addSkipHandler(parent, buttonId = 'skip') {
+        return this.addButtonHandler(parent, buttonId, () => {
+            this.cleanup();
+            this.tutorial.closeTutorial();
+        });
+    }
+    
+    /**
+     * Add a next button handler
+     * @param {Element} parent - Parent element containing the button
+     * @param {string} buttonId - ID of the next button
+     * @param {boolean} isFeature - Whether this is a feature tour step
+     */
+    addNextHandler(parent, buttonId = 'next', isFeature = false) {
+        return this.addButtonHandler(parent, buttonId, () => {
+            this.cleanup();
+            if (isFeature) {
+                this.tutorial.nextFeature();
+            } else {
+                this.tutorial.nextStep();
+            }
+        });
+    }
+    
+    /**
+     * Add event listener with automatic cleanup registration
+     * @param {Element} element - Element to attach listener to
+     * @param {string} eventType - Type of event to listen for
+     * @param {Function} handler - Event handler function
+     */
+    addEventListenerWithCleanup(element, eventType, handler) {
+        if (!element) return;
+        
+        element.addEventListener(eventType, handler);
+        this.eventListeners.push({ element, eventType, handler });
+    }
+    
+    /**
+     * Setup a timer with automatic cleanup registration
+     * @param {Function} callback - Function to call when timer expires
+     * @param {number} delay - Delay in milliseconds
+     * @returns {number} Timer ID
+     */
+    setTimerWithCleanup(callback, delay) {
+        const timerId = setTimeout(() => {
+            // Remove from active timers list when it completes
+            this.activeTimers = this.activeTimers.filter(id => id !== timerId);
+            callback();
+        }, delay);
+        
+        this.activeTimers.push(timerId);
+        return timerId;
+    }
+    
+    /**
+     * Setup an interval with automatic cleanup registration
+     * @param {Function} callback - Function to call on each interval
+     * @param {number} delay - Interval delay in milliseconds
+     * @returns {number} Interval ID
+     */
+    setIntervalWithCleanup(callback, delay) {
+        const intervalId = setInterval(callback, delay);
+        this.activeTimers.push(intervalId);
+        return intervalId;
+    }
+    
+    /**
+     * Clean up all timers and event listeners
+     */
+    cleanup() {
+        // Clear all active timers
+        this.activeTimers.forEach(id => {
+            clearTimeout(id);
+            clearInterval(id);
+        });
+        this.activeTimers = [];
+        
+        // Remove all event listeners
+        this.eventListeners.forEach(({ element, eventType, handler }) => {
+            if (element) {
+                element.removeEventListener(eventType, handler);
+            }
+        });
+        this.eventListeners = [];
+    }
+    
+    //=============================================================================
+    // ELEMENT HIGHLIGHTING
+    //=============================================================================
+    
+    /**
      * Highlight an element
+     * @param {string} selector - CSS selector for the element to highlight
+     * @param {boolean} flashAnimation - Whether to add flashing animation
+     * @returns {Element} The highlighted element
      */
     highlightElement(selector, flashAnimation = false) {
         const element = document.querySelector(selector);
@@ -656,7 +607,28 @@ class TutorialModal {
     }
     
     /**
+     * Remove highlight from an element
+     * @param {Element} element - Element to remove highlight from
+     */
+    removeHighlight(element) {
+        if (!element) return;
+        
+        element.classList.remove('tutorial-highlight');
+        element.classList.remove('flash-animation');
+    }
+    
+    //=============================================================================
+    // TOOLTIP MANAGEMENT
+    //=============================================================================
+    
+    /**
      * Create a tooltip near an element
+     * @param {Element} element - Element to attach tooltip to
+     * @param {string} title - Tooltip title
+     * @param {string} content - Tooltip content HTML
+     * @param {string} position - Position relative to element ('top', 'bottom', 'left', 'right', 'center')
+     * @param {Array} buttons - Array of button configuration objects
+     * @returns {Element} The created tooltip element
      */
     createTooltip(element, title, content, position = 'right', buttons = []) {
         if (!element) return null;
@@ -701,7 +673,8 @@ class TutorialModal {
         // Add close button handler
         const closeBtn = tooltip.querySelector('#tooltip-close');
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
+            this.addEventListenerWithCleanup(closeBtn, 'click', () => {
+                this.cleanup();
                 this.tutorial.closeTutorial();
             });
         }
@@ -711,6 +684,9 @@ class TutorialModal {
     
     /**
      * Position a tooltip relative to an element
+     * @param {Element} tooltip - Tooltip element
+     * @param {Element} element - Target element
+     * @param {string} position - Position ('top', 'bottom', 'left', 'right', 'center')
      */
     positionTooltip(tooltip, element, position) {
         if (!tooltip || !element) return;
@@ -764,13 +740,75 @@ class TutorialModal {
             tooltip.style.left = `${window.innerWidth - newTooltipRect.width - 10}px`;
         }
     }
+    
+    //=============================================================================
+    // FEATURE TOUR HELPERS
+    //=============================================================================
+    
+    /**
+     * Create a feature tour step with standard structure
+     * @param {string} selector - CSS selector for element to highlight
+     * @param {string} title - Modal title
+     * @param {string} content - Modal content HTML
+     * @param {string} position - Position for tooltip ('top', 'bottom', 'left', 'right')
+     * @returns {Element} The created tooltip element
+     */
+    createFeatureTourStep(selector, title, content, position = 'right') {
+        // Highlight target element
+        const element = this.highlightElement(selector, true);
+        
+        if (!element) return null;
+        
+        // Create tooltip with standard buttons
+        const tooltip = this.createTooltip(
+            element,
+            title,
+            content,
+            position,
+            [
+                { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
+                { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
+            ]
+        );
+        
+        // Add standard event listeners using tracked event handlers
+        if (tooltip) {
+            const skipBtn = tooltip.querySelector('#feature-skip');
+            if (skipBtn) {
+                this.addEventListenerWithCleanup(skipBtn, 'click', () => {
+                    this.cleanup();
+                    this.tutorial.closeTutorial();
+                });
+            }
+            
+            const nextBtn = tooltip.querySelector('#feature-next');
+            if (nextBtn) {
+                this.addEventListenerWithCleanup(nextBtn, 'click', () => {
+                    this.cleanup();
+                    this.tutorial.nextFeature();
+                });
+            }
+        }
+        
+        return tooltip;
+    }
 }
 
+//=============================================================================
+// TUTORIAL STEP MODALS
+//=============================================================================
+
 /**
- * Introduction Modal
+ * Introduction Modal - First step of the tutorial
  */
 class IntroModal extends TutorialModal {
+    /**
+     * Show the intro modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const { modal } = this.createModal(
             'Welcome to Skull Cavern Path!',
             'This tutorial will guide you through comparing pathfinding algorithms to find the most efficient route through the Skull Cavern.',
@@ -779,28 +817,31 @@ class IntroModal extends TutorialModal {
                 { id: 'intro-next', text: 'Start Tutorial', primary: true, icon: 'play' }
             ]
         );
-        // Removed manual absolute centering. Flexbox will center the modal.
-        // Add button event listeners
-        const skipBtn = modal.querySelector('#intro-skip');
-        if (skipBtn) {
-            skipBtn.addEventListener('click', () => {
-                this.tutorial.closeTutorial();
-            });
-        }
-        const nextBtn = modal.querySelector('#intro-next');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                this.tutorial.nextStep();
-            });
-        }
+        
+        // Add button event listeners with cleanup
+        this.addButtonHandler(modal, 'intro-skip', () => {
+            this.cleanup();
+            this.tutorial.closeTutorial();
+        });
+        
+        this.addButtonHandler(modal, 'intro-next', () => {
+            this.cleanup();
+            this.tutorial.nextStep();
+        });
     }
 }
 
 /**
- * Algorithm Comparison Modal
+ * Algorithm Comparison Modal - Shows the algorithm panels side by side
  */
 class AlgorithmComparisonModal extends TutorialModal {
+    /**
+     * Show algorithm comparison modal and highlight relevant elements
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // First show the modal with explanation and 'Show Me' button
         const { overlay, modal } = this.createModal(
             'Algorithm Comparison',
@@ -810,44 +851,46 @@ class AlgorithmComparisonModal extends TutorialModal {
                 { id: 'algo-show', text: 'Show Me', primary: true, icon: 'eye' }
             ]
         );
-        // Removed manual absolute centering. Flexbox will center the modal.
-        // Add button event listeners
-        const skipBtn = modal.querySelector('#algo-skip');
-        if (skipBtn) {
-            skipBtn.addEventListener('click', () => {
-                this.tutorial.closeTutorial();
-            });
-        }
-        const showBtn = modal.querySelector('#algo-show');
-        if (showBtn) {
-            showBtn.addEventListener('click', () => {
-                // Remove the modal
-                const container = document.getElementById('tutorial-container');
-                if (container && overlay) {
-                    container.removeChild(overlay);
-                }
-                // Highlight the algorithm container
-                const algorithmContainer = this.highlightElement('.algorithm-comparison', true);
-                // Wait a few seconds to let the user see the highlighted container
-                setTimeout(() => {
-                    // Remove highlight
-                    if (algorithmContainer) {
-                        algorithmContainer.classList.remove('tutorial-highlight');
-                        algorithmContainer.classList.remove('flash-animation');
-                    }
-                    // Move to next step
-                    this.tutorial.nextStep();
-                }, 3000); // Show for 3 seconds
-            });
-        }
+        
+        // Add button event listeners with cleanup
+        this.addButtonHandler(modal, 'algo-skip', () => {
+            this.cleanup();
+            this.tutorial.closeTutorial();
+        });
+        
+        this.addButtonHandler(modal, 'algo-show', () => {
+            // Remove the modal
+            const container = document.getElementById('tutorial-container');
+            if (container && overlay) {
+                container.removeChild(overlay);
+            }
+            
+            // Highlight the algorithm container
+            const algorithmContainer = this.highlightElement('.algorithm-comparison', true);
+            
+            // Wait a few seconds to let the user see the highlighted container
+            this.setTimerWithCleanup(() => {
+                // Remove highlights via cleanup
+                this.cleanup();
+                
+                // Move to next step
+                this.tutorial.nextStep();
+            }, 3000); // Show for 3 seconds
+        });
     }
 }
 
 /**
- * Generate Maze Modal
+ * Generate Maze Modal - Shows how to generate a maze
  */
 class GenerateMazeModal extends TutorialModal {
+    /**
+     * Show maze generation step
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Highlight the generate maze button
         const mazeButton = this.highlightElement('#random-maze-btn', true);
         
@@ -864,36 +907,29 @@ class GenerateMazeModal extends TutorialModal {
                 ]
             );
             
-            // Add event listeners
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#maze-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
+            // Add event listeners with cleanup
+            this.addButtonHandler(tooltip, 'maze-skip', () => {
+                this.cleanup();
+                this.tutorial.closeTutorial();
+            });
+            
+            this.addButtonHandler(tooltip, 'maze-help', () => {
+                // Simulate clicking the maze button
+                if (mazeButton) {
+                    mazeButton.click();
                 }
                 
-                const helpBtn = tooltip.querySelector('#maze-help');
-                if (helpBtn) {
-                    helpBtn.addEventListener('click', () => {
-                        // Simulate clicking the maze button
-                        if (mazeButton) {
-                            mazeButton.click();
-                        }
-                        
-                        // Show success animation
-                        this.tutorial.showSuccess();
-                        
-                        // Wait a bit and move to next step
-                        setTimeout(() => {
-                            this.tutorial.nextStep();
-                        }, 1500);
-                    });
-                }
-            }
+                // Show success animation
+                this.tutorial.showSuccess();
+                
+                // Wait a bit and move to next step
+                this.setTimerWithCleanup(() => {
+                    this.tutorial.nextStep();
+                }, 1500);
+            });
             
-            // Add click listener to the actual button
-            mazeButton.addEventListener('click', (e) => {
+            // Add click listener to the actual button with cleanup
+            this.addEventListenerWithCleanup(mazeButton, 'click', (e) => {
                 // Only react to actual user clicks
                 if (!e.isTrusted) return;
                 
@@ -913,8 +949,8 @@ class GenerateMazeModal extends TutorialModal {
                         if (parentElement) {
                             parentElement.replaceChild(nextBtn, helpBtn);
                             
-                            // Add event listener to next button
-                            nextBtn.addEventListener('click', () => {
+                            // Add event listener to next button with cleanup
+                            this.addEventListenerWithCleanup(nextBtn, 'click', () => {
                                 this.tutorial.nextStep();
                             });
                         }
@@ -926,10 +962,16 @@ class GenerateMazeModal extends TutorialModal {
 }
 
 /**
- * Walls Tool Modal
+ * Walls Tool Modal - Demonstrates how to add walls
  */
 class WallsToolModal extends TutorialModal {
+    /**
+     * Show walls tool tutorial step
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Highlight the wall tool button
         const wallButton = this.highlightElement('#wall-btn', true);
         
@@ -946,41 +988,36 @@ class WallsToolModal extends TutorialModal {
                 ]
             );
             
-            // Add event listeners
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#wall-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const helpBtn = tooltip.querySelector('#wall-help');
-                if (helpBtn) {
-                    helpBtn.addEventListener('click', () => {
-                        // Simulate clicking the wall button
-                        if (wallButton) {
-                            wallButton.click();
-                            
-                            // Show prompt to draw on grid
-                            setTimeout(() => {
-                                const gridNode = document.querySelector('.node:not(.start-node):not(.end-node)');
-                                if (gridNode) {
-                                    this.highlightElement(gridNode, true);
-                                }
-                            }, 500);
-                        }
-                    });
-                }
-            }
+            // Add event listeners with cleanup
+            this.addButtonHandler(tooltip, 'wall-skip', () => {
+                this.cleanup();
+                this.tutorial.closeTutorial();
+            });
             
-            // Add click listener to the wall button
-            wallButton.addEventListener('click', (e) => {
+            this.addButtonHandler(tooltip, 'wall-help', () => {
+                // Simulate clicking the wall button
+                if (wallButton) {
+                    wallButton.click();
+                    
+                    // Show prompt to draw on grid
+                    this.setTimerWithCleanup(() => {
+                        const gridNode = document.querySelector('.node:not(.start-node):not(.end-node)');
+                        if (gridNode) {
+                            // Use CSS selector instead of passing the element
+                            const selector = `.node[data-row="${gridNode.dataset.row}"][data-col="${gridNode.dataset.col}"]`;
+                            this.highlightElement(selector, true);
+                        }
+                    }, 500);
+                }
+            });
+            
+            // Add click listener to the wall button with cleanup
+            this.addEventListenerWithCleanup(wallButton, 'click', (e) => {
                 // Only react to actual user clicks
                 if (!e.isTrusted) return;
                 
                 // Check for wall nodes after a delay
-                setTimeout(() => {
+                this.setTimerWithCleanup(() => {
                     // Check if walls have been added
                     const wallsAdded = document.querySelector('.node.wall');
                     if (wallsAdded) {
@@ -1000,8 +1037,8 @@ class WallsToolModal extends TutorialModal {
                                 if (parentElement) {
                                     parentElement.replaceChild(nextBtn, helpBtn);
                                     
-                                    // Add event listener to next button
-                                    nextBtn.addEventListener('click', () => {
+                                    // Add event listener to next button with cleanup
+                                    this.addEventListenerWithCleanup(nextBtn, 'click', () => {
                                         this.tutorial.nextStep();
                                     });
                                 }
@@ -1011,11 +1048,12 @@ class WallsToolModal extends TutorialModal {
                 }, 1000);
             });
             
-            // Check for wall nodes periodically
-            const checkInterval = setInterval(() => {
+            // Check for wall nodes periodically using setIntervalWithCleanup
+            this.setIntervalWithCleanup(() => {
                 const wallsAdded = document.querySelector('.node.wall');
                 if (wallsAdded) {
-                    clearInterval(checkInterval);
+                    // Clean up all timers
+                    this.cleanup();
                     
                     // Show success
                     this.tutorial.showSuccess();
@@ -1033,8 +1071,8 @@ class WallsToolModal extends TutorialModal {
                             if (parentElement) {
                                 parentElement.replaceChild(nextBtn, helpBtn);
                                 
-                                // Add event listener to next button
-                                nextBtn.addEventListener('click', () => {
+                                // Add event listener with cleanup
+                                this.addEventListenerWithCleanup(nextBtn, 'click', () => {
                                     this.tutorial.nextStep();
                                 });
                             }
@@ -1047,10 +1085,16 @@ class WallsToolModal extends TutorialModal {
 }
 
 /**
- * Weights Tool Modal
+ * Weights Tool Modal - Demonstrates how to add weighted areas
  */
 class WeightsToolModal extends TutorialModal {
+    /**
+     * Show weighted nodes tutorial step
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Highlight the weights tool button
         const weightButton = this.highlightElement('#weighted-node-btn', true);
         
@@ -1067,39 +1111,37 @@ class WeightsToolModal extends TutorialModal {
                 ]
             );
             
-            // Add event listeners
+            // Add event listeners with cleanup
             if (tooltip) {
-                const skipBtn = tooltip.querySelector('#weight-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
+                this.addButtonHandler(tooltip, 'weight-skip', () => {
+                    this.cleanup();
+                    this.tutorial.closeTutorial();
+                });
                 
-                const helpBtn = tooltip.querySelector('#weight-help');
-                if (helpBtn) {
-                    helpBtn.addEventListener('click', () => {
-                        // Simulate clicking the weight button
-                        if (weightButton) {
-                            weightButton.click();
-                            
-                            // Show prompt to draw on grid
-                            setTimeout(() => {
-                                const gridNode = document.querySelector('.node:not(.start-node):not(.end-node):not(.wall)');
-                                if (gridNode) {
-                                    this.highlightElement(gridNode, true);
-                                }
-                            }, 500);
-                        }
-                    });
-                }
+                this.addButtonHandler(tooltip, 'weight-help', () => {
+                    // Simulate clicking the weight button
+                    if (weightButton) {
+                        weightButton.click();
+                        
+                        // Show prompt to draw on grid
+                        this.setTimerWithCleanup(() => {
+                            const gridNode = document.querySelector('.node:not(.start-node):not(.end-node):not(.wall)');
+                            if (gridNode) {
+                                // Use CSS selector instead of passing the element
+                                const selector = `.node[data-row="${gridNode.dataset.row}"][data-col="${gridNode.dataset.col}"]`;
+                                this.highlightElement(selector, true);
+                            }
+                        }, 500);
+                    }
+                });
             }
             
-            // Check for weighted nodes periodically
-            const checkInterval = setInterval(() => {
+            // Check for weighted nodes periodically using setIntervalWithCleanup
+            const checkInterval = this.setIntervalWithCleanup(() => {
                 const weightsAdded = document.querySelector('.node.weighted');
                 if (weightsAdded) {
-                    clearInterval(checkInterval);
+                    // Clear the interval via cleanup since we're using tracked timers
+                    this.cleanup();
                     
                     // Show success
                     this.tutorial.showSuccess();
@@ -1117,8 +1159,8 @@ class WeightsToolModal extends TutorialModal {
                             if (parentElement) {
                                 parentElement.replaceChild(nextBtn, helpBtn);
                                 
-                                // Add event listener to next button
-                                nextBtn.addEventListener('click', () => {
+                                // Add event listener with cleanup
+                                this.addEventListenerWithCleanup(nextBtn, 'click', () => {
                                     this.tutorial.nextStep();
                                 });
                             }
@@ -1131,10 +1173,16 @@ class WeightsToolModal extends TutorialModal {
 }
 
 /**
- * Find Path Modal
+ * Find Path Modal - Shows how to start the algorithm visualization
  */
 class FindPathModal extends TutorialModal {
+    /**
+     * Show the find path tutorial step
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Show a centered modal (not a tooltip)
         const { modal, overlay } = this.createModal(
             'Find Paths',
@@ -1144,54 +1192,63 @@ class FindPathModal extends TutorialModal {
                 { id: 'path-help', text: 'Show Me', primary: true, icon: 'lightbulb' }
             ]
         );
-        // Add event listeners
-        const skipBtn = modal.querySelector('#path-skip');
-        if (skipBtn) {
-            skipBtn.addEventListener('click', () => {
-                this.tutorial.closeTutorial();
-            });
-        }
-        const helpBtn = modal.querySelector('#path-help');
-        if (helpBtn) {
-            helpBtn.addEventListener('click', () => {
-                // Close the modal
-                const container = document.getElementById('tutorial-container');
-                if (container && overlay) {
-                    container.removeChild(overlay);
-                }
-                // Always highlight the header Find Path button
-                const startButton = document.getElementById('start-btn-header');
-                if (startButton) {
-                    startButton.classList.add('tutorial-highlight', 'flash-animation');
-                    // Remove highlight and proceed to next step only when both algorithms are done
-                    const onFindPathClick = () => {
-                        startButton.classList.remove('tutorial-highlight', 'flash-animation');
-                        startButton.removeEventListener('click', onFindPathClick);
-                        // Wait for both algorithms to finish using global completion flags
-                        const pollForCompletion = setInterval(() => {
-                            if (window.dijkstraController.isFinished && window.astarController.isFinished) {
-                                clearInterval(pollForCompletion);
-                                this.tutorial.nextStep();
-                            }
-                        }, 500);
-                        // Fallback timeout to ensure the modal shows even if flags aren't set
-                        setTimeout(() => {
-                            clearInterval(pollForCompletion);
+        
+        // Add event listeners with cleanup
+        this.addButtonHandler(modal, 'path-skip', () => {
+            this.cleanup();
+            this.tutorial.closeTutorial();
+        });
+        
+        this.addButtonHandler(modal, 'path-help', () => {
+            // Close the modal
+            const container = document.getElementById('tutorial-container');
+            if (container && overlay) {
+                container.removeChild(overlay);
+            }
+            
+            // Always highlight the header Find Path button
+            const startButton = document.getElementById('start-btn-header');
+            if (startButton) {
+                startButton.classList.add('tutorial-highlight', 'flash-animation');
+                
+                // Remove highlight and proceed to next step only when both algorithms are done
+                const onFindPathClick = () => {
+                    startButton.classList.remove('tutorial-highlight', 'flash-animation');
+                    // Explicitly remove the click listener
+                    startButton.removeEventListener('click', onFindPathClick);
+                    
+                    // Wait for both algorithms to finish using global completion flags
+                    const pollForCompletion = this.setIntervalWithCleanup(() => {
+                        if (window.dijkstraController?.isFinished && window.astarController?.isFinished) {
+                            this.cleanup(); // Will clear the interval
                             this.tutorial.nextStep();
-                        }, 5000); // 5 seconds fallback
-                    };
-                    startButton.addEventListener('click', onFindPathClick);
-                }
-            });
-        }
+                        }
+                    }, 500);
+                    
+                    // Fallback timeout to ensure the modal shows even if flags aren't set
+                    this.setTimerWithCleanup(() => {
+                        this.cleanup(); // Will clear all timers including the poll interval
+                        this.tutorial.nextStep();
+                    }, 2000);
+                };
+                
+                this.addEventListenerWithCleanup(startButton, 'click', onFindPathClick);
+            }
+        });
     }
 }
 
 /**
- * Results Comparison Modal
+ * Results Comparison Modal - Highlights the algorithm results
  */
 class ResultsComparisonModal extends TutorialModal {
+    /**
+     * Show the results comparison tutorial step
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Show a centered modal (not a tooltip)
         const { modal, overlay } = this.createModal(
             'Compare Results',
@@ -1201,48 +1258,48 @@ class ResultsComparisonModal extends TutorialModal {
                 { id: 'results-show', text: 'Show Me', primary: true, icon: 'lightbulb' }
             ]
         );
+        
         // Add event listeners
-        const skipBtn = modal.querySelector('#results-skip');
-        if (skipBtn) {
-            skipBtn.addEventListener('click', () => {
-                this.tutorial.closeTutorial();
+        this.addButtonHandler(modal, 'results-skip', () => {
+            this.cleanup();
+            this.tutorial.closeTutorial();
+        });
+        
+        this.addButtonHandler(modal, 'results-show', () => {
+            // Close the modal
+            const container = document.getElementById('tutorial-container');
+            if (container && overlay) {
+                container.removeChild(overlay);
+            }
+            
+            // Highlight the path footer info
+            const pathFooters = document.querySelectorAll('.algorithm-footer');
+            pathFooters.forEach(footer => {
+                // Create a unique selector for each footer
+                const algorithmType = footer.closest('.algorithm-container')?.dataset.algorithm || '';
+                const selector = `.algorithm-container[data-algorithm="${algorithmType}"] .algorithm-footer`;
+                this.highlightElement(selector, true);
             });
-        }
-        const showBtn = modal.querySelector('#results-show');
-        if (showBtn) {
-            showBtn.addEventListener('click', () => {
-                // Close the modal
-                const container = document.getElementById('tutorial-container');
-                if (container && overlay) {
-                    container.removeChild(overlay);
-                }
+            
+            // Wait 2 seconds then proceed to the completion step
+            this.setTimerWithCleanup(() => {
+                // Remove highlights using clearAllModals
+                this.tutorial.clearAllModals();
                 
-                // Highlight the path footer info
-                const pathFooters = document.querySelectorAll('.algorithm-footer');
-                pathFooters.forEach(footer => {
-                    this.highlightElement(footer, true);
-                });
-                
-                // Wait 2 seconds then proceed to the completion step
-                setTimeout(() => {
-                    // Remove highlights
-                    pathFooters.forEach(footer => {
-                        footer.classList.remove('tutorial-highlight');
-                        footer.classList.remove('flash-animation');
-                    });
-                    
-                    // Show the completion step
-                    this.tutorial.nextStep();
-                }, 2000);
-            });
-        }
+                // Show the completion step
+                this.tutorial.nextStep();
+            }, 2000);
+        });
     }
 }
 
 /**
- * Completion Modal
+ * Completion Modal - Final step of the basic tutorial
  */
 class CompletionModal extends TutorialModal {
+    /**
+     * Show the completion modal
+     */
     show() {
         const { modal } = this.createModal(
             'Basic Tutorial Complete!',
@@ -1270,259 +1327,282 @@ class CompletionModal extends TutorialModal {
     }
 }
 
+//=============================================================================
+// FEATURE TOUR MODALS
+//=============================================================================
+
 /**
- * Feature Tour Modals
+ * Maze Types Feature Modal - Explains different maze generation algorithms
  */
 class MazeTypesFeatureModal extends TutorialModal {
+    /**
+     * Show the maze types feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         // Highlight the maze type select
         const mazeTypeSelect = this.highlightElement('#maze-type-select', true);
         
         // Create tooltip
         if (mazeTypeSelect) {
-            const tooltip = this.createTooltip(
-                mazeTypeSelect,
+            this.createFeatureTourStep(
+                '#maze-type-select',
                 'Maze Types',
                 'The dropdown menu offers different maze generation algorithms:<br>• Basic Random Maze: Randomly placed walls<br>• Recursive Division: Creates a structured maze with corridors<br>• Vertical/Horizontal Skew: Controls the orientation of passages',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Maze Types',
+                'The maze type dropdown offers different maze generation algorithms like Basic Random, Recursive Division, and directional skew options.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            // Add event listeners
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Random Weights Feature Modal - Explains the random weights feature
+ */
 class RandomWeightsFeatureModal extends TutorialModal {
+    /**
+     * Show the random weights feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const weightsBtn = this.highlightElement('#random-weights-btn', true);
         
         if (weightsBtn) {
-            const tooltip = this.createTooltip(
-                weightsBtn,
+            this.createFeatureTourStep(
+                '#random-weights-btn',
                 'Random Weights',
                 'This button adds random weighted nodes to the grid. Weighted nodes cost more for algorithms to travel through, which can affect path selection.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Random Weights',
+                'The Random Weights button adds randomly distributed weighted nodes to the grid. Weighted nodes cost more for algorithms to travel through, affecting path selection.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Random Start/End Feature Modal - Explains the random start/end point feature
+ */
 class RandomStartEndFeatureModal extends TutorialModal {
+    /**
+     * Show the random start/end feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const startEndBtn = this.highlightElement('#random-start-end-btn', true);
         
         if (startEndBtn) {
-            const tooltip = this.createTooltip(
-                startEndBtn,
+            this.createFeatureTourStep(
+                '#random-start-end-btn',
                 'Random Start/End',
                 'Quickly randomize the start and end points to test algorithms on different scenarios.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Random Start/End',
+                'The Random Start/End button allows you to quickly randomize the start and end points to test algorithms on different scenarios.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Step By Step Feature Modal - Explains the step-by-step visualization mode
+ */
 class StepByStepFeatureModal extends TutorialModal {
+    /**
+     * Show the step-by-step feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const visualizationMode = this.highlightElement('#visualization-mode', true);
         
         if (visualizationMode) {
-            const tooltip = this.createTooltip(
-                visualizationMode,
+            this.createFeatureTourStep(
+                '#visualization-mode',
                 'Step-by-Step Mode',
                 'Using this mode, you can see exactly how each algorithm works by stepping forward and backward through the pathfinding process.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Step-by-Step Mode',
+                'The Step-by-Step visualization mode allows you to see exactly how each algorithm works by stepping forward and backward through the pathfinding process.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Speed Controls Feature Modal - Explains the visualization speed controls
+ */
 class SpeedControlsFeatureModal extends TutorialModal {
+    /**
+     * Show the speed controls feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const speedControl = this.highlightElement('#visualization-speed', true);
         
         if (speedControl) {
-            const tooltip = this.createTooltip(
-                speedControl,
+            this.createFeatureTourStep(
+                '#visualization-speed',
                 'Speed Controls',
                 'Adjust how quickly the algorithms run during visualization. Slower speeds help you see what\'s happening in detail.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Speed Controls',
+                'Speed controls allow you to adjust how quickly the algorithms run during visualization. Slower speeds help you see what\'s happening in detail.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Grid Size Feature Modal - Explains the grid size adjustment feature
+ */
 class GridSizeFeatureModal extends TutorialModal {
+    /**
+     * Show the grid size feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const gridSize = this.highlightElement('#grid-size', true);
         
         if (gridSize) {
-            const tooltip = this.createTooltip(
-                gridSize,
+            this.createFeatureTourStep(
+                '#grid-size',
                 'Grid Size',
                 'Change the size of the grid to create more complex mazes or simpler test cases.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Grid Size',
+                'The Grid Size control allows you to change the size of the grid to create more complex mazes or simpler test cases.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Save/Load Feature Modal - Explains the grid saving and loading features
+ */
 class SaveLoadFeatureModal extends TutorialModal {
+    /**
+     * Show the save/load feature modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const saveBtn = this.highlightElement('#save-grid-btn-header', true);
         
         if (saveBtn) {
-            const tooltip = this.createTooltip(
-                saveBtn,
+            this.createFeatureTourStep(
+                '#save-grid-btn-header',
                 'Save/Load Grid',
                 'Save your custom grids and load them later to compare algorithm performance on the same layout.',
-                'right',
+                'right'
+            );
+        } else {
+            // Fallback if element not found
+            const { modal } = this.createModal(
+                'Save/Load Grid',
+                'The Save and Load features allow you to save your custom grids and load them later to compare algorithm performance on the same layout.',
                 [
                     { id: 'feature-skip', text: 'Skip All', danger: true, icon: 'times' },
                     { id: 'feature-next', text: 'Next Feature', primary: true, icon: 'arrow-right' }
                 ]
             );
             
-            if (tooltip) {
-                const skipBtn = tooltip.querySelector('#feature-skip');
-                if (skipBtn) {
-                    skipBtn.addEventListener('click', () => {
-                        this.tutorial.closeTutorial();
-                    });
-                }
-                
-                const nextBtn = tooltip.querySelector('#feature-next');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        this.tutorial.nextFeature();
-                    });
-                }
-            }
+            this.addSkipHandler(modal, 'feature-skip');
+            this.addNextHandler(modal, 'feature-next', true);
         }
     }
 }
 
+/**
+ * Feature Completion Modal - Final step of the feature tour
+ */
 class FeatureCompletionModal extends TutorialModal {
+    /**
+     * Show the feature completion modal
+     */
     show() {
+        // Cleanup any previous tooltips/highlights
+        this.cleanup();
+        
         const { modal } = this.createModal(
             'Feature Overview Complete',
             'You\'ve learned all the main features! Ready to start exploring on your own?',
@@ -1532,15 +1612,21 @@ class FeatureCompletionModal extends TutorialModal {
         );
         
         // Add button event listener
-        const finishBtn = modal.querySelector('#feature-finish');
-        if (finishBtn) {
-            finishBtn.addEventListener('click', () => {
-                this.tutorial.resetAndFinish();
-            });
-        }
+        this.addButtonHandler(modal, 'feature-finish', () => {
+            this.cleanup();
+            this.tutorial.resetAndFinish();
+        });
     }
 }
 
-// Export the tutorial instance
+// Create tutorial instance and make it globally available
 const modularTutorial = new ModularTutorial();
-window.modularTutorial = modularTutorial; 
+window.modularTutorial = modularTutorial;
+
+// Initialize tutorial on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with a short delay to ensure all elements are loaded
+    setTimeout(() => {
+        window.modularTutorial.init();
+    }, 500);
+}); 
