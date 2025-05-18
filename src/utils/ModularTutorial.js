@@ -72,9 +72,6 @@ class ModularTutorial {
         // Add styling
         this.addStyling();
         
-        // Add tutorial button to help modal
-        this.addTutorialButton();
-        
         // Check if tutorial was completed before
         this.tutorialCompleted = localStorage.getItem('tutorialCompleted') === 'true';
         
@@ -358,38 +355,6 @@ class ModularTutorial {
                 console.log('Tutorial already completed, not starting.');
             }
         }, 1500);
-    }
-    
-    /**
-     * Add a button to restart the tutorial
-     */
-    addTutorialButton() {
-        // Check if help modal exists
-        const helpModal = document.getElementById('help-modal');
-        if (helpModal) {
-            const helpContent = helpModal.querySelector('.help-content');
-            if (helpContent) {
-                // Create a tutorial section
-                const tutorialSection = document.createElement('div');
-                tutorialSection.innerHTML = `
-                    <h3>Tutorial</h3>
-                    <p>Need help getting started? Run the interactive tutorial to learn how to use the app.</p>
-                    <button id="restart-tutorial-btn" class="action-btn">Start Tutorial</button>
-                `;
-                
-                // Insert at the beginning of help content
-                helpContent.insertBefore(tutorialSection, helpContent.firstChild);
-                
-                // Add event listener
-                document.getElementById('restart-tutorial-btn').addEventListener('click', () => {
-                    // Close help modal first
-                    helpModal.style.display = 'none';
-                    
-                    // Start tutorial
-                    this.startTutorial();
-                });
-            }
-        }
     }
     
     /**

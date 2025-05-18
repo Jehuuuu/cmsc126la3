@@ -9,25 +9,22 @@ class GameController {
      * @param {VisualizationController[]} visualizationControllers - Array of visualization controllers
      */
     constructor(grids, gridViews, visualizationControllers) {
-        // console.log("GameController: Initializing with", grids.length, "grids");
-        
         // Handle both single grid and multiple grid scenarios
         this.grids = Array.isArray(grids) ? grids : [grids];
         this.gridViews = Array.isArray(gridViews) ? gridViews : [gridViews];
         this.visualizationControllers = Array.isArray(visualizationControllers) 
             ? visualizationControllers 
             : [visualizationControllers];
-        
-        // We no longer set default start and end nodes by default
-        // Random positions will be set on page load instead
     }
+
+    //=============================================================================
+    // GRID STATE MANAGEMENT
+    //=============================================================================
 
     /**
      * Set default start and end nodes
      */
     setDefaultStartEnd() {
-        // console.log("GameController: Setting default start/end nodes for all grids");
-        
         // Safety check - make sure grids exist
         if (!this.grids || this.grids.length === 0) {
             console.error("GameController: No grids available to set start/end nodes");
@@ -42,8 +39,6 @@ class GameController {
         const endRow = Math.floor(this.grids[0].rows * 3 / 4);
         const endCol = Math.floor(this.grids[0].cols * 3 / 4);
         
-        // console.log(`Setting start node at (${startRow}, ${startCol}) and end node at (${endRow}, ${endCol})`);
-        
         // Apply to all grids
         this.grids.forEach((grid, index) => {
             // Skip if grid is not properly initialized
@@ -54,9 +49,6 @@ class GameController {
             
             grid.setStartNode(startRow, startCol);
             grid.setEndNode(endRow, endCol);
-            
-            // console.log(`Grid ${index}: Start node set:`, !!grid.startNode);
-            // console.log(`Grid ${index}: End node set:`, !!grid.endNode);
             
             // Update grid view if available
             if (this.gridViews && this.gridViews[index]) {
@@ -71,58 +63,9 @@ class GameController {
     }
 
     /**
-     * Reset visualization state across all visualization controllers
-     * Used before making grid changes to ensure clean slate
-     */
-    resetVisualizationState() {
-        // Reset visualization controllers more thoroughly
-        this.visualizationControllers.forEach(controller => {
-            if (controller) {
-                // Force a complete visualization reset
-                if (typeof controller.forceReset === 'function') {
-                    controller.forceReset();
-                } else {
-                    // Fallback to basic reset if forceReset isn't available
-                    if (typeof controller.reset === 'function') {
-                        controller.reset();
-                    }
-                    if (typeof controller.stopVisualization === 'function') {
-                        controller.stopVisualization();
-                    }
-                }
-                
-                // Reset UI stats to zero
-                if (controller.elementIds) {
-                    const visitedCountElement = document.getElementById(controller.elementIds.visitedCountId);
-                    const pathLengthElement = document.getElementById(controller.elementIds.pathLengthId);
-                    
-                    if (visitedCountElement) visitedCountElement.textContent = '0';
-                    if (pathLengthElement) pathLengthElement.textContent = '0';
-                }
-            }
-        });
-        
-        // Reset path visualization in all grids
-        this.grids.forEach(grid => {
-            if (grid) {
-                grid.resetPath();
-            }
-        });
-        
-        // Ensure grid views are updated to reflect the reset
-        this.gridViews.forEach(gridView => {
-            if (gridView && typeof gridView.update === 'function') {
-                gridView.update();
-            }
-        });
-    }
-
-    /**
      * Set random start and end nodes
      */
     setRandomStartEnd() {
-        // console.log("GameController: Setting random start/end for all grids");
-        
         // Reset any existing visualization
         this.resetVisualizationState();
         
@@ -202,252 +145,11 @@ class GameController {
     }
 
     /**
-     * Generate a random maze
-     * @param {number} density - Wall density (0-1)
-     */
-    generateRandomMaze(density = 0.3) {
-        // Reset any existing visualization
-        this.resetVisualizationState();
-        
-        // Clear all walls from all grids
-        this.grids.forEach(grid => {
-            // First clear all walls but preserve everything else
-            for (let row = 0; row < grid.rows; row++) {
-                for (let col = 0; col < grid.cols; col++) {
-                    const node = grid.getNode(row, col);
-                    if (node && node.isWall) {
-                        node.isWall = false;
-                        node.obstacleType = null;
-                    }
-                }
-            }
-            // Reset path visualization
-            grid.resetPath();
-        });
-        
-        // Generate maze on the first grid (which will ensure a path exists)
-        this.grids[0].generateRandomMaze(density);
-        
-        // Get the updated start, end, and wall positions from the first grid
-        const startRow = this.grids[0].startNode.row;
-        const startCol = this.grids[0].startNode.col;
-        const endRow = this.grids[0].endNode.row;
-        const endCol = this.grids[0].endNode.col;
-        
-        // Collect wall positions from the first grid
-        const wallPattern = [];
-        for (let row = 0; row < this.grids[0].rows; row++) {
-            for (let col = 0; col < this.grids[0].cols; col++) {
-                const node = this.grids[0].getNode(row, col);
-                if (node.isWall) {
-                    // Save wall position and assign a random obstacle type
-                    wallPattern.push({ 
-                        row, 
-                        col, 
-                        obstacleType: Math.random() < 0.5 ? 1 : 2 
-                    });
-                }
-            }
-        }
-        
-        // Apply the same pattern to all other grids
-        for (let i = 1; i < this.grids.length; i++) {
-            const grid = this.grids[i];
-            
-            // Set the same start and end positions
-            grid.setStartNode(startRow, startCol);
-            grid.setEndNode(endRow, endCol);
-            
-            // Apply walls with the same pattern
-            wallPattern.forEach(wall => {
-                const node = grid.getNode(wall.row, wall.col);
-                if (node && !node.isStart && !node.isEnd) {
-                    node.isWall = true;
-                    node.obstacleType = wall.obstacleType;
-                }
-            });
-        }
-        
-        // Update all grid views
-        this.gridViews.forEach(gridView => {
-            if (gridView) gridView.update();
-        });
-    }
-
-    /**
-     * Generate a maze using recursive division algorithm
-     * @param {string} skew - Optional skew direction ('vertical', 'horizontal')
-     */
-    generateRecursiveDivisionMaze(skew) {
-        // Reset any existing visualization
-        this.resetVisualizationState();
-        
-        // Clear all walls from all grids
-        this.grids.forEach(grid => {
-            // First clear all walls but preserve everything else
-            for (let row = 0; row < grid.rows; row++) {
-                for (let col = 0; col < grid.cols; col++) {
-                    const node = grid.getNode(row, col);
-                    if (node && node.isWall) {
-                        node.isWall = false;
-                        node.obstacleType = null;
-                    }
-                }
-            }
-            // Reset path visualization
-            grid.resetPath();
-        });
-        
-        // Generate the maze pattern on the first grid (which will ensure a path exists)
-        this.grids[0].generateRecursiveDivisionMaze(skew);
-        
-        // Get the updated start, end, and wall positions from the first grid
-        const startRow = this.grids[0].startNode.row;
-        const startCol = this.grids[0].startNode.col;
-        const endRow = this.grids[0].endNode.row;
-        const endCol = this.grids[0].endNode.col;
-        
-        // Get the wall pattern from the first grid
-        const wallPattern = [];
-        for (let row = 0; row < this.grids[0].rows; row++) {
-            for (let col = 0; col < this.grids[0].cols; col++) {
-                const node = this.grids[0].getNode(row, col);
-                if (node.isWall) {
-                    // Save wall position and assign a random obstacle type
-                    wallPattern.push({ 
-                        row, 
-                        col, 
-                        obstacleType: Math.random() < 0.5 ? 1 : 2 
-                    });
-                }
-            }
-        }
-        
-        // Apply same wall pattern to other grids
-        for (let i = 1; i < this.grids.length; i++) {
-            const grid = this.grids[i];
-            
-            // Set the same start and end positions
-            grid.setStartNode(startRow, startCol);
-            grid.setEndNode(endRow, endCol);
-            
-            // Apply wall pattern
-            wallPattern.forEach(wall => {
-                const node = grid.getNode(wall.row, wall.col);
-                if (node && !node.isStart && !node.isEnd) {
-                    node.isWall = true;
-                    node.obstacleType = wall.obstacleType;
-                }
-            });
-        }
-        
-        // Update all grid views
-        this.gridViews.forEach(gridView => {
-            if (gridView) gridView.update();
-        });
-    }
-
-    /**
-     * Generate a maze based on the selected algorithm
-     * @param {string} mazeType - The type of maze to generate
-     */
-    generateMaze(mazeType) {
-        // Reset any existing visualization
-        this.resetVisualizationState();
-        
-        // First, clear all walls and weighted nodes from all grids
-        this.grids.forEach(grid => {
-            for (let row = 0; row < grid.rows; row++) {
-                for (let col = 0; col < grid.cols; col++) {
-                    const node = grid.getNode(row, col);
-                    if (node) {
-                        node.isWall = false;
-                        node.obstacleType = null;
-                        node.isWeighted = false;
-                        node.weight = 1;
-                    }
-                }
-            }
-            grid.resetPath();
-        });
-        
-        // Generate the maze pattern on the first grid
-        let wallDensity;
-        switch (mazeType) {
-            case 'random':
-                wallDensity = 0.35; // Increased density for more challenging random mazes
-                this.grids[0].generateRandomMaze(wallDensity);
-                break;
-            case 'recursive-division':
-                this.grids[0].generateRecursiveDivisionMaze();
-                break;
-            case 'recursive-division-vertical':
-                this.grids[0].generateRecursiveDivisionMaze('vertical');
-                break;
-            case 'recursive-division-horizontal':
-                this.grids[0].generateRecursiveDivisionMaze('horizontal');
-                break;
-            default:
-                console.warn('Unknown maze type:', mazeType);
-                return;
-        }
-        
-        // Get the updated start, end, and wall positions from the first grid
-        const startRow = this.grids[0].startNode.row;
-        const startCol = this.grids[0].startNode.col;
-        const endRow = this.grids[0].endNode.row;
-        const endCol = this.grids[0].endNode.col;
-        
-        // Get the wall pattern from the first grid
-        const wallPattern = [];
-        for (let row = 0; row < this.grids[0].rows; row++) {
-            for (let col = 0; col < this.grids[0].cols; col++) {
-                const node = this.grids[0].getNode(row, col);
-                if (node.isWall) {
-                    // Save wall position and assign a random obstacle type
-                    wallPattern.push({ 
-                        row, 
-                        col, 
-                        obstacleType: Math.random() < 0.5 ? 1 : 2 
-                    });
-                }
-            }
-        }
-        
-        // Apply maze pattern to all other grids
-        for (let i = 1; i < this.grids.length; i++) {
-            const grid = this.grids[i];
-            
-            // Set the same start and end positions
-            grid.setStartNode(startRow, startCol);
-            grid.setEndNode(endRow, endCol);
-            
-            // Apply wall pattern
-            wallPattern.forEach(wall => {
-                const node = grid.getNode(wall.row, wall.col);
-                if (node && !node.isStart && !node.isEnd) {
-                    node.isWall = true;
-                    node.isWeighted = false; // Ensure wall nodes aren't weighted
-                    node.weight = 1;
-                    node.obstacleType = wall.obstacleType;
-                }
-            });
-        }
-        
-        // Update all grid views
-        this.gridViews.forEach(gridView => {
-            if (gridView) gridView.update();
-        });
-    }
-
-    /**
      * Resize all grids
      * @param {number} rows - Number of rows
      * @param {number} cols - Number of columns
      */
     resizeGrid(rows, cols) {
-        // console.log(`GameController: Resizing all grids to ${rows}x${cols}`);
-        
         // Stop any running visualizations
         this.visualizationControllers.forEach(controller => {
             if (controller) controller.stopVisualization();
@@ -471,8 +173,6 @@ class GameController {
      * Clear all grids (walls and path)
      */
     clearGrid() {
-        // console.log("GameController: Clearing all grids");
-        
         // Stop any running visualizations with stronger reset
         this.visualizationControllers.forEach(controller => {
             if (controller) {
@@ -526,12 +226,252 @@ class GameController {
         if (prevStepBtn) prevStepBtn.disabled = true;
     }
 
+    //=============================================================================
+    // VISUALIZATION CONTROL
+    //=============================================================================
+
+    /**
+     * Reset visualization state across all visualization controllers
+     * Used before making grid changes to ensure clean slate
+     */
+    resetVisualizationState() {
+        // Reset visualization controllers more thoroughly
+        this.visualizationControllers.forEach(controller => {
+            if (controller) {
+                // Force a complete visualization reset
+                if (typeof controller.forceReset === 'function') {
+                    controller.forceReset();
+                } else {
+                    // Fallback to basic reset if forceReset isn't available
+                    if (typeof controller.reset === 'function') {
+                        controller.reset();
+                    }
+                    if (typeof controller.stopVisualization === 'function') {
+                        controller.stopVisualization();
+                    }
+                }
+                
+                // Reset UI stats to zero
+                if (controller.elementIds) {
+                    const visitedCountElement = document.getElementById(controller.elementIds.visitedCountId);
+                    const pathLengthElement = document.getElementById(controller.elementIds.pathLengthId);
+                    
+                    if (visitedCountElement) visitedCountElement.textContent = '0';
+                    if (pathLengthElement) pathLengthElement.textContent = '0';
+                }
+            }
+        });
+        
+        // Reset path visualization in all grids
+        this.grids.forEach(grid => {
+            if (grid) {
+                grid.resetPath();
+            }
+        });
+        
+        // Ensure grid views are updated to reflect the reset
+        this.gridViews.forEach(gridView => {
+            if (gridView && typeof gridView.update === 'function') {
+                gridView.update();
+            }
+        });
+    }
+
+    //=============================================================================
+    // MAZE GENERATION
+    //=============================================================================
+
+    /**
+     * Generate a maze based on the selected algorithm
+     * @param {string} mazeType - The type of maze to generate ('random', 'recursive-division', etc.)
+     * @param {boolean} preserveWeights - Whether to preserve existing weighted nodes
+     */
+    generateMaze(mazeType, preserveWeights = true) {
+        // Reset any existing visualization
+        this.resetVisualizationState();
+        
+        // Store weighted nodes if preserving them
+        const weightedNodes = preserveWeights ? this._saveWeightedNodes() : [];
+        
+        // Clear all walls and weighted nodes from all grids
+        this.grids.forEach(grid => {
+            for (let row = 0; row < grid.rows; row++) {
+                for (let col = 0; col < grid.cols; col++) {
+                    const node = grid.getNode(row, col);
+                    if (node) {
+                        node.isWall = false;
+                        node.obstacleType = null;
+                        node.isWeighted = false;
+                        node.weight = 1;
+                    }
+                }
+            }
+            grid.resetPath();
+        });
+        
+        // Generate the maze pattern on the first grid
+        let wallDensity;
+        switch (mazeType) {
+            case 'random':
+                wallDensity = 0.35; // Increased density for more challenging random mazes
+                this.grids[0].generateRandomMaze(wallDensity);
+                break;
+            case 'recursive-division':
+                this.grids[0].generateRecursiveDivisionMaze();
+                break;
+            case 'recursive-division-vertical':
+                this.grids[0].generateRecursiveDivisionMaze('vertical');
+                break;
+            case 'recursive-division-horizontal':
+                this.grids[0].generateRecursiveDivisionMaze('horizontal');
+                break;
+            default:
+                console.warn('Unknown maze type:', mazeType);
+                return;
+        }
+        
+        // Synchronize all grids with the first grid's pattern
+        this._synchronizeGrids();
+        
+        // Restore weighted nodes if needed
+        if (preserveWeights && weightedNodes.length > 0) {
+            this._restoreWeightedNodes(weightedNodes);
+        }
+    }
+
+    /**
+     * Generate a random maze
+     * @param {number} density - Wall density between 0-1
+     * @param {boolean} preserveWeights - Whether to preserve existing weighted nodes
+     */
+    generateRandomMaze(density = 0.3, preserveWeights = true) {
+        // Reset any existing visualization
+        this.resetVisualizationState();
+        
+        // Store weighted nodes if preserving them
+        const weightedNodes = preserveWeights ? this._saveWeightedNodes() : [];
+        
+        // Clear all walls from all grids
+        this._clearAllWalls();
+        
+        // Generate maze on the first grid
+        this.grids[0].generateRandomMaze(density);
+        
+        // Synchronize all grids with the first grid's pattern
+        this._synchronizeGrids();
+        
+        // Restore weighted nodes if needed
+        if (preserveWeights && weightedNodes.length > 0) {
+            this._restoreWeightedNodes(weightedNodes);
+        }
+    }
+
+    /**
+     * Generate a maze using recursive division algorithm
+     * @param {string} skew - Optional skew direction ('vertical', 'horizontal')
+     * @param {boolean} preserveWeights - Whether to preserve existing weighted nodes
+     */
+    generateRecursiveDivisionMaze(skew, preserveWeights = true) {
+        // Reset any existing visualization
+        this.resetVisualizationState();
+        
+        // Store weighted nodes if preserving them
+        const weightedNodes = preserveWeights ? this._saveWeightedNodes() : [];
+        
+        // Clear all walls from all grids
+        this._clearAllWalls();
+        
+        // Generate the maze pattern on the first grid
+        this.grids[0].generateRecursiveDivisionMaze(skew);
+        
+        // Synchronize all grids with the first grid's pattern
+        this._synchronizeGrids();
+        
+        // Restore weighted nodes if needed
+        if (preserveWeights && weightedNodes.length > 0) {
+            this._restoreWeightedNodes(weightedNodes);
+        }
+    }
+
+    /**
+     * Generate random weighted nodes
+     * @param {number} density - Weighted node density (0-1)
+     */
+    generateRandomWeights(density = 0.15) {
+        // Reset any existing visualization
+        this.resetVisualizationState();
+        
+        // First clear all existing weights from all grids
+        this.grids.forEach(grid => {
+            for (let row = 0; row < grid.rows; row++) {
+                for (let col = 0; col < grid.cols; col++) {
+                    const node = grid.nodes[row][col];
+                    if (node && !node.isWall && !node.isStart && !node.isEnd) {
+                        node.isWeighted = false;
+                        node.weight = 1;
+                    }
+                }
+            }
+        });
+        
+        // Generate the weight pattern on the first grid
+        const rows = this.grids[0].rows;
+        const cols = this.grids[0].cols;
+        
+        // Generate the weight pattern
+        const weightPattern = [];
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                // Skip walls, start and end nodes
+                if (this.grids[0].nodes[row][col].isWall || 
+                    this.grids[0].nodes[row][col].isStart || 
+                    this.grids[0].nodes[row][col].isEnd) {
+                    continue;
+                }
+                
+                // Random weight generation based on density
+                if (Math.random() < density) {
+                    // Generate random weight between 2-10
+                    const weight = Math.floor(Math.random() * 9) + 2; // 2 to 10
+                    weightPattern.push({ row, col, weight });
+                    
+                    // Apply weight to the first grid
+                    const node = this.grids[0].getNode(row, col);
+                    if (node) {
+                        node.isWeighted = true;
+                        node.weight = weight;
+                    }
+                }
+            }
+        }
+        
+        // Apply identical weights to all other grids
+        for (let i = 1; i < this.grids.length; i++) {
+            const grid = this.grids[i];
+            
+            // Apply weights
+            weightPattern.forEach(item => {
+                const node = grid.getNode(item.row, item.col);
+                if (node && !node.isWall && !node.isStart && !node.isEnd) {
+                    node.isWeighted = true;
+                    node.weight = item.weight;
+                }
+            });
+        }
+        
+        // Update all grid views
+        this._updateAllGridViews();
+    }
+
+    //=============================================================================
+    // NODE MANIPULATION
+    //=============================================================================
+
     /**
      * Set current tool for all grid views
      * @param {string} tool - The tool to set
      */
     setCurrentTool(tool) {
-        // console.log("GameController: Setting tool to", tool);
         this.gridViews.forEach(gridView => {
             if (gridView) gridView.setCurrentTool(tool);
         });
@@ -546,8 +486,6 @@ class GameController {
      * @param {number} customValue - Optional custom value for weighted nodes
      */
     handleNodeAction(gridIndex, row, col, action, customValue = null) {
-        // console.log(`GameController: Grid ${gridIndex} - ${action} at (${row}, ${col})`);
-        
         // Safety check - validate grids array
         if (!this.grids || this.grids.length === 0) {
             console.error("GameController: No grids available for node action");
@@ -555,7 +493,6 @@ class GameController {
         }
         
         // Reset any existing visualization to ensure we start with a clean slate
-        // This is especially important after a "no path found" scenario
         this.resetVisualizationState();
         
         // Determine obstacle type only once for consistent wall appearance across grids
@@ -640,22 +577,17 @@ class GameController {
         });
         
         // Make sure both grid views are updated
-        if (this.gridViews) {
-            this.gridViews.forEach((gridView, index) => {
-                if (gridView && typeof gridView.update === 'function') {
-                    try {
-                        gridView.update();
-                    } catch (error) {
-                        console.error(`Error updating grid view ${index}:`, error);
-                    }
-                }
-            });
-        }
+        this._updateAllGridViews();
     }
+
+    //=============================================================================
+    // SAVE/LOAD FUNCTIONALITY
+    //=============================================================================
 
     /**
      * Save the current grid state to local storage
      * @param {string} name - Name for the saved grid
+     * @returns {boolean} Success status
      */
     saveGrid(name) {
         if (!name) {
@@ -790,9 +722,7 @@ class GameController {
             }
             
             // Update all grid views
-            this.gridViews.forEach((gridView, index) => {
-                if (gridView) gridView.update();
-            });
+            this._updateAllGridViews();
             
             return true;
         } catch (error) {
@@ -815,77 +745,134 @@ class GameController {
         }
     }
 
+    //=============================================================================
+    // HELPER METHODS
+    //=============================================================================
+
     /**
-     * Generate random weighted nodes
-     * @param {number} density - Weighted node density (0-1)
+     * Clear all walls from all grids but preserve other node properties
+     * @private
      */
-    generateRandomWeights(density = 0.15) {
-        // console.log("GameController: Generating random weighted nodes");
-        
-        // Reset any existing visualization
-        this.resetVisualizationState();
-        
-        // First clear all existing weights from all grids
+    _clearAllWalls() {
         this.grids.forEach(grid => {
             for (let row = 0; row < grid.rows; row++) {
                 for (let col = 0; col < grid.cols; col++) {
-                    const node = grid.nodes[row][col];
-                    if (node && !node.isWall && !node.isStart && !node.isEnd) {
-                        node.isWeighted = false;
-                        node.weight = 1;
+                    const node = grid.getNode(row, col);
+                    if (node && node.isWall) {
+                        node.isWall = false;
+                        node.obstacleType = null;
                     }
                 }
             }
+            // Reset path visualization
+            grid.resetPath();
         });
+    }
+
+    /**
+     * Update all grid views to reflect the latest grid state
+     * @private
+     */
+    _updateAllGridViews() {
+        this.gridViews.forEach(gridView => {
+            if (gridView && typeof gridView.update === 'function') {
+                gridView.update();
+            }
+        });
+    }
+
+    /**
+     * Synchronize all grids with the first grid's pattern
+     * @private
+     */
+    _synchronizeGrids() {
+        // Get the updated start, end, and wall positions from the first grid
+        const startRow = this.grids[0].startNode.row;
+        const startCol = this.grids[0].startNode.col;
+        const endRow = this.grids[0].endNode.row;
+        const endCol = this.grids[0].endNode.col;
         
-        // Generate the weight pattern on the first grid
-        const rows = this.grids[0].rows;
-        const cols = this.grids[0].cols;
-        
-        // Generate the weight pattern
-        const weightPattern = [];
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                // Skip walls, start and end nodes
-                if (this.grids[0].nodes[row][col].isWall || 
-                    this.grids[0].nodes[row][col].isStart || 
-                    this.grids[0].nodes[row][col].isEnd) {
-                    continue;
-                }
-                
-                // Random weight generation based on density
-                if (Math.random() < density) {
-                    // Generate random weight between 2-10
-                    const weight = Math.floor(Math.random() * 9) + 2; // 2 to 10
-                    weightPattern.push({ row, col, weight });
-                    
-                    // Apply weight to the first grid
-                    const node = this.grids[0].getNode(row, col);
-                    if (node) {
-                        node.isWeighted = true;
-                        node.weight = weight;
-                    }
+        // Collect wall positions from the first grid
+        const wallPattern = [];
+        for (let row = 0; row < this.grids[0].rows; row++) {
+            for (let col = 0; col < this.grids[0].cols; col++) {
+                const node = this.grids[0].getNode(row, col);
+                if (node.isWall) {
+                    // Save wall position and assign a random obstacle type
+                    wallPattern.push({ 
+                        row, 
+                        col, 
+                        obstacleType: Math.random() < 0.5 ? 1 : 2 
+                    });
                 }
             }
         }
         
-        // Apply identical weights to all other grids
+        // Apply the same pattern to all other grids
         for (let i = 1; i < this.grids.length; i++) {
             const grid = this.grids[i];
             
-            // Apply weights
-            weightPattern.forEach(item => {
-                const node = grid.getNode(item.row, item.col);
-                if (node && !node.isWall && !node.isStart && !node.isEnd) {
-                    node.isWeighted = true;
-                    node.weight = item.weight;
+            // Set the same start and end positions
+            grid.setStartNode(startRow, startCol);
+            grid.setEndNode(endRow, endCol);
+            
+            // Apply walls with the same pattern
+            wallPattern.forEach(wall => {
+                const node = grid.getNode(wall.row, wall.col);
+                if (node && !node.isStart && !node.isEnd) {
+                    node.isWall = true;
+                    node.obstacleType = wall.obstacleType;
                 }
             });
         }
         
         // Update all grid views
-        this.gridViews.forEach(gridView => {
-            if (gridView) gridView.update();
+        this._updateAllGridViews();
+    }
+    
+    /**
+     * Save all weighted nodes from the first grid
+     * @returns {Array} Array of saved weighted node information
+     * @private
+     */
+    _saveWeightedNodes() {
+        const weightedNodes = [];
+        
+        for (let row = 0; row < this.grids[0].rows; row++) {
+            for (let col = 0; col < this.grids[0].cols; col++) {
+                const node = this.grids[0].getNode(row, col);
+                if (node && node.isWeighted) {
+                    weightedNodes.push({
+                        row, col, weight: node.weight
+                    });
+                }
+            }
+        }
+        
+        return weightedNodes;
+    }
+    
+    /**
+     * Restore weighted nodes after maze generation
+     * @param {Array} weightedNodes - Array of saved weighted node information
+     * @private
+     */
+    _restoreWeightedNodes(weightedNodes) {
+        if (!weightedNodes || weightedNodes.length === 0) return;
+        
+        // Apply weights to all grids
+        this.grids.forEach(grid => {
+            weightedNodes.forEach(item => {
+                const node = grid.getNode(item.row, item.col);
+                // Only apply weight if node exists and isn't a wall, start, or end node
+                if (node && !node.isWall && !node.isStart && !node.isEnd) {
+                    node.isWeighted = true;
+                    node.weight = item.weight;
+                }
+            });
         });
+        
+        // Update all grid views
+        this._updateAllGridViews();
     }
 } 
