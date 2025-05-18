@@ -6,6 +6,10 @@
  * It guarantees the shortest path in weighted graphs where all weights are non-negative.
  */
 class DijkstraAlgorithm extends Algorithm {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
     /**
      * Create a new Dijkstra algorithm instance
      * @param {Grid} grid - The grid to run the algorithm on
@@ -14,7 +18,9 @@ class DijkstraAlgorithm extends Algorithm {
         super(grid);
     }
 
-    // Core algorithm methods
+    //=============================================================================
+    // ALGORITHM EXECUTION
+    //=============================================================================
 
     /**
      * Run Dijkstra's algorithm to find the shortest path
@@ -121,7 +127,9 @@ class DijkstraAlgorithm extends Algorithm {
         }
     }
     
-    // Helper methods
+    //=============================================================================
+    // HELPER METHODS
+    //=============================================================================
     
     /**
      * Creates a priority queue for Dijkstra's algorithm
@@ -134,7 +142,9 @@ class DijkstraAlgorithm extends Algorithm {
         return new PriorityQueue((a, b) => a.distance - b.distance);
     }
 
-    // Static information methods
+    //=============================================================================
+    // STATIC INFORMATION
+    //=============================================================================
     
     /**
      * Get the algorithm name

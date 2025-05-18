@@ -158,7 +158,7 @@ class GameController {
         // Resize all grids
         this.grids.forEach((grid, index) => {
             grid.resize(rows, cols);
-            
+        
             // Re-render the grid view
             if (this.gridViews[index]) {
                 this.gridViews[index].render();
@@ -248,9 +248,9 @@ class GameController {
                     }
                     if (typeof controller.stopVisualization === 'function') {
                         controller.stopVisualization();
-                    }
-                }
-                
+            }
+        }
+        
                 // Reset UI stats to zero
                 if (controller.elementIds) {
                     const visitedCountElement = document.getElementById(controller.elementIds.visitedCountId);
@@ -266,8 +266,8 @@ class GameController {
         this.grids.forEach(grid => {
             if (grid) {
                 grid.resetPath();
-            }
-        });
+                }
+            });
         
         // Ensure grid views are updated to reflect the reset
         this.gridViews.forEach(gridView => {
@@ -353,19 +353,19 @@ class GameController {
         
         // Clear all walls from all grids
         this._clearAllWalls();
-        
+            
         // Generate maze on the first grid
         this.grids[0].generateRandomMaze(density);
-        
+            
         // Synchronize all grids with the first grid's pattern
         this._synchronizeGrids();
         
         // Restore weighted nodes if needed
         if (preserveWeights && weightedNodes.length > 0) {
             this._restoreWeightedNodes(weightedNodes);
+                }
         }
-    }
-
+        
     /**
      * Generate a maze using recursive division algorithm
      * @param {string} skew - Optional skew direction ('vertical', 'horizontal')
@@ -383,7 +383,7 @@ class GameController {
         
         // Generate the maze pattern on the first grid
         this.grids[0].generateRecursiveDivisionMaze(skew);
-        
+            
         // Synchronize all grids with the first grid's pattern
         this._synchronizeGrids();
         
@@ -417,7 +417,7 @@ class GameController {
         // Generate the weight pattern on the first grid
         const rows = this.grids[0].rows;
         const cols = this.grids[0].cols;
-        
+            
         // Generate the weight pattern
         const weightPattern = [];
         for (let row = 0; row < rows; row++) {
@@ -441,14 +441,14 @@ class GameController {
                         node.isWeighted = true;
                         node.weight = weight;
                     }
+                    }
                 }
             }
-        }
-        
+            
         // Apply identical weights to all other grids
         for (let i = 1; i < this.grids.length; i++) {
             const grid = this.grids[i];
-            
+        
             // Apply weights
             weightPattern.forEach(item => {
                 const node = grid.getNode(item.row, item.col);
@@ -796,7 +796,7 @@ class GameController {
         const wallPattern = [];
         for (let row = 0; row < this.grids[0].rows; row++) {
             for (let col = 0; col < this.grids[0].cols; col++) {
-                const node = this.grids[0].getNode(row, col);
+                    const node = this.grids[0].getNode(row, col);
                 if (node.isWall) {
                     // Save wall position and assign a random obstacle type
                     wallPattern.push({ 

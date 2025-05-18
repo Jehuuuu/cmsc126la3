@@ -8,8 +8,6 @@ class Grid {
      * @param {number} cols - Number of columns in the grid
      */
     constructor(rows = 10, cols = 10) {
-        // console.log("Grid: Creating grid with dimensions", rows, "x", cols);
-        
         this.rows = rows;
         this.cols = cols;
         this.nodes = [];
@@ -20,12 +18,14 @@ class Grid {
         this.initGrid();
     }
 
+    //=============================================================================
+    // GRID INITIALIZATION AND RESET
+    //=============================================================================
+
     /**
      * Initialize the grid with nodes
      */
     initGrid() {
-        // console.log("Grid: Initializing nodes");
-        
         this.nodes = [];
         
         for (let row = 0; row < this.rows; row++) {
@@ -35,8 +35,6 @@ class Grid {
             }
             this.nodes.push(currentRow);
         }
-        
-        // console.log("Grid: Created", this.rows * this.cols, "nodes");
     }
 
     /**
@@ -53,6 +51,34 @@ class Grid {
     }
 
     /**
+     * Reset all path-related node properties
+     */
+    resetPath() {
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                this.nodes[row][col].reset();
+            }
+        }
+    }
+
+    /**
+     * Reset the entire grid
+     */
+    resetGrid() {
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                this.nodes[row][col].resetAll();
+            }
+        }
+        this.startNode = null;
+        this.endNode = null;
+    }
+
+    //=============================================================================
+    // NODE ACCESS AND MANIPULATION
+    //=============================================================================
+
+    /**
      * Get a node at the specified position
      * @param {number} row - Row index
      * @param {number} col - Column index
@@ -64,6 +90,69 @@ class Grid {
         }
         return this.nodes[row][col];
     }
+
+    /**
+     * Get all neighbors of a node
+     * @param {Node} node - The node to get neighbors for
+     * @returns {Node[]} Array of neighboring nodes
+     */
+    getNeighbors(node) {
+        const neighbors = [];
+        const { row, col } = node;
+        
+        // Up, Right, Down, Left directions
+        const directions = [
+            { row: -1, col: 0 },
+            { row: 0, col: 1 },
+            { row: 1, col: 0 },
+            { row: 0, col: -1 }
+        ];
+        
+        for (const dir of directions) {
+            const neighborRow = row + dir.row;
+            const neighborCol = col + dir.col;
+            const neighbor = this.getNode(neighborRow, neighborCol);
+            
+            if (neighbor && !neighbor.isWall) {
+                neighbors.push(neighbor);
+            }
+        }
+        
+        return neighbors;
+    }
+
+    /**
+     * Create a deep clone of this grid
+     * @returns {Grid} A new Grid instance with the same properties
+     */
+    clone() {
+        const clonedGrid = new Grid(this.rows, this.cols);
+        
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                const originalNode = this.nodes[row][col];
+                const clonedNode = clonedGrid.nodes[row][col];
+                
+                clonedNode.isStart = originalNode.isStart;
+                clonedNode.isEnd = originalNode.isEnd;
+                clonedNode.isWall = originalNode.isWall;
+                clonedNode.isVisited = originalNode.isVisited;
+                clonedNode.isPath = originalNode.isPath;
+                clonedNode.isCurrent = originalNode.isCurrent;
+                clonedNode.distance = originalNode.distance;
+                clonedNode.weight = originalNode.weight;
+                
+                if (originalNode.isStart) clonedGrid.startNode = clonedNode;
+                if (originalNode.isEnd) clonedGrid.endNode = clonedNode;
+            }
+        }
+        
+        return clonedGrid;
+    }
+
+    //=============================================================================
+    // START/END NODE MANAGEMENT
+    //=============================================================================
 
     /**
      * Set a node as the start node
@@ -110,6 +199,34 @@ class Grid {
     }
 
     /**
+     * Set random start and end points
+     */
+    setRandomStartEnd() {
+        // Reset existing start/end
+        if (this.startNode) this.startNode.isStart = false;
+        if (this.endNode) this.endNode.isEnd = false;
+        
+        // Generate random positions ensuring they are different
+        let startRow, startCol, endRow, endCol;
+        do {
+            startRow = Math.floor(Math.random() * this.rows);
+            startCol = Math.floor(Math.random() * this.cols);
+            endRow = Math.floor(Math.random() * this.rows);
+            endCol = Math.floor(Math.random() * this.cols);
+        } while ((startRow === endRow && startCol === endCol) || 
+                this.getNode(startRow, startCol).isWall || 
+                this.getNode(endRow, endCol).isWall);
+        
+        // Set new start/end
+        this.setStartNode(startRow, startCol);
+        this.setEndNode(endRow, endCol);
+    }
+
+    //=============================================================================
+    // WALL MANAGEMENT
+    //=============================================================================
+
+    /**
      * Toggle a node's wall state
      * @param {number} row - Row index
      * @param {number} col - Column index
@@ -145,29 +262,9 @@ class Grid {
         }
     }
 
-    /**
-     * Reset all path-related node properties
-     */
-    resetPath() {
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                this.nodes[row][col].reset();
-            }
-        }
-    }
-
-    /**
-     * Reset the entire grid
-     */
-    resetGrid() {
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                this.nodes[row][col].resetAll();
-            }
-        }
-        this.startNode = null;
-        this.endNode = null;
-    }
+    //=============================================================================
+    // MAZE GENERATION
+    //=============================================================================
 
     /**
      * Create a random maze on the grid
@@ -323,88 +420,5 @@ class Grid {
             this.recursiveDivision(startRow, startCol, row - 1, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
             this.recursiveDivision(row + 1, startCol, endRow, endCol, skew, keepStartRow, keepStartCol, keepEndRow, keepEndCol);
         }
-    }
-
-    /**
-     * Set random start and end points
-     */
-    setRandomStartEnd() {
-        // Reset existing start/end
-        if (this.startNode) this.startNode.isStart = false;
-        if (this.endNode) this.endNode.isEnd = false;
-        
-        // Generate random positions ensuring they are different
-        let startRow, startCol, endRow, endCol;
-        do {
-            startRow = Math.floor(Math.random() * this.rows);
-            startCol = Math.floor(Math.random() * this.cols);
-            endRow = Math.floor(Math.random() * this.rows);
-            endCol = Math.floor(Math.random() * this.cols);
-        } while ((startRow === endRow && startCol === endCol) || 
-                this.getNode(startRow, startCol).isWall || 
-                this.getNode(endRow, endCol).isWall);
-        
-        // Set new start/end
-        this.setStartNode(startRow, startCol);
-        this.setEndNode(endRow, endCol);
-    }
-
-    /**
-     * Get all neighbors of a node
-     * @param {Node} node - The node to get neighbors for
-     * @returns {Node[]} Array of neighboring nodes
-     */
-    getNeighbors(node) {
-        const neighbors = [];
-        const { row, col } = node;
-        
-        // Up, Right, Down, Left directions
-        const directions = [
-            { row: -1, col: 0 },
-            { row: 0, col: 1 },
-            { row: 1, col: 0 },
-            { row: 0, col: -1 }
-        ];
-        
-        for (const dir of directions) {
-            const neighborRow = row + dir.row;
-            const neighborCol = col + dir.col;
-            const neighbor = this.getNode(neighborRow, neighborCol);
-            
-            if (neighbor && !neighbor.isWall) {
-                neighbors.push(neighbor);
-            }
-        }
-        
-        return neighbors;
-    }
-
-    /**
-     * Create a deep clone of this grid
-     * @returns {Grid} A new Grid instance with the same properties
-     */
-    clone() {
-        const clonedGrid = new Grid(this.rows, this.cols);
-        
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                const originalNode = this.nodes[row][col];
-                const clonedNode = clonedGrid.nodes[row][col];
-                
-                clonedNode.isStart = originalNode.isStart;
-                clonedNode.isEnd = originalNode.isEnd;
-                clonedNode.isWall = originalNode.isWall;
-                clonedNode.isVisited = originalNode.isVisited;
-                clonedNode.isPath = originalNode.isPath;
-                clonedNode.isCurrent = originalNode.isCurrent;
-                clonedNode.distance = originalNode.distance;
-                clonedNode.weight = originalNode.weight;
-                
-                if (originalNode.isStart) clonedGrid.startNode = clonedNode;
-                if (originalNode.isEnd) clonedGrid.endNode = clonedNode;
-            }
-        }
-        
-        return clonedGrid;
     }
 } 

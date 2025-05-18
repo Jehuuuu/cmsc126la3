@@ -97,38 +97,38 @@ class VisualizationController {
      * @private
      */
     async _handleAutoVisualization() {
-        // Auto mode: animate the visualization
-        await this.gridView.visualize(
-            this.visitedNodesInOrder, 
-            this.pathNodesInOrder, 
-            this.speed[this.currentSpeed]
-        );
-        
-        // After animation is complete, show the "no path found" toast if needed
-        // and if this is the Dijkstra algorithm (to avoid duplicate toasts)
-        if (!this.pathFound && window.Toast && this.algorithm instanceof DijkstraAlgorithm) {
-            window.Toast.error('No possible path found to destination');
-        }
-        
-        // Mark this algorithm as done, but don't re-enable UI yet
-        this.isVisualizing = false;
-        
-        // Check if both algorithms have finished
-        if (window.dijkstraController && window.astarController) {
-            const bothFinished = this.checkIfBothAlgorithmsFinished();
+            // Auto mode: animate the visualization
+            await this.gridView.visualize(
+                this.visitedNodesInOrder, 
+                this.pathNodesInOrder, 
+                this.speed[this.currentSpeed]
+            );
             
-            // If both algorithms haven't finished, check if we need to re-enable UI
-            if (!bothFinished) {
-                const otherController = this === window.dijkstraController 
-                    ? window.astarController 
-                    : window.dijkstraController;
+            // After animation is complete, show the "no path found" toast if needed
+            // and if this is the Dijkstra algorithm (to avoid duplicate toasts)
+            if (!this.pathFound && window.Toast && this.algorithm instanceof DijkstraAlgorithm) {
+                window.Toast.error('No possible path found to destination');
+            }
+            
+            // Mark this algorithm as done, but don't re-enable UI yet
+            this.isVisualizing = false;
+            
+            // Check if both algorithms have finished
+            if (window.dijkstraController && window.astarController) {
+                const bothFinished = this.checkIfBothAlgorithmsFinished();
                 
-                if (!otherController.isVisualizing) {
+            // If both algorithms haven't finished, check if we need to re-enable UI
+                if (!bothFinished) {
+                    const otherController = this === window.dijkstraController 
+                        ? window.astarController 
+                        : window.dijkstraController;
+                    
+                    if (!otherController.isVisualizing) {
                     // Both are not visualizing, so re-enable UI
-                    this.enableAllUIElements();
+                        this.enableAllUIElements();
+                    }
                 }
             }
-        }
     }
 
     /**
@@ -136,39 +136,39 @@ class VisualizationController {
      * @private
      */
     _handleStepVisualization() {
-        // Step mode: prepare for stepping
-        this.currentStep = -1;
-        this.maxStep = this.visitedNodesInOrder.length - 1;
-        
-        // Enable step controls but disable the Previous Step button initially
-        this.uiView.setStepControlsEnabled(true);
-        this.disablePrevStepButton(true);
-        
-        // Handle special case where there's only one step (end is immediately found)
-        if (this.maxStep <= 0) {
+            // Step mode: prepare for stepping
+            this.currentStep = -1;
+            this.maxStep = this.visitedNodesInOrder.length - 1;
+            
+            // Enable step controls but disable the Previous Step button initially
+            this.uiView.setStepControlsEnabled(true);
+            this.disablePrevStepButton(true);
+            
+            // Handle special case where there's only one step (end is immediately found)
+            if (this.maxStep <= 0) {
             // Take the single step
-            this.nextStep();
+                this.nextStep();
             
             // Check if both algorithms have completed
-            if (window.dijkstraController && window.astarController) {
-                const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
-                const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
-                
-                if (dijkstraFinished && astarFinished) {
-                    this.disableNextStepButton();
+                if (window.dijkstraController && window.astarController) {
+                    const dijkstraFinished = window.dijkstraController.currentStep >= window.dijkstraController.maxStep;
+                    const astarFinished = window.astarController.currentStep >= window.astarController.maxStep;
+                    
+                    if (dijkstraFinished && astarFinished) {
+                        this.disableNextStepButton();
+                    }
                 }
-            }
-            
-            // If there are no steps to take, set isVisualizing to false
-            if (this.visitedNodesInOrder.length <= 1) {
-                this.isVisualizing = false;
-            }
-        } else {
-            // Show first step for normal cases
-            this.nextStep();
-            
+                
+                // If there are no steps to take, set isVisualizing to false
+                if (this.visitedNodesInOrder.length <= 1) {
+                    this.isVisualizing = false;
+                }
+            } else {
+                // Show first step for normal cases
+                this.nextStep();
+                
             // Keep drawing tools and randomizers disabled but allow step navigation
-            this.uiView.setGridInteractionsDisabled(true);
+                this.uiView.setGridInteractionsDisabled(true);
         }
     }
 
@@ -211,8 +211,8 @@ class VisualizationController {
         
         // Ensure mode selectors are enabled
         this.enableModeSelectors();
-    }
-
+        }
+        
     /**
      * Set the visualization speed
      * @param {string} speed - The speed to set ('slow', 'medium', or 'fast')
@@ -428,7 +428,7 @@ class VisualizationController {
             this.gridView.update();
         }
     }
-    
+
     /**
      * Reset the controller state and grid
      */
@@ -517,8 +517,8 @@ class VisualizationController {
         
         // Reset the UI
         this.resetUI();
-    }
-
+                        }
+                        
     //=============================================================================
     // UI MANAGEMENT
     //=============================================================================
@@ -564,8 +564,8 @@ class VisualizationController {
                 
                 // Show success toast
                 if (window.Toast && dijkstraController.algorithm instanceof DijkstraAlgorithm) {
-                    if (dijkstraController.pathFound && astarController.pathFound) {
-                        window.Toast.success('Both algorithms have found their paths!');
+                        if (dijkstraController.pathFound && astarController.pathFound) {
+                            window.Toast.success('Both algorithms have found their paths!');
                     }
                 }
                 

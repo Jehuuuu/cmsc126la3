@@ -1,10 +1,14 @@
 /**
  * Implementation of A* Algorithm for pathfinding
  * 
- * A* combines Dijkstra's algorithm with a heuristic to efficiently find the shortest path.
+ * A* combines Dijkstra's algorithm with a heuristic to guide its search.
  * It prioritizes nodes that appear to be closer to the goal based on a heuristic estimate.
  */
 class AStarAlgorithm extends Algorithm {
+    //=============================================================================
+    // INITIALIZATION
+    //=============================================================================
+    
     /**
      * Create a new A* algorithm instance
      * @param {Grid} grid - The grid to run the algorithm on
@@ -12,8 +16,6 @@ class AStarAlgorithm extends Algorithm {
     constructor(grid) {
         super(grid);
     }
-
-    // Initialization methods
     
     /**
      * Initialize the algorithm before running
@@ -32,7 +34,9 @@ class AStarAlgorithm extends Algorithm {
         return true;
     }
     
-    // Core algorithm methods
+    //=============================================================================
+    // ALGORITHM EXECUTION
+    //=============================================================================
 
     /**
      * Run A* algorithm to find the shortest path
@@ -136,7 +140,9 @@ class AStarAlgorithm extends Algorithm {
         }
     }
     
-    // Helper methods
+    //=============================================================================
+    // HELPER METHODS
+    //=============================================================================
     
     /**
      * Creates a priority queue for the A* algorithm
@@ -172,7 +178,9 @@ class AStarAlgorithm extends Algorithm {
         return Math.abs(node.row - endNode.row) + Math.abs(node.col - endNode.col);
     }
 
-    // Static information methods
+    //=============================================================================
+    // STATIC INFORMATION
+    //=============================================================================
     
     /**
      * Get the algorithm name
