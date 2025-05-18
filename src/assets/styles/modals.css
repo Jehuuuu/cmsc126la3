@@ -1,55 +1,45 @@
 /*
  * Modals & Notifications CSS
- * Minecraft-themed styling for modal dialogs, forms, and toast notifications
- * For the pathfinding algorithm visualization application
- */
-
-/*
- * Global Variables
- * Centralized variables for consistent styling across all modals
  */
 :root {
-    /* Main Colors */
-    --modal-bg: #3c2a21;           /* Dark brown background */
-    --modal-border: #986c44;       /* Minecraft dirt border color */
-    --modal-header: #986c44;       /* Minecraft dirt color */
-    --modal-text: #fff;            /* White text for contrast */
-    --modal-input-bg: #2c1e16;     /* Darker brown for form fields */
-    --modal-input-border: #000;    /* Black border for inputs */
-    --modal-shadow: rgba(0, 0, 0, 0.5); /* Base shadow color */
+    /* Colors */
+    --modal-bg: #3c2a21;
+    --modal-border: #986c44;
+    --modal-header: #986c44;
+    --modal-text: #fff;
+    --modal-input-bg: #2c1e16;
+    --modal-input-border: #000;
+    --modal-shadow: rgba(0, 0, 0, 0.5);
     
     /* Button Colors */
-    --btn-green: #5bac38;          /* Success/confirm/save */
-    --btn-green-hover: #4a9c27;    /* Success hover */
-    --btn-red: #e74c3c;            /* Danger/delete/cancel */
-    --btn-red-hover: #c0392b;      /* Danger hover */
-    --btn-brown: #986c44;          /* Neutral/default */
-    --btn-brown-hover: #825432;    /* Neutral hover */
-    --btn-gold: #d9a334;           /* Highlight/important */
-    --btn-gold-hover: #ffcc00;     /* Highlight hover */
-    --btn-blue: #3498db;           /* Info/help */
+    --btn-green: #5bac38;
+    --btn-green-hover: #4a9c27;
+    --btn-red: #e74c3c;
+    --btn-red-hover: #c0392b;
+    --btn-brown: #986c44;
+    --btn-brown-hover: #825432;
+    --btn-gold: #d9a334;
+    --btn-gold-hover: #ffcc00;
+    --btn-blue: #3498db;
     
     /* Layout & Spacing */
-    --modal-padding: 15px;         /* Standard inner padding */
-    --modal-gap: 10px;             /* Standard spacing between elements */
-    --border-width: 3px;           /* Standard border width */
-    --border-radius: 0px;          /* Square corners for pixelated look */
+    --modal-padding: 15px;
+    --modal-gap: 10px;
+    --border-width: 3px;
+    --border-radius: 0px;
     
     /* Animations & Transitions */
-    --hover-transition: all 0.2s;  /* Standard hover effect speed */
-    --modal-transition: 0.3s;      /* Modal appear/disappear speed */
-    --toast-duration: 3s;          /* Time for toast notifications */
+    --hover-transition: all 0.2s;
+    --modal-transition: 0.3s;
+    --toast-duration: 3s;
     
     /* Shadows & Effects */
-    --inner-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7); /* Inset shadow for depth */
-    --button-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3); /* Button depth */
-    --focus-glow: 0 0 5px var(--btn-gold); /* Focus ring for accessibility */
+    --inner-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+    --button-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --focus-glow: 0 0 5px var(--btn-gold);
 }
 
-/*
- * Base Modal Structure
- * Core components for all modal dialogs in the application
- */
+/* Base Modal Structure */
 
 /* Modal Overlay */
 .modal {
@@ -140,18 +130,9 @@
     color: var(--btn-gold-hover);
 }
 
-/*
- * Form Elements
- * Styling for all modal form components
- */
-
-/* 
- * Base Input Styling 
- * Common styles for all text-based inputs
- */
+/* Form Elements */
 .modal-content input[type="text"],
-.modal-content input[type="number"],
-.form-group input[type="number"] {
+.modal-content input[type="number"] {
     /* Layout */
     width: calc(100% - 2 * var(--modal-padding));
     margin: 0 var(--modal-padding) var(--modal-padding);
@@ -171,34 +152,13 @@
 
 /* Input Focus State */
 .modal-content input[type="text"]:focus,
-.modal-content input[type="number"]:focus,
-.form-group input[type="number"]:focus {
+.modal-content input[type="number"]:focus {
     outline: none;
     border-color: var(--btn-gold);
     box-shadow: var(--inner-shadow), var(--focus-glow);
 }
 
-/* 
- * Form Groups 
- * Container for form label + input combinations
- */
-.form-group {
-    margin: var(--modal-padding) var(--modal-padding);
-}
-
-/* Form Labels */
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--btn-gold);
-    text-shadow: 1px 1px 0 #000;
-    font-weight: bold;
-}
-
-/*
- * Custom Number Input
- * Special container for numeric inputs with formatting
- */
+/* Custom Number Input */
 .custom-input-container {
     display: flex;
     align-items: center;
@@ -231,25 +191,16 @@
     cursor: not-allowed;
 }
 
-/* 
- * Number Input Browser Compatibility
- * Remove default browser spinner buttons
- */
+/* Number Input Browser Compatibility */
 .custom-input-container input[type="number"]::-webkit-inner-spin-button,
 .custom-input-container input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/* Firefox number input compatibility */
-.custom-input-container input[type="number"] {
-    -moz-appearance: textfield;
-}
+/* Firefox number input compatibility is handled by the webkit rules above */
 
-/* 
- * Grid Size Format Text
- * The "×" character between width and height inputs
- */
+/* Grid Size Format Text */
 .grid-size-format {
     color: var(--btn-gold);
     text-shadow: 1px 1px 0 #000;
@@ -258,10 +209,7 @@
     margin: 0 5px;
 }
 
-/*
- * Button System
- * Standard button styles and variations for all modals
- */
+/* Button System */
 
 /* Button Container */
 .modal-buttons {
@@ -270,10 +218,7 @@
     gap: var(--modal-gap);
 }
 
-/* 
- * Base Button Style
- * Default styling applied to all modal buttons
- */
+/* Base Button Style */
 .modal-buttons button {
     /* Layout */
     flex: 1;
@@ -308,15 +253,7 @@
     box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/*
- * Button Variants
- * Color variations for different button functions
- */
-
-/* 
- * Success Buttons (Green)
- * Used for confirming, saving, or completing actions 
- */
+/* Button Variants */
 #confirm-save-btn, 
 #confirm-weight-btn,
 #confirm-grid-size-btn {
@@ -329,10 +266,7 @@
     background-color: var(--btn-green-hover);
 }
 
-/* 
- * Danger Buttons (Red)
- * Used for delete operations or cancelling important actions
- */
+/* Danger Buttons */
 #confirm-delete-btn,
 #cancel-load-btn {
     background-color: var(--btn-red);
@@ -343,10 +277,7 @@
     background-color: var(--btn-red-hover);
 }
 
-/* 
- * Neutral Buttons (Brown)
- * Used for non-destructive cancellation or secondary actions
- */
+/* Neutral Buttons */
 #cancel-save-btn, 
 #cancel-weight-btn, 
 #cancel-grid-size-btn,
@@ -361,15 +292,7 @@
     background-color: var(--btn-brown-hover);
 }
 
-/*
- * Specific Modal Types
- * Custom styling for individual modal types with unique layouts
- */
-
-/*
- * Help Modal
- * Documentation and instructions modal with scrollable content
- */
+/* Specific Modal Types */
 #help-modal .modal-content {
     width: 80%;
     max-width: 900px;
@@ -481,10 +404,7 @@
     padding: 8px var(--modal-padding);
 }
 
-/*
- * Saved Grid List Components
- * Container and items for displaying saved grid configurations
- */
+/* Saved Grid List Components */
 
 /* Grid List Container */
 .saved-grids-list {
@@ -504,10 +424,7 @@
     text-shadow: 1px 1px 0 #000;
 }
 
-/* 
- * Grid Item
- * Individual saved grid entry with name and delete button
- */
+/* Grid Item */
 .grid-item {
     /* Layout */
     display: flex;
@@ -524,10 +441,7 @@
     border-bottom: none;
 }
 
-/* 
- * Grid Name
- * Clickable label that loads the saved grid
- */
+/* Grid Name */
 .grid-item .grid-name {
     /* Layout */
     flex-grow: 1;
@@ -547,10 +461,7 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 
- * Delete Grid Button
- * Button to remove a saved grid configuration
- */
+/* Delete Grid Button */
 .grid-item .delete-grid {
     /* Layout */
     display: flex;
@@ -573,16 +484,7 @@
     transform: scale(1.1);
 }
 
-/*
- * Custom Scrollbars
- * WebKit-specific scrollbar styling for scrollable containers
- * Note: These styles only apply to WebKit browsers (Chrome, Safari, Edge)
- */
-
-/* 
- * Common Scrollbar Styles
- * Applied to all scrollable elements in modals
- */
+/* Custom Scrollbars */
 .saved-grids-list::-webkit-scrollbar,
 #help-modal .modal-content::-webkit-scrollbar {
     width: 10px; /* Scrollbar width */
@@ -604,11 +506,7 @@
     background: var(--btn-brown-hover); /* Hover color */
 }
 
-/*
- * Toast Notifications
- * Non-intrusive notification messages that appear briefly
- * Used for operation feedback (success, error, info)
- */
+/* Toast Notifications */
 
 /* Container for Toast Notifications */
 .toast-container {
@@ -625,10 +523,7 @@
     gap: var(--modal-gap);
 }
 
-/* 
- * Base Toast Notification
- * Common styles for all toast types
- */
+/* Base Toast Notification */
 .toast {
     /* Layout */
     display: flex;
@@ -672,10 +567,7 @@
     transform: translateX(0);
 }
 
-/*
- * Toast Variants
- * Different types of toast messages
- */
+/* Toast Variants */
 
 /* Success Toast */
 .toast.toast-success {
@@ -692,10 +584,7 @@
     border-left: 8px solid var(--btn-blue);
 }
 
-/*
- * Toast Components
- * Internal elements for toast notifications
- */
+/* Toast Components */
 
 /* Toast Icon */
 .toast-icon {
@@ -727,15 +616,7 @@
     100% { width: 0%; }
 }
 
-/*
- * Responsive Styles
- * Breakpoint-specific adjustments for different screen sizes
- */
-
-/*
- * Mobile Breakpoint (Small Screens)
- * Optimized for phones and small tablets (≤ 480px)
- */
+/* Responsive Styles */
 @media (max-width: 480px) {
     /* Adjusted Modal Positioning */
     .modal-content {
@@ -779,10 +660,7 @@
     }
 }
 
-/*
- * Desktop Breakpoint (Large Screens)
- * Optimized for large monitors (≥ 1200px)
- */
+/* Desktop Breakpoint */
 @media (min-width: 1200px) {
     /* Wider Help Modal */
     #help-modal .modal-content {
@@ -790,4 +668,6 @@
         max-width: 1000px;
         margin: 5vh auto;
     }
-} 
+}
+
+ 

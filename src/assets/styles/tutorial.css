@@ -1,9 +1,8 @@
 /* 
  * Tutorial System Styles
- * Styles for the interactive guided tutorial
  */
 
-/* Overlay that covers the entire page */
+/* ===== Base Tutorial Components ===== */
 .tutorial-overlay {
     position: fixed;
     top: 0;
@@ -15,10 +14,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: all; /* Ensure we capture clicks on overlay */
+    pointer-events: all;
 }
 
-/* Tutorial modal */
+
 .tutorial-modal {
     background-color: #422f25;
     border: 4px solid #000;
@@ -41,7 +40,7 @@
     flex-direction: column;
 }
 
-/* Modal header */
+
 .tutorial-header {
     margin-bottom: 15px;
     text-align: center;
@@ -54,20 +53,20 @@
     margin-bottom: 5px;
 }
 
-/* Tutorial content */
+
 .tutorial-content {
     margin-bottom: 15px;
     font-size: 1.1rem;
     line-height: 1.5;
-    max-height: 40vh; /* Ensure content doesn't exceed viewport */
-    overflow-y: auto; /* Add scrolling if needed */
+    max-height: 40vh;
+    overflow-y: auto;
 }
 
 .tutorial-content p {
     margin-bottom: 10px;
 }
 
-/* Tutorial progress indicator */
+/* ===== Progress Indicator ===== */
 .tutorial-progress {
     display: flex;
     justify-content: center;
@@ -92,7 +91,7 @@
     background-color: #5bac38;
 }
 
-/* Button container */
+/* ===== Buttons ===== */
 .tutorial-buttons {
     display: flex;
     justify-content: space-between;
@@ -133,7 +132,7 @@
     background-color: #f85c4b;
 }
 
-/* Close button */
+/* ===== Close Button ===== */
 .tutorial-close {
     position: absolute;
     top: 10px;
@@ -156,28 +155,28 @@
     transform: scale(1.1);
 }
 
-/* Special positioning for close button in sidebar tooltip */
+
 .tutorial-modal.sidebar-aligned .tutorial-close {
     top: 5px;
     right: 5px;
     width: 24px;
     height: 24px;
     font-size: 1rem;
-    z-index: 10005; /* Ensure it's above other elements */
+    z-index: 10005;
 }
 
-/* Highlight effect for UI elements */
+/* ===== Highlighting and Visual Effects ===== */
 .tutorial-highlight {
-    position: relative !important; /* Important to override any other positioning */
-    z-index: 10002 !important; /* Important to override other z-index values */
-    pointer-events: auto !important;
-    animation: pulse 2s infinite !important; /* Increased animation time for more visibility */
-    box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8) !important; /* Brighter gold color, thicker border */
+    position: relative;
+    z-index: 10002;
+    pointer-events: auto;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8);
     border-radius: 5px;
-    outline: 2px solid #FFD700 !important; /* Additional gold outline */
+    outline: 2px solid #FFD700;
 }
 
-/* Pointers/arrows to guide attention */
+
 .tutorial-pointer {
     position: absolute;
     width: 40px;
@@ -190,9 +189,7 @@
     animation: float 1s infinite alternate;
 }
 
-/* Pointer styles */
-
-/* For mobile screens */
+/* ===== Mobile Responsiveness ===== */
 @media (max-width: 768px) {
     .tutorial-modal {
         width: 95%;
@@ -214,7 +211,7 @@
     }
 }
 
-/* Animations */
+/* ===== Animations ===== */
 @keyframes pulse {
     0% { 
         box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.9); 
@@ -235,7 +232,7 @@
     to { transform: translateY(-10px); }
 }
 
-/* Special success animation */
+/* ===== Success Animation ===== */
 .tutorial-success {
     position: fixed;
     top: 50%;
@@ -259,7 +256,7 @@
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Task completion checklist */
+/* ===== Task Checklist ===== */
 .tutorial-tasks {
     margin: 15px 0;
     padding-left: 15px;
@@ -302,7 +299,7 @@
     opacity: 0.7;
 }
 
-/* Feature spotlight - keeps specific UI element visible through overlay */
+/* ===== Feature Spotlight ===== */
 .tutorial-spotlight {
     position: absolute;
     z-index: 10001;
@@ -311,30 +308,23 @@
     border-radius: 5px;
 }
 
-/* Specific styling for algorithm comparison container */
+/* ===== Algorithm Comparison Styling ===== */
 .algorithm-comparison.tutorial-highlight {
-    position: relative !important;
-    box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.8) !important;
-    outline: 3px solid #FFD700 !important;
+    box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.8);
+    outline: 3px solid #FFD700;
     border-radius: 8px;
-    z-index: 10002 !important;
-    animation: enhanced-pulse 1.5s infinite !important; /* Faster animation */
-    transition: all 0.3s ease !important;
+    z-index: 10002;
+    animation: enhanced-pulse 1.5s infinite;
+    transition: all 0.3s ease;
 }
 
-/* Enhanced pulse animation for algorithm comparison highlight */
+
 @keyframes enhanced-pulse {
-    0% { 
+    0%, 100% { 
         box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.9), 0 0 30px 5px rgba(255, 165, 0, 0.5); 
         outline-color: #FFD700;
         transform: scale(1);
         filter: brightness(1);
-    }
-    25% {
-        box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8), 0 0 35px 10px rgba(255, 140, 0, 0.6);
-        outline-color: #FFA500;
-        transform: scale(1.005);
-        filter: brightness(1.05);
     }
     50% { 
         box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.7), 0 0 40px 15px rgba(255, 140, 0, 0.7); 
@@ -342,52 +332,40 @@
         transform: scale(1.01);
         filter: brightness(1.1);
     }
-    75% {
-        box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.8), 0 0 35px 10px rgba(255, 140, 0, 0.6);
-        outline-color: #FFA500;
-        transform: scale(1.005);
-        filter: brightness(1.05);
-    }
-    100% { 
-        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.9), 0 0 30px 5px rgba(255, 165, 0, 0.5); 
-        outline-color: #FFD700;
-        transform: scale(1);
-        filter: brightness(1);
-    }
 }
 
-/* Specific styling for algorithm tooltip in sidebar */
+/* ===== Sidebar Tooltip Styling ===== */
 .tutorial-modal.sidebar-aligned {
-    max-width: 180px !important;
-    padding: 12px !important;
-    background-color: #362921 !important;
-    border-radius: 4px !important;
-    margin-left: 5px !important;
-    font-size: 0.9em !important;
+    max-width: 180px;
+    padding: 12px;
+    background-color: #362921;
+    border-radius: 4px;
+    margin-left: 5px;
+    font-size: 0.9em;
 }
 
 .tutorial-modal.sidebar-aligned .tutorial-header {
-    padding-right: 25px; /* Make room for the close button */
-    text-align: left; /* Left-align the header for better space usage */
+    padding-right: 25px;
+    text-align: left;
     margin-bottom: 8px;
 }
 
 .tutorial-modal.sidebar-aligned .tutorial-header h2 {
-    font-size: 1.3rem !important;
-    margin-bottom: 3px !important;
+    font-size: 1.3rem;
+    margin-bottom: 3px;
     text-align: center;
-    padding-right: 20px; /* Extra space to avoid close button */
+    padding-right: 20px; 
 }
 
 .tutorial-modal.sidebar-aligned .tutorial-content {
-    margin-bottom: 10px !important;
+    margin-bottom: 10px;
 }
 
 .tutorial-modal.sidebar-aligned .tutorial-buttons {
-    justify-content: center !important;
+    justify-content: center;
 }
 
 .tutorial-modal.sidebar-aligned .tutorial-btn {
-    padding: 8px 15px !important;
-    min-width: 80px !important;
+    padding: 8px 15px;
+    min-width: 80px;
 } 

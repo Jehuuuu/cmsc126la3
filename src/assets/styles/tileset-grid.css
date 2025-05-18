@@ -1,50 +1,46 @@
-/* Tileset-based grid styling */
+/* Tileset Grid Styling */
 
-/* Grid container styling */
+/* Base Grid Container */
 .grid {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 0; /* Remove gap for seamless tileset */
+    gap: 0;
     border: 4px solid #000;
     aspect-ratio: 1/1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: relative;
-    overflow: visible; /* Changed from hidden to prevent cutoff */
-    background-color: #222; /* Dark background behind grid */
-    user-select: none; /* Prevent text selection on grid */
-    margin: 0 auto; /* Center the grid */
+    overflow: visible;
+    background-color: #222;
+    user-select: none;
+    margin: 0 auto;
 }
 
-/* Remove standard grid effects as we'll use our own */
 .grid::before,
 .grid::after {
     display: none;
 }
 
-/* Base node styling with tileset */
+/* Base Node Styling */
 .node {
     aspect-ratio: 1/1;
     position: relative;
     cursor: pointer;
     transition: transform 0.1s;
-    /* Background image now set by JavaScript */
-    background-size: 100% 100%; /* Make the tile fit exactly in the node */
+    background-size: 100% 100%;
     background-repeat: no-repeat;
-    border: none; /* Remove border for seamless tiles */
-    image-rendering: pixelated; /* Keep pixelated look for retro style */
-    user-select: none; /* Prevent text selection */
-    -webkit-user-drag: none; /* Prevent dragging */
-    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    border: none;
+    image-rendering: pixelated;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Hover effect */
 .node:hover {
     transform: scale(1.1);
     z-index: 10;
     filter: brightness(1.2);
 }
 
-/* Disable hover effect for walls, start and end nodes when mouse is down (drawing) */
 .isMouseDown .node.wall:hover,
 .isMouseDown .node.start:hover,
 .isMouseDown .node.end:hover {
@@ -52,21 +48,7 @@
     filter: none;
 }
 
-/* Disable the blue highlighting that can occur during interaction */
-.node.wall::before,
-.node.start::before,
-.node.end::before {
-    background-color: transparent !important;
-}
-
-/* Prevent blue highlighting from visited animation during wall drawing */
-.isMouseDown .node.visited::before {
-    animation: none !important;
-    opacity: 0.5 !important;
-    transform: scale(1) !important;
-}
-
-/* Node state overlays using ::after pseudo-element */
+/* Node State Overlays - Common Base */
 .node::after {
     content: '';
     position: absolute;
@@ -75,7 +57,7 @@
     right: 0;
     bottom: 0;
     transition: all 0.3s ease;
-    pointer-events: none; /* Let mouse events pass through to the node */
+    pointer-events: none;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 70% 70%;
@@ -83,148 +65,113 @@
     z-index: 2;
 }
 
-/* Start node overlay - house icon */
-.node.start::after {
-    opacity: 1;
-    background-color: rgba(46, 204, 113, 0.35); /* Semi-transparent green */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-    border: 2px solid rgba(46, 204, 113, 0.8);
-    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
-}
-
-/* End node overlay - flag/target icon */
-.node.end::after {
-    opacity: 1;
-    background-color: rgba(231, 76, 60, 0.35); /* Semi-transparent red */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
-    border: 2px solid rgba(231, 76, 60, 0.8);
-    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
-}
-
-/* Start and end node styles - using image overlays instead of ::after pseudo-elements */
-.node.start::after,
-.node.end::after {
-    display: none !important; /* Disable the pseudo-element styling */
-}
-
-/* Image overlay styling for start, end, and wall nodes */
+/* Image Overlays for Node Types */
 .start-overlay,
 .end-overlay,
 .obstacle-overlay,
 .weighted-overlay {
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-    object-fit: cover !important;
-    image-rendering: pixelated !important;
+    display: block;
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    image-rendering: pixelated;
 }
 
-/* Common properties for all image overlays */
-.start-overlay,
-.end-overlay,
-.obstacle-overlay,
-.weighted-overlay {
-    display: block !important;
-    position: absolute !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-    image-rendering: pixelated !important;
-}
-
-/* Image overlay styling for wall nodes */
+/* Obstacle/Wall Overlay */
 .obstacle-overlay {
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-    object-fit: cover !important;
-    image-rendering: pixelated !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* Image overlay styling for start and end nodes - smaller size */
+/* Start and End Overlays */
 .start-overlay,
 .end-overlay {
-    display: block !important;
-    position: absolute !important;
-    top: 15% !important;
-    left: 15% !important;
-    width: 70% !important;
-    height: 70% !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-    object-fit: contain !important;
-    image-rendering: pixelated !important;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
 }
 
-/* Image overlay styling for weighted nodes */
+/* Weighted Node Overlay */
 .weighted-overlay {
-    top: 15% !important;
-    left: 15% !important;
-    width: 70% !important;
-    height: 70% !important;
-    object-fit: contain !important;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
 }
 
-/* Weight value display */
+/* Weight Value Display */
 .weight-value {
-    position: absolute !important;
-    bottom: 2px !important;
-    right: 2px !important;
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    color: white !important;
-    border-radius: 50% !important;
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 11 !important;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 11;
 }
 
-/* Wall node styling with direct obstacle overlay */
+/* Wall Node Styling */
 .node.wall {
-    position: relative !important;
+    position: relative;
     --obstacle-url: url('/src/assets/images/obstacle1.png');
 }
 
-/* Use ::before to apply the obstacle image */
 .node.wall::before {
-    content: "" !important;
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-image: var(--obstacle-url) !important;
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--obstacle-url);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 10;
+    pointer-events: none;
 }
 
-/* Removing the wall::after styling */
 .node.wall::after {
-    display: none !important;
+    display: none;
 }
 
-/* Visited node overlay - blue tint */
+/* Clear highlighting during wall drawing */
+.node.wall::before,
+.node.start::before,
+.node.end::before {
+    background-color: transparent;
+}
+
+.isMouseDown .node.visited::before {
+    animation: none;
+    opacity: 0.5;
+    transform: scale(1);
+}
+
+/* Start and End Node Styling */
+.node.start::after,
+.node.end::after {
+    display: none;
+}
+
+/* Visited Node Styling */
 .node.visited {
     position: relative;
 }
 
-/* Create a special animation class that will be added by JavaScript */
 .node.visited::before {
     content: '';
     position: absolute;
@@ -232,24 +179,22 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(52, 152, 219, 0.3); /* Semi-transparent blue */
+    background-color: rgba(52, 152, 219, 0.3);
     z-index: 1;
-    opacity: 0; /* Start invisible */
-    transform: scale(0.3); /* Start small */
+    opacity: 0;
+    transform: scale(0.3);
 }
 
-/* Animation will be triggered by this class added by JavaScript */
 .node.visited.animate::before {
     animation: nodeExplore 0.5s ease-out forwards;
 }
 
-/* Static state after animation completes */
 .node.visited:not(.animate)::before {
     opacity: 1;
     transform: scale(1);
 }
 
-/* Path node overlay - yellow glow with arrow */
+/* Path Node Styling */
 .node.path {
     position: relative;
 }
@@ -261,25 +206,23 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(241, 196, 15, 0.4); /* Semi-transparent yellow */
+    background-color: rgba(241, 196, 15, 0.4);
     z-index: 1;
-    opacity: 0; /* Start invisible */
-    transform: scale(0.5); /* Start small */
+    opacity: 0;
+    transform: scale(0.5);
 }
 
-/* Animation for path nodes */
 .node.path.animate::before {
     animation: pathReveal 0.5s ease-out forwards;
 }
 
-/* Static state after animation completes */
 .node.path:not(.animate)::before {
     opacity: 1;
     transform: scale(1);
 }
 
 .node.path::after {
-    opacity: 0; /* Start invisible */
+    opacity: 0;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
 }
@@ -292,7 +235,7 @@
     opacity: 1;
 }
 
-/* Current node overlay - pulsing highlight */
+/* Current Node Styling */
 .node.current {
     position: relative;
 }
@@ -304,14 +247,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(155, 89, 182, 0.4); /* Semi-transparent purple */
+    background-color: rgba(155, 89, 182, 0.4);
     border: 2px solid rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     z-index: 1;
     animation: pulse 1s infinite;
 }
 
-/* Make start/end nodes override visited/path effects */
+/* Priority Overrides */
 .node.start::before,
 .node.end::before {
     display: none;
@@ -334,99 +277,4 @@
     0% { transform: scale(1); opacity: 0.7; }
     50% { transform: scale(1.1); opacity: 0.9; }
     100% { transform: scale(1); opacity: 0.7; }
-}
-
-/* Update legend colors to match new styles */
-.legend-color {
-    position: relative;
-    overflow: hidden;
-    --legend-tileset: url('../images/tileset.png'); /* Default, will be overridden by JS */
-}
-
-.legend-color::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* Background image will be set by JavaScript */
-    background-image: var(--legend-tileset);
-    background-size: cover;
-    z-index: 0;
-}
-
-.legend-color.start-node::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(46, 204, 113, 0.35);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-    background-size: 70% 70%;
-    background-position: center;
-    background-repeat: no-repeat;
-    border: 2px solid rgba(46, 204, 113, 0.8);
-    z-index: 1;
-}
-
-.legend-color.end-node::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(231, 76, 60, 0.35);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
-    background-size: 70% 70%;
-    background-position: center;
-    background-repeat: no-repeat;
-    border: 2px solid rgba(231, 76, 60, 0.8);
-    z-index: 1;
-}
-
-.legend-color.wall-node::after {
-    /* We're handling this directly in JavaScript now */
-    display: none;
-}
-
-.legend-color.visited-node::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(52, 152, 219, 0.5);
-    z-index: 1;
-}
-
-.legend-color.path-node::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(241, 196, 15, 0.4);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
-    background-size: 60% 60%;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1;
-}
-
-.legend-color.current-node::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(155, 89, 182, 0.5);
-    border: 2px solid white;
-    z-index: 1;
 } 

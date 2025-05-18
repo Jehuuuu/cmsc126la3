@@ -128,8 +128,8 @@ class Algorithm {
         
         // Mark current node
         if (currentStep < this.visitedNodesInOrder.length) {
-            const currentNode = this.visitedNodesInOrder[currentStep];
-            currentNode.isCurrent = true;
+        const currentNode = this.visitedNodesInOrder[currentStep];
+        currentNode.isCurrent = true;
         }
     }
 
