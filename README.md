@@ -32,16 +32,16 @@ Open the application in your browser and start exploring pathfinding algorithms 
 ### Basic Usage (No Installation)
 1. Clone the repository:
    ```
-   git clone https://github.com/Jehuuuu/cmsc126le3.git
-   cd cmsc126le3
+   git clone https://github.com/Jehuuuu/cmsc126la3.git
+   cd cmsc126la3
    ```
 2. Open `index.html` in any modern web browser
 
 ### Development Setup (with npm)
 1. Clone the repository:
    ```
-   git clone https://github.com/Jehuuuu/cmsc126le3.git
-   cd cmsc126le3
+   git clone https://github.com/Jehuuuu/cmsc126la3.git
+   cd cmsc126la3
    ```
 2. Install dependencies:
    ```
